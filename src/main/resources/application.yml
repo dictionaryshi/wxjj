@@ -1,0 +1,48 @@
+# web服务端口号
+server.port: 9000
+
+server:
+  servlet:
+    encoding:
+      enabled: true
+      charset: utf-8
+      force: true
+
+management:
+  endpoints:
+    web:
+      base-path: /monitor
+      path-mapping:
+        health: /alive
+
+spring:
+  profiles:
+    active: @mvn.active@
+  mail:
+    username: 903031015@qq.com
+    password: wxkalbwatwsvbbdg
+    host: smtp.qq.com
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+  application:
+    name: com.wxjj
+
+---
+spring:
+  profiles: dev
+
+#日志配置文件位置
+logging:
+  config: classpath:logback-dev.xml
+---
+spring:
+  profiles: stag
+
+#日志配置文件位置
+logging:
+  config: classpath:logback-stag.xml
+---
+
