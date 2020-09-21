@@ -1,5 +1,6 @@
 package com.wx.model.request;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -31,4 +32,11 @@ public class SendMailRequest {
     private String text;
 
     private MultipartFile file;
+
+
+    @ApiModelProperty(hidden = true)
+    private String fileName;
+
+    @ApiModelProperty(hidden = true)
+    private String contentType;
 }
