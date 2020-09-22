@@ -19,9 +19,6 @@ import javax.validation.constraints.NotBlank;
 @ToString
 public class SendMailRequest {
 
-    @NotBlank(message = "发件人 不为空")
-    private String from;
-
     @NotBlank(message = "收件人 不为空")
     private String tos;
 
@@ -33,6 +30,9 @@ public class SendMailRequest {
 
     private MultipartFile file;
 
+
+    @ApiModelProperty(hidden = true)
+    private String from;
 
     @ApiModelProperty(hidden = true)
     private String fileName;

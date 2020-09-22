@@ -4,6 +4,7 @@ import com.scy.core.ObjectUtil;
 import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.SignCheck;
 import com.wx.model.request.SendMailRequest;
+import com.wx.service.SendEmailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +28,25 @@ import javax.validation.Valid;
 @RestController
 public class MailController {
 
+    private final SendEmailService sendEmailService;
+
+    public MailController(SendEmailService sendEmailService) {
+        this.sendEmailService = sendEmailService;
+    }
+
     @ApiOperation("发送邮件")
     @SignCheck
     @PostMapping(value = "/send-email", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseResult<?> sendEmail(@Valid SendMailRequest sendMailRequest, HttpServletRequest request) {
+    public ResponseResult<?> sendEmail(@Valid SendMailRequest sendMailRequest, HttpServletRequest request) throws Throwable {
+        sendMailRequest.setFrom("1016496469@qq.com");
+
         if (!ObjectUtil.isNull(sendMailRequest.getFile())) {
             sendMailRequest.setFileName(sendMailRequest.getFile().getOriginalFilename());
             sendMailRequest.setContentType(request.getServletContext().getMimeType(sendMailRequest.getFile().getOriginalFilename()));
         }
+
+        sendEmailService.sendEmail(sendMailRequest);
+
         return ResponseResult.success(null);
     }
 }
