@@ -32,6 +32,8 @@ spring:
             enable: true
   application:
     name: com.wxjj
+  lifecycle:
+    timeout-per-shutdown-phase: 50s
 
 ---
 spring:
