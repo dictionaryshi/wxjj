@@ -1,4 +1,4 @@
-package com.wx.controller.sdk;
+package com.wx.controller.api;
 
 import com.scy.core.ObjectUtil;
 import com.scy.core.rest.ResponseResult;
