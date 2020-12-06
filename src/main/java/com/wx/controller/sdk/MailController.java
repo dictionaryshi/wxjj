@@ -3,7 +3,7 @@ package com.wx.controller.sdk;
 import com.scy.core.ObjectUtil;
 import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.SignCheck;
-import com.wx.model.request.SendMailRequest;
+import com.wx.controller.request.SendMailRequest;
 import com.wx.service.SendEmailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
