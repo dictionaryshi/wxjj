@@ -1,4 +1,4 @@
-package com.wx.model.request;
+package com.wx.controller.request;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

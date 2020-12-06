@@ -1,6 +1,6 @@
 package com.wx.service;
 
-import com.wx.model.request.SendMailRequest;
+import com.wx.controller.request.SendMailRequest;
 
 /**
  * SendEmailService

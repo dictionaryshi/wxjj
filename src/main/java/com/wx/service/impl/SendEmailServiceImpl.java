@@ -2,7 +2,7 @@ package com.wx.service.impl;
 
 import com.scy.core.ObjectUtil;
 import com.scy.core.StringUtil;
-import com.wx.model.request.SendMailRequest;
+import com.wx.controller.request.SendMailRequest;
 import com.wx.service.SendEmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
