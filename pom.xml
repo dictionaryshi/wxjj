@@ -75,6 +75,12 @@
             <artifactId>scy-zookeeper</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.scy</groupId>
+            <artifactId>scy-redis</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
