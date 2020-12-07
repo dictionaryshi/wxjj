@@ -23,6 +23,6 @@ public class SwaggerConfig {
         return SwaggerUtil.getDocket("温馨家具",
                 "接口API" + SystemUtil.SYSTEM_LINE_BREAK
                         + "责任人:史春阳, 联系方式:903031015@qq.com",
-                "1.0", "com.wx.controller.sdk");
+                "1.0", "com.wx.controller.api");
     }
 }
