@@ -16,7 +16,7 @@
 
         <!-- 数据库链接URL、用户名、密码 -->
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://127.0.0.1:3306/stock"
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/warehouse"
                         userId="root"
                         password=""
         />
@@ -27,7 +27,7 @@
 
         <!-- 生成实体类的位置 -->
         <javaModelGenerator
-                targetPackage="com.wx.dao.model"
+                targetPackage="com.wx.dao.warehouse.model"
                 targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
@@ -35,14 +35,17 @@
 
         <!-- 生成Mapper类的位置 -->
         <javaClientGenerator type="ANNOTATEDMAPPER"
-                             targetPackage="com.wx.dao.mapper"
+                             targetPackage="com.wx.dao.warehouse.mapper"
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
         <!-- 数据库名和表名的配置 -->
-        <table schema="stock"
-               tableName="order_goods" domainObjectName="OrderGoodsDO"
+        <!--
+            tableName="user_passport" domainObjectName="UserPassportDO"
+        -->
+        <table schema="warehouse"
+               tableName="" domainObjectName=""
         >
             <!-- 生成的javaBean的属性按照驼峰命名 -->
             <property name="useActualColumnNames" value="false"/>
