@@ -5,6 +5,7 @@ import com.scy.redis.util.RedisUtil;
 import com.wx.constant.RedisKeyEnum;
 import com.wx.domain.code.entity.CaptchaEntity;
 import com.wx.domain.code.service.CaptchaDomainService;
+import com.wx.domain.passport.entity.UserPassportEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +36,12 @@ public class SsoService {
         valueOperationsUtil.setIfAbsent(redisKey, captchaEntity.getCaptcha(), 180_000L, TimeUnit.MILLISECONDS);
 
         return captchaEntity;
+    }
+
+    /**
+     * 登录
+     */
+    public UserPassportEntity login(UserPassportEntity userPassportEntity, String captchaId, String captcha) {
+        return userPassportEntity;
     }
 }
