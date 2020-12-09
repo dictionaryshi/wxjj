@@ -6,6 +6,7 @@ import com.scy.web.util.CookieUtil;
 import com.scy.web.util.LoginUtil;
 import com.wx.controller.assembler.CaptchaAssembler;
 import com.wx.controller.assembler.LoginAssembler;
+import com.wx.controller.request.GetLoginUserRequest;
 import com.wx.controller.request.LoginRequest;
 import com.wx.controller.response.CaptchaResponse;
 import com.wx.domain.code.entity.CaptchaEntity;
@@ -17,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -58,6 +58,16 @@ public class SsoController {
         String domain = "scy.com";
         CookieUtil.sendCookie(response, LoginUtil.COOKIE_SSO, userPassportEntity.getToken(), domain);
 
+        UserTokenBO userTokenBO = LoginAssembler.toUserTokenBO(userPassportEntity);
+        return ResponseResult.success(userTokenBO);
+    }
+
+    @ApiOperation("查询当前登录用户信息")
+    @GetMapping("/get-login-user")
+    public ResponseResult<UserTokenBO> getLoginUser(
+            @Valid GetLoginUserRequest getLoginUserRequest
+    ) {
+        UserPassportEntity userPassportEntity = ssoService.getLoginUser(getLoginUserRequest.getToken());
         UserTokenBO userTokenBO = LoginAssembler.toUserTokenBO(userPassportEntity);
         return ResponseResult.success(userTokenBO);
     }
