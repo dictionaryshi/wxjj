@@ -1,5 +1,6 @@
 package com.wx.controller.assembler;
 
+import com.scy.core.ObjectUtil;
 import com.scy.web.model.UserTokenBO;
 import com.wx.controller.request.LoginRequest;
 import com.wx.domain.passport.entity.UserPassportEntity;
@@ -23,6 +24,10 @@ public class LoginAssembler {
     }
 
     public static UserTokenBO toUserTokenBO(UserPassportEntity userPassportEntity) {
+        if (ObjectUtil.isNull(userPassportEntity)) {
+            return null;
+        }
+
         UserTokenBO userTokenBO = new UserTokenBO();
         userTokenBO.setToken(userPassportEntity.getToken());
         userTokenBO.setUserId(userPassportEntity.getUserId());

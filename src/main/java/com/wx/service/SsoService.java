@@ -1,9 +1,11 @@
 package com.wx.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.scy.core.StringUtil;
 import com.scy.core.exception.BusinessException;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.json.JsonUtil;
+import com.scy.redis.core.RedisTemplateUtil;
 import com.scy.redis.core.ValueOperationsUtil;
 import com.scy.redis.util.RedisUtil;
 import com.wx.constant.RedisKeyEnum;
@@ -35,6 +37,9 @@ public class SsoService {
 
     @Autowired
     private ValueOperationsUtil<String, String> valueOperationsUtil;
+
+    @Autowired
+    private RedisTemplateUtil<String, String> redisTemplateUtil;
 
     /**
      * 获取图片验证码
@@ -73,5 +78,18 @@ public class SsoService {
             log.info(MessageUtil.format("验证码不正确", "captcha", captcha, "redisCaptcha", redisCaptcha));
             throw new BusinessException("验证码不正确");
         }
+    }
+
+    public UserPassportEntity getLoginUser(String token) {
+        String redisKey = RedisUtil.getRedisKey(RedisKeyEnum.LOGIN_TOKEN.getRedisKeyPrefix(), token);
+        String json = valueOperationsUtil.get(redisKey);
+        if (StringUtil.isEmpty(json)) {
+            return null;
+        }
+
+        redisTemplateUtil.expire(redisKey, 3600_000L, TimeUnit.MILLISECONDS);
+
+        return JsonUtil.json2Object(json, new TypeReference<UserPassportEntity>() {
+        });
     }
 }
