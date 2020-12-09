@@ -2,11 +2,15 @@ package com.wx.domain.passport.service;
 
 import com.scy.core.CollectionUtil;
 import com.scy.core.ObjectUtil;
+import com.scy.core.encode.Md5Util;
+import com.scy.core.exception.BusinessException;
+import com.scy.core.format.MessageUtil;
 import com.wx.dao.warehouse.mapper.UserPassportDOMapper;
 import com.wx.dao.warehouse.model.UserPassportDO;
 import com.wx.dao.warehouse.model.UserPassportDOExample;
 import com.wx.domain.passport.entity.UserPassportEntity;
 import com.wx.domain.passport.factory.UserPassportFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,7 @@ import java.util.List;
  * @author shichunyang
  * Created by shichunyang on 2020/12/8.
  */
+@Slf4j
 @Service
 public class UserPassportDomainService {
 
@@ -35,5 +40,21 @@ public class UserPassportDomainService {
         }
 
         return UserPassportFactory.toUserPassportEntity(userPassportDO);
+    }
+
+    public UserPassportEntity checkPassportAndPassword(String passport, String password) {
+        UserPassportEntity userPassportEntity = getUserPassport(passport);
+        if (ObjectUtil.isNull(userPassportEntity)) {
+            log.info(MessageUtil.format("账号不存在", "passport", passport));
+            throw new BusinessException("用户名或密码不正确");
+        }
+
+        String md5Password = Md5Util.md5Encode(password);
+        if (!ObjectUtil.equals(md5Password, userPassportEntity.getPassword())) {
+            log.info(MessageUtil.format("密码不正确", "passport", passport, "password", password));
+            throw new BusinessException("用户名或密码不正确");
+        }
+
+        return userPassportEntity;
     }
 }

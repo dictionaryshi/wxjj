@@ -3,12 +3,14 @@ package com.wx.service;
 import com.scy.core.StringUtil;
 import com.scy.core.exception.BusinessException;
 import com.scy.core.format.MessageUtil;
+import com.scy.core.json.JsonUtil;
 import com.scy.redis.core.ValueOperationsUtil;
 import com.scy.redis.util.RedisUtil;
 import com.wx.constant.RedisKeyEnum;
 import com.wx.domain.code.entity.CaptchaEntity;
 import com.wx.domain.code.service.CaptchaDomainService;
 import com.wx.domain.passport.entity.UserPassportEntity;
+import com.wx.domain.passport.service.UserPassportDomainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,9 @@ public class SsoService {
 
     @Autowired
     private CaptchaDomainService captchaDomainService;
+
+    @Autowired
+    private UserPassportDomainService userPassportDomainService;
 
     @Autowired
     private ValueOperationsUtil<String, String> valueOperationsUtil;
@@ -48,6 +53,11 @@ public class SsoService {
      */
     public UserPassportEntity login(UserPassportEntity userPassportEntity, String captchaId, String captcha) {
         checkCaptcha(captchaId, captcha);
+
+        userPassportEntity = userPassportDomainService.checkPassportAndPassword(userPassportEntity.getPassport(), userPassportEntity.getPassword());
+
+        String redisKey = RedisUtil.getRedisKey(RedisKeyEnum.LOGIN_TOKEN.getRedisKeyPrefix(), userPassportEntity.getToken());
+        valueOperationsUtil.setIfAbsent(redisKey, JsonUtil.object2Json(userPassportEntity), 3600_000L, TimeUnit.MILLISECONDS);
         return userPassportEntity;
     }
 
