@@ -3,6 +3,7 @@ package com.wx.controller.assembler;
 import com.scy.core.ObjectUtil;
 import com.scy.web.model.UserTokenBO;
 import com.wx.controller.request.LoginRequest;
+import com.wx.controller.response.UserPassportResponse;
 import com.wx.domain.passport.entity.UserPassportEntity;
 
 /**
@@ -21,6 +22,18 @@ public class LoginAssembler {
         userPassportEntity.setPassport(loginRequest.getPassport());
         userPassportEntity.setPassword(loginRequest.getPassword());
         return userPassportEntity;
+    }
+
+    public static UserPassportResponse toUserPassportResponse(UserPassportEntity userPassportEntity) {
+        if (ObjectUtil.isNull(userPassportEntity)) {
+            return null;
+        }
+
+        UserPassportResponse userPassportResponse = new UserPassportResponse();
+        userPassportResponse.setUserId(userPassportEntity.getUserId());
+        userPassportResponse.setPassport(userPassportEntity.getPassport());
+        userPassportResponse.setCreatedAt(userPassportEntity.getCreatedAt());
+        return userPassportResponse;
     }
 
     public static UserTokenBO toUserTokenBO(UserPassportEntity userPassportEntity) {

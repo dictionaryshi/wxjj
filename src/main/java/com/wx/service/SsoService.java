@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -91,5 +92,12 @@ public class SsoService {
 
         return JsonUtil.json2Object(json, new TypeReference<UserPassportEntity>() {
         });
+    }
+
+    /**
+     * 查询所有用户账号信息
+     */
+    public List<UserPassportEntity> listAllUserPassports() {
+        return userPassportDomainService.listAllUserPassports();
     }
 }
