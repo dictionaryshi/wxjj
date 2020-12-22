@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * UserPassportDomainService
@@ -40,6 +41,17 @@ public class UserPassportDomainService {
         }
 
         return UserPassportFactory.toUserPassportEntity(userPassportDO);
+    }
+
+    /**
+     * 查询所有用户账号信息
+     */
+    public List<UserPassportEntity> listAllUserPassports() {
+        UserPassportDOExample userPassportDOExample = new UserPassportDOExample();
+        UserPassportDOExample.Criteria criteria = userPassportDOExample.createCriteria();
+        criteria.andIdGreaterThan(0L);
+        List<UserPassportDO> userPassports = userPassportDOMapper.selectByExample(userPassportDOExample);
+        return userPassports.stream().map(UserPassportFactory::toUserPassportEntity).collect(Collectors.toList());
     }
 
     public UserPassportEntity checkPassportAndPassword(String passport, String password) {
