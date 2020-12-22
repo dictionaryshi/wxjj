@@ -1,6 +1,8 @@
 package com.wx.controller.api;
 
+import com.scy.core.CollectionUtil;
 import com.scy.core.rest.ResponseResult;
+import com.scy.web.annotation.LoginCheck;
 import com.scy.web.model.UserTokenBO;
 import com.scy.web.util.CookieUtil;
 import com.scy.web.util.LoginUtil;
@@ -9,6 +11,7 @@ import com.wx.controller.assembler.LoginAssembler;
 import com.wx.controller.request.GetLoginUserRequest;
 import com.wx.controller.request.LoginRequest;
 import com.wx.controller.response.CaptchaResponse;
+import com.wx.controller.response.UserPassportResponse;
 import com.wx.domain.code.entity.CaptchaEntity;
 import com.wx.domain.passport.entity.UserPassportEntity;
 import com.wx.service.SsoService;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * SsoController
@@ -70,5 +75,15 @@ public class SsoController {
         UserPassportEntity userPassportEntity = ssoService.getLoginUser(getLoginUserRequest.getToken());
         UserTokenBO userTokenBO = LoginAssembler.toUserTokenBO(userPassportEntity);
         return ResponseResult.success(userTokenBO);
+    }
+
+    @ApiOperation("查询所有用户账号信息")
+    @LoginCheck
+    @GetMapping("/list-all-user-passports")
+    public ResponseResult<List<UserPassportResponse>> listAllUserPassports(
+    ) {
+        List<UserPassportEntity> userPassportEntities = ssoService.listAllUserPassports();
+        List<UserPassportResponse> userPassportResponses = CollectionUtil.map(userPassportEntities, LoginAssembler::toUserPassportResponse).collect(Collectors.toList());
+        return ResponseResult.success(userPassportResponses);
     }
 }
