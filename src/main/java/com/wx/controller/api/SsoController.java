@@ -11,6 +11,7 @@ import com.wx.controller.assembler.LoginAssembler;
 import com.wx.controller.request.AddUserPassportRequest;
 import com.wx.controller.request.GetLoginUserRequest;
 import com.wx.controller.request.LoginRequest;
+import com.wx.controller.request.UpdateUserPassportRequest;
 import com.wx.controller.response.CaptchaResponse;
 import com.wx.controller.response.UserPassportResponse;
 import com.wx.domain.code.entity.CaptchaEntity;
@@ -95,6 +96,16 @@ public class SsoController {
             @RequestBody @Valid AddUserPassportRequest addUserPassportRequest
     ) {
         long userId = ssoService.insertUserPassport(addUserPassportRequest.getPassport(), addUserPassportRequest.getPassword());
+        return ResponseResult.success(userId);
+    }
+
+    @ApiOperation("修改用户账号信息")
+    @LoginCheck
+    @PostMapping("/update-user-passport")
+    public ResponseResult<Long> updateUserPassport(
+            @RequestBody @Valid UpdateUserPassportRequest updateUserPassportRequest
+    ) {
+        long userId = ssoService.updateUserPassport(updateUserPassportRequest.getPassport(), updateUserPassportRequest.getPassword());
         return ResponseResult.success(userId);
     }
 }
