@@ -107,4 +107,11 @@ public class SsoService {
     public long insertUserPassport(String passport, String password) {
         return userPassportDomainService.insertUserPassport(passport, password);
     }
+
+    /**
+     * 修改账号密码
+     */
+    public long updateUserPassport(String passport, String password) {
+        return userPassportDomainService.updateUserPassport(passport, password);
+    }
 }

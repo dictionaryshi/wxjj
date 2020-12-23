@@ -77,4 +77,22 @@ public class UserPassportDomainService {
         userPassportDOMapper.insertSelective(userPassportDO);
         return userPassportDO.getId();
     }
+
+    public long updateUserPassport(String passport, String password) {
+        UserPassportEntity userPassportEntity = getUserPassport(passport);
+        if (ObjectUtil.isNull(userPassportEntity)) {
+            throw new BusinessException("账号信息不存在");
+        }
+
+        UserPassportDO userPassportDO = new UserPassportDO();
+        userPassportDO.setPassword(Md5Util.md5Encode(password));
+
+        UserPassportDOExample userPassportDOExample = new UserPassportDOExample();
+        UserPassportDOExample.Criteria criteria = userPassportDOExample.createCriteria();
+        criteria.andIdEqualTo(userPassportEntity.getUserId());
+        criteria.andPassportEqualTo(passport);
+
+        userPassportDOMapper.updateByExampleSelective(userPassportDO, userPassportDOExample);
+        return userPassportEntity.getUserId();
+    }
 }
