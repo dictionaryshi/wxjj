@@ -100,4 +100,11 @@ public class SsoService {
     public List<UserPassportEntity> listAllUserPassports() {
         return userPassportDomainService.listAllUserPassports();
     }
+
+    /**
+     * 添加用户账号
+     */
+    public long insertUserPassport(String passport, String password) {
+        return userPassportDomainService.insertUserPassport(passport, password);
+    }
 }

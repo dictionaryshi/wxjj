@@ -36,9 +36,6 @@ public class UserPassportDomainService {
         criteria.andPassportEqualTo(passport);
         List<UserPassportDO> userPassports = userPassportDOMapper.selectByExample(userPassportDOExample);
         UserPassportDO userPassportDO = CollectionUtil.firstElement(userPassports);
-        if (ObjectUtil.isNull(userPassportDO)) {
-            return null;
-        }
 
         return UserPassportFactory.toUserPassportEntity(userPassportDO);
     }
@@ -68,5 +65,16 @@ public class UserPassportDomainService {
         }
 
         return userPassportEntity;
+    }
+
+    public long insertUserPassport(String passport, String password) {
+        UserPassportEntity userPassportEntity = getUserPassport(passport);
+        if (!ObjectUtil.isNull(userPassportEntity)) {
+            throw new BusinessException("账号已存在");
+        }
+
+        UserPassportDO userPassportDO = UserPassportFactory.toUserPassportDO(passport, password);
+        userPassportDOMapper.insertSelective(userPassportDO);
+        return userPassportDO.getId();
     }
 }

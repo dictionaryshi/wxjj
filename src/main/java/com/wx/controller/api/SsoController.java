@@ -8,6 +8,7 @@ import com.scy.web.util.CookieUtil;
 import com.scy.web.util.LoginUtil;
 import com.wx.controller.assembler.CaptchaAssembler;
 import com.wx.controller.assembler.LoginAssembler;
+import com.wx.controller.request.AddUserPassportRequest;
 import com.wx.controller.request.GetLoginUserRequest;
 import com.wx.controller.request.LoginRequest;
 import com.wx.controller.response.CaptchaResponse;
@@ -85,5 +86,15 @@ public class SsoController {
         List<UserPassportEntity> userPassportEntities = ssoService.listAllUserPassports();
         List<UserPassportResponse> userPassportResponses = CollectionUtil.map(userPassportEntities, LoginAssembler::toUserPassportResponse).collect(Collectors.toList());
         return ResponseResult.success(userPassportResponses);
+    }
+
+    @ApiOperation("添加用户账号信息")
+    @LoginCheck
+    @PostMapping("/add-user-passport")
+    public ResponseResult<Long> addUserPassport(
+            @RequestBody @Valid AddUserPassportRequest addUserPassportRequest
+    ) {
+        long userId = ssoService.insertUserPassport(addUserPassportRequest.getPassport(), addUserPassportRequest.getPassword());
+        return ResponseResult.success(userId);
     }
 }
