@@ -43,6 +43,7 @@
         <!-- 数据库名和表名的配置 -->
         <!--
             tableName="user_passport" domainObjectName="UserPassportDO"
+            tableName="sku_category" domainObjectName="SkuCategoryDO"
         -->
         <table schema="warehouse"
                tableName="" domainObjectName=""
