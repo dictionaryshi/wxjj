@@ -1,8 +1,11 @@
 package com.wx.domain.category.service;
 
 import com.scy.core.CollectionUtil;
+import com.scy.core.DiffUtil;
 import com.scy.core.ObjectUtil;
 import com.scy.core.exception.BusinessException;
+import com.scy.core.format.MessageUtil;
+import com.scy.core.model.DiffBO;
 import com.wx.dao.warehouse.mapper.SkuCategoryDOMapper;
 import com.wx.dao.warehouse.model.SkuCategoryDO;
 import com.wx.dao.warehouse.model.SkuCategoryDOExample;
@@ -69,5 +72,24 @@ public class SkuCategoryDomainService {
         skuCategoryDO.setCategoryName(categoryName);
         skuCategoryDOMapper.insertSelective(skuCategoryDO);
         return skuCategoryDO.getId();
+    }
+
+    public List<DiffBO> updateSkuCategory(long categoryId, String categoryName) {
+        SkuCategoryEntity skuCategoryEntity = getSkuCategoryEntity(categoryId);
+        if (ObjectUtil.isNull(skuCategoryEntity)) {
+            throw new BusinessException(MessageUtil.format("品类不存在", "categoryId", categoryId));
+        }
+
+        SkuCategoryEntity skuCategoryByCategoryName = getSkuCategoryEntity(categoryName);
+        if (!ObjectUtil.isNull(skuCategoryByCategoryName)) {
+            return CollectionUtil.emptyList();
+        }
+
+        SkuCategoryDO skuCategoryDO = new SkuCategoryDO();
+        skuCategoryDO.setId(categoryId);
+        skuCategoryDO.setCategoryName(categoryName);
+        skuCategoryDOMapper.updateByPrimaryKeySelective(skuCategoryDO);
+
+        return DiffUtil.diff(skuCategoryEntity, getSkuCategoryEntity(categoryId));
     }
 }

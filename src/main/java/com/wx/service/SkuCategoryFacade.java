@@ -1,5 +1,6 @@
 package com.wx.service;
 
+import com.scy.core.model.DiffBO;
 import com.wx.domain.category.entity.SkuCategoryEntity;
 import com.wx.domain.category.service.SkuCategoryDomainService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,5 +42,12 @@ public class SkuCategoryFacade {
      */
     public List<SkuCategoryEntity> listAllSkuCategoryEntities() {
         return skuCategoryDomainService.listAllSkuCategoryEntities();
+    }
+
+    /**
+     * 修改品类
+     */
+    public List<DiffBO> updateSkuCategory(long categoryId, String categoryName) {
+        return skuCategoryDomainService.updateSkuCategory(categoryId, categoryName);
     }
 }

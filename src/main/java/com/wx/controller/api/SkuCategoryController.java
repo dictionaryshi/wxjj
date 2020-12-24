@@ -1,11 +1,13 @@
 package com.wx.controller.api;
 
 import com.scy.core.CollectionUtil;
+import com.scy.core.model.DiffBO;
 import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.SkuCategoryAssembler;
 import com.wx.controller.request.category.AddSkuCategoryRequest;
 import com.wx.controller.request.category.GetSkuCategoryRequest;
+import com.wx.controller.request.category.UpdateSkuCategoryRequest;
 import com.wx.controller.response.category.SkuCategoryResponse;
 import com.wx.domain.category.entity.SkuCategoryEntity;
 import com.wx.service.SkuCategoryFacade;
@@ -63,5 +65,15 @@ public class SkuCategoryController {
         List<SkuCategoryEntity> skuCategoryEntities = skuCategoryFacade.listAllSkuCategoryEntities();
         List<SkuCategoryResponse> skuCategoryResponses = CollectionUtil.map(skuCategoryEntities, SkuCategoryAssembler::toSkuCategoryResponse).collect(Collectors.toList());
         return ResponseResult.success(skuCategoryResponses);
+    }
+
+    @ApiOperation("修改品类")
+    @LoginCheck
+    @PostMapping("/update-category")
+    public ResponseResult<List<DiffBO>> updateCategory(
+            @RequestBody @Valid UpdateSkuCategoryRequest updateSkuCategoryRequest
+    ) {
+        List<DiffBO> diffs = skuCategoryFacade.updateSkuCategory(updateSkuCategoryRequest.getCategoryId(), updateSkuCategoryRequest.getCategoryName());
+        return ResponseResult.success(diffs);
     }
 }
