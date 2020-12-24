@@ -6,6 +6,7 @@ import com.scy.core.ObjectUtil;
 import com.scy.core.exception.BusinessException;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.model.DiffBO;
+import com.scy.db.util.ForceMasterHelper;
 import com.wx.dao.warehouse.mapper.SkuCategoryDOMapper;
 import com.wx.dao.warehouse.model.SkuCategoryDO;
 import com.wx.dao.warehouse.model.SkuCategoryDOExample;
@@ -90,6 +91,14 @@ public class SkuCategoryDomainService {
         skuCategoryDO.setCategoryName(categoryName);
         skuCategoryDOMapper.updateByPrimaryKeySelective(skuCategoryDO);
 
-        return DiffUtil.diff(skuCategoryEntity, getSkuCategoryEntity(categoryId));
+        SkuCategoryEntity afterSkuCategoryEntity;
+        try {
+            ForceMasterHelper.forceMaster();
+            afterSkuCategoryEntity = getSkuCategoryEntity(categoryId);
+        } finally {
+            ForceMasterHelper.clearForceMaster();
+        }
+
+        return DiffUtil.diff(skuCategoryEntity, afterSkuCategoryEntity);
     }
 }
