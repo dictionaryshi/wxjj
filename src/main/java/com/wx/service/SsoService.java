@@ -114,4 +114,11 @@ public class SsoService {
     public long updateUserPassport(String passport, String password) {
         return userPassportDomainService.updateUserPassport(passport, password);
     }
+
+    /**
+     * 查询用户账号
+     */
+    public UserPassportEntity getUserPassportEntity(long userId) {
+        return userPassportDomainService.getUserPassportEntity(userId);
+    }
 }

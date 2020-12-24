@@ -95,4 +95,9 @@ public class UserPassportDomainService {
         userPassportDOMapper.updateByExampleSelective(userPassportDO, userPassportDOExample);
         return userPassportEntity.getUserId();
     }
+
+    public UserPassportEntity getUserPassportEntity(long userId) {
+        UserPassportDO userPassportDO = userPassportDOMapper.selectByPrimaryKey(userId);
+        return UserPassportFactory.toUserPassportEntity(userPassportDO);
+    }
 }
