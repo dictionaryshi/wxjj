@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author : shichunyang
  * Date    : 2020/12/24
@@ -32,5 +34,12 @@ public class SkuCategoryFacade {
      */
     public SkuCategoryEntity getSkuCategoryEntity(long categoryId) {
         return skuCategoryDomainService.getSkuCategoryEntity(categoryId);
+    }
+
+    /**
+     * 查询所有品类
+     */
+    public List<SkuCategoryEntity> listAllSkuCategoryEntities() {
+        return skuCategoryDomainService.listAllSkuCategoryEntities();
     }
 }

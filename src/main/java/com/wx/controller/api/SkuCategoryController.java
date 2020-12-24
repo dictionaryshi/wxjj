@@ -1,5 +1,6 @@
 package com.wx.controller.api;
 
+import com.scy.core.CollectionUtil;
 import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.SkuCategoryAssembler;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -51,5 +54,14 @@ public class SkuCategoryController {
         SkuCategoryEntity skuCategoryEntity = skuCategoryFacade.getSkuCategoryEntity(getSkuCategoryRequest.getCategoryId());
         SkuCategoryResponse skuCategoryResponse = SkuCategoryAssembler.toSkuCategoryResponse(skuCategoryEntity);
         return ResponseResult.success(skuCategoryResponse);
+    }
+
+    @ApiOperation("查询所有品类")
+    @LoginCheck
+    @GetMapping("/list-all-categories")
+    public ResponseResult<List<SkuCategoryResponse>> listAllCategories() {
+        List<SkuCategoryEntity> skuCategoryEntities = skuCategoryFacade.listAllSkuCategoryEntities();
+        List<SkuCategoryResponse> skuCategoryResponses = CollectionUtil.map(skuCategoryEntities, SkuCategoryAssembler::toSkuCategoryResponse).collect(Collectors.toList());
+        return ResponseResult.success(skuCategoryResponses);
     }
 }
