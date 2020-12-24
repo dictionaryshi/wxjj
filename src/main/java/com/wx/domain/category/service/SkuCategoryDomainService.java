@@ -51,6 +51,14 @@ public class SkuCategoryDomainService {
         return CollectionUtil.map(skuCategories, SkuCategoryFactory::toSkuCategoryEntity).collect(Collectors.toList());
     }
 
+    public List<SkuCategoryEntity> listAllSkuCategoryEntities() {
+        SkuCategoryDOExample skuCategoryDOExample = new SkuCategoryDOExample();
+        SkuCategoryDOExample.Criteria criteria = skuCategoryDOExample.createCriteria();
+        criteria.andIdGreaterThan(0L);
+        List<SkuCategoryDO> skuCategories = skuCategoryDOMapper.selectByExample(skuCategoryDOExample);
+        return CollectionUtil.map(skuCategories, SkuCategoryFactory::toSkuCategoryEntity).collect(Collectors.toList());
+    }
+
     public long insertSkuCategory(String categoryName) {
         SkuCategoryEntity skuCategoryEntity = getSkuCategoryEntity(categoryName);
         if (!ObjectUtil.isNull(skuCategoryEntity)) {
