@@ -25,7 +25,7 @@ public class UserPassportResponse {
     /**
      * 用户id
      */
-    @ApiModelProperty(value = "用户唯一标识", required = true, example = "13264232894")
+    @ApiModelProperty(value = "用户唯一标识", required = true, example = "123456")
     private Long userId;
 
     /**
