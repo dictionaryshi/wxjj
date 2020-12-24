@@ -1,5 +1,7 @@
 package com.wx.domain.category.factory;
 
+import com.scy.core.ObjectUtil;
+import com.wx.dao.warehouse.model.SkuCategoryDO;
 import com.wx.domain.category.entity.SkuCategoryEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -14,9 +16,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SkuCategoryFactory {
 
-    public static SkuCategoryEntity toSkuCategoryEntity(String categoryName) {
+    public static SkuCategoryEntity toSkuCategoryEntity(SkuCategoryDO skuCategoryDO) {
+        if (ObjectUtil.isNull(skuCategoryDO)) {
+            return null;
+        }
+
         SkuCategoryEntity skuCategoryEntity = new SkuCategoryEntity();
-        skuCategoryEntity.setCategoryName(categoryName);
+        skuCategoryEntity.setId(skuCategoryDO.getId());
+        skuCategoryEntity.setCategoryName(skuCategoryDO.getCategoryName());
         return skuCategoryEntity;
     }
 }
