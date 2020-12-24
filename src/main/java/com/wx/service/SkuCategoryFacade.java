@@ -1,5 +1,6 @@
 package com.wx.service;
 
+import com.wx.domain.category.entity.SkuCategoryEntity;
 import com.wx.domain.category.service.SkuCategoryDomainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +25,12 @@ public class SkuCategoryFacade {
      */
     public long insertSkuCategory(String categoryName) {
         return skuCategoryDomainService.insertSkuCategory(categoryName);
+    }
+
+    /**
+     * 查询品类
+     */
+    public SkuCategoryEntity getSkuCategoryEntity(long categoryId) {
+        return skuCategoryDomainService.getSkuCategoryEntity(categoryId);
     }
 }
