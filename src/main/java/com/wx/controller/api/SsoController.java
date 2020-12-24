@@ -8,10 +8,7 @@ import com.scy.web.util.CookieUtil;
 import com.scy.web.util.LoginUtil;
 import com.wx.controller.assembler.CaptchaAssembler;
 import com.wx.controller.assembler.LoginAssembler;
-import com.wx.controller.request.AddUserPassportRequest;
-import com.wx.controller.request.GetLoginUserRequest;
-import com.wx.controller.request.LoginRequest;
-import com.wx.controller.request.UpdateUserPassportRequest;
+import com.wx.controller.request.*;
 import com.wx.controller.response.CaptchaResponse;
 import com.wx.controller.response.UserPassportResponse;
 import com.wx.domain.code.entity.CaptchaEntity;
@@ -77,6 +74,17 @@ public class SsoController {
         UserPassportEntity userPassportEntity = ssoService.getLoginUser(getLoginUserRequest.getToken());
         UserTokenBO userTokenBO = LoginAssembler.toUserTokenBO(userPassportEntity);
         return ResponseResult.success(userTokenBO);
+    }
+
+    @ApiOperation("根据userId查询用户账号")
+    @LoginCheck
+    @GetMapping("/get-user-passport-by-user-id")
+    public ResponseResult<UserPassportResponse> getUserPassportByUserId(
+            @Valid GetUserPassportRequest getUserPassportRequest
+    ) {
+        UserPassportEntity userPassportEntity = ssoService.getUserPassportEntity(getUserPassportRequest.getUserId());
+        UserPassportResponse userPassportResponse = LoginAssembler.toUserPassportResponse(userPassportEntity);
+        return ResponseResult.success(userPassportResponse);
     }
 
     @ApiOperation("查询所有用户账号信息")
