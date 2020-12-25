@@ -1,9 +1,12 @@
 package com.wx.domain.sku.service;
 
 import com.scy.core.CollectionUtil;
+import com.scy.core.DiffUtil;
 import com.scy.core.ObjectUtil;
 import com.scy.core.exception.BusinessException;
 import com.scy.core.format.MessageUtil;
+import com.scy.core.model.DiffBO;
+import com.scy.db.util.ForceMasterHelper;
 import com.wx.dao.warehouse.mapper.GoodsSkuDOMapper;
 import com.wx.dao.warehouse.model.GoodsSkuDO;
 import com.wx.dao.warehouse.model.GoodsSkuDOExample;
@@ -51,5 +54,26 @@ public class GoodsSkuDomainService {
         GoodsSkuDO goodsSkuDO = GoodsSkuFactory.toGoodsSkuDO(goodsSkuEntity);
         goodsSkuDOMapper.insertSelective(goodsSkuDO);
         return goodsSkuDO.getId();
+    }
+
+    public List<DiffBO> update(GoodsSkuEntity goodsSkuEntity) {
+        GoodsSkuEntity goodsSkuEntityBySkuId = getGoodsSkuEntity(goodsSkuEntity.getSkuId());
+        if (ObjectUtil.isNull(goodsSkuEntityBySkuId)) {
+            throw new BusinessException(MessageUtil.format("商品不存在", "skuId", goodsSkuEntity.getSkuId()));
+        }
+
+        if (!ObjectUtil.equals(goodsSkuEntity.getSkuName(), goodsSkuEntityBySkuId.getSkuName())
+                && !ObjectUtil.isNull(getGoodsSkuEntity(goodsSkuEntity.getSkuName()))) {
+            throw new BusinessException(MessageUtil.format("商品已存在", "skuName", goodsSkuEntity.getSkuName()));
+        }
+
+        GoodsSkuDO goodsSkuDO = GoodsSkuFactory.toGoodsSkuDO(goodsSkuEntity);
+        goodsSkuDOMapper.updateByPrimaryKeySelective(goodsSkuDO);
+
+        ForceMasterHelper.forceMaster();
+        GoodsSkuEntity afterGoodsSkuEntity = getGoodsSkuEntity(goodsSkuEntity.getSkuId());
+        ForceMasterHelper.clearForceMaster();
+
+        return DiffUtil.diff(goodsSkuEntityBySkuId, afterGoodsSkuEntity);
     }
 }

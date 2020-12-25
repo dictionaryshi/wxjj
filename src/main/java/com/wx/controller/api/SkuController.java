@@ -1,9 +1,11 @@
 package com.wx.controller.api;
 
+import com.scy.core.model.DiffBO;
 import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.GoodsSkuAssembler;
 import com.wx.controller.request.goods.AddGoodsSkuRequest;
+import com.wx.controller.request.goods.UpdateGoodsSkuRequest;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
 import com.wx.service.GoodsSkuFacade;
 import io.swagger.annotations.Api;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author : shichunyang
@@ -42,5 +45,16 @@ public class SkuController {
         GoodsSkuEntity goodsSkuEntity = GoodsSkuAssembler.toGoodsSkuEntity(addGoodsSkuRequest);
         long skuId = goodsSkuFacade.add(goodsSkuEntity);
         return ResponseResult.success(skuId);
+    }
+
+    @ApiOperation("修改商品")
+    @LoginCheck
+    @PostMapping("/update-sku")
+    public ResponseResult<List<DiffBO>> updateSku(
+            @RequestBody @Valid UpdateGoodsSkuRequest updateGoodsSkuRequest
+    ) {
+        GoodsSkuEntity goodsSkuEntity = GoodsSkuAssembler.toGoodsSkuEntity(updateGoodsSkuRequest);
+        List<DiffBO> diffs = goodsSkuFacade.update(goodsSkuEntity);
+        return ResponseResult.success(diffs);
     }
 }
