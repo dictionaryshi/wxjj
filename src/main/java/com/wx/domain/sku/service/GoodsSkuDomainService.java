@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -75,5 +76,10 @@ public class GoodsSkuDomainService {
         ForceMasterHelper.clearForceMaster();
 
         return DiffUtil.diff(goodsSkuEntityBySkuId, afterGoodsSkuEntity);
+    }
+
+    public List<Long> listCategoryIds(List<GoodsSkuEntity> goodsSkuEntities) {
+        return CollectionUtil.map(goodsSkuEntities, GoodsSkuEntity::getCategoryId)
+                .distinct().collect(Collectors.toList());
     }
 }

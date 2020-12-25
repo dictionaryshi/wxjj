@@ -1,7 +1,9 @@
 package com.wx.controller.assembler;
 
+import com.scy.core.ObjectUtil;
 import com.wx.controller.request.goods.AddGoodsSkuRequest;
 import com.wx.controller.request.goods.UpdateGoodsSkuRequest;
+import com.wx.controller.response.goods.GoodsSkuResponse;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -29,5 +31,18 @@ public class GoodsSkuAssembler {
         goodsSkuEntity.setSkuName(updateGoodsSkuRequest.getSkuName());
         goodsSkuEntity.setCategoryId(updateGoodsSkuRequest.getCategoryId());
         return goodsSkuEntity;
+    }
+
+    public static GoodsSkuResponse toGoodsSkuResponse(GoodsSkuEntity goodsSkuEntity) {
+        if (ObjectUtil.isNull(goodsSkuEntity)) {
+            return null;
+        }
+
+        GoodsSkuResponse goodsSkuResponse = new GoodsSkuResponse();
+        goodsSkuResponse.setSkuId(goodsSkuEntity.getSkuId());
+        goodsSkuResponse.setSkuName(goodsSkuEntity.getSkuName());
+        goodsSkuResponse.setCategoryId(goodsSkuEntity.getCategoryId());
+        goodsSkuResponse.setCategoryName(goodsSkuEntity.getCategoryName());
+        return goodsSkuResponse;
     }
 }
