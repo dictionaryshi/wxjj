@@ -30,4 +30,9 @@ public class GoodsSkuEntity {
      * 品类id
      */
     private Long categoryId;
+
+    /**
+     * 品类名称
+     */
+    private String categoryName;
 }

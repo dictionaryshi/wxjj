@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -53,6 +54,12 @@ public class SkuCategoryDomainService {
         criteria.andIdIn(categoryIds);
         List<SkuCategoryDO> skuCategories = skuCategoryDOMapper.selectByExample(skuCategoryDOExample);
         return CollectionUtil.map(skuCategories, SkuCategoryFactory::toSkuCategoryEntity).collect(Collectors.toList());
+    }
+
+    public Map<Long, String> getSkuCategoryMap(List<Long> categoryIds) {
+        List<SkuCategoryEntity> skuCategoryEntities = listSkuCategoryEntities(categoryIds);
+        return CollectionUtil.stream(skuCategoryEntities)
+                .collect(Collectors.toMap(SkuCategoryEntity::getId, SkuCategoryEntity::getCategoryName, (v1, v2) -> v2));
     }
 
     public List<SkuCategoryEntity> listAllSkuCategoryEntities() {
