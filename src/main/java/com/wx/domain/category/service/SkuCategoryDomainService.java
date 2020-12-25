@@ -39,6 +39,14 @@ public class SkuCategoryDomainService {
         return SkuCategoryFactory.toSkuCategoryEntity(skuCategoryDO);
     }
 
+    public String getSkuCategoryName(long categoryId) {
+        SkuCategoryEntity skuCategoryEntity = getSkuCategoryEntity(categoryId);
+        if (ObjectUtil.isNull(skuCategoryEntity)) {
+            return null;
+        }
+        return skuCategoryEntity.getCategoryName();
+    }
+
     public SkuCategoryEntity getSkuCategoryEntity(String categoryName) {
         SkuCategoryDOExample skuCategoryDOExample = new SkuCategoryDOExample();
         SkuCategoryDOExample.Criteria criteria = skuCategoryDOExample.createCriteria();

@@ -43,6 +43,20 @@ public class GoodsSkuFacade {
         return goodsSkuDomainService.update(goodsSkuEntity);
     }
 
+    /**
+     * 查询商品
+     */
+    public GoodsSkuEntity getGoodsSkuEntity(long skuId) {
+        GoodsSkuEntity goodsSkuEntity = goodsSkuDomainService.getGoodsSkuEntity(skuId);
+        if (ObjectUtil.isNull(goodsSkuEntity)) {
+            return null;
+        }
+
+        String skuCategoryName = skuCategoryDomainService.getSkuCategoryName(goodsSkuEntity.getCategoryId());
+        goodsSkuEntity.setCategoryName(skuCategoryName);
+        return goodsSkuEntity;
+    }
+
     private void checkCategory(GoodsSkuEntity goodsSkuEntity) {
         SkuCategoryEntity skuCategoryEntity = skuCategoryDomainService.getSkuCategoryEntity(goodsSkuEntity.getCategoryId());
         if (ObjectUtil.isNull(skuCategoryEntity)) {
