@@ -5,17 +5,16 @@ import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.GoodsSkuAssembler;
 import com.wx.controller.request.goods.AddGoodsSkuRequest;
+import com.wx.controller.request.goods.GetGoodsSkuRequest;
 import com.wx.controller.request.goods.UpdateGoodsSkuRequest;
+import com.wx.controller.response.goods.GoodsSkuResponse;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
 import com.wx.service.GoodsSkuFacade;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -56,5 +55,15 @@ public class SkuController {
         GoodsSkuEntity goodsSkuEntity = GoodsSkuAssembler.toGoodsSkuEntity(updateGoodsSkuRequest);
         List<DiffBO> diffs = goodsSkuFacade.update(goodsSkuEntity);
         return ResponseResult.success(diffs);
+    }
+
+    @ApiOperation("查询商品")
+    @LoginCheck
+    @GetMapping("/get-sku")
+    public ResponseResult<GoodsSkuResponse> getSku(
+            @Valid GetGoodsSkuRequest getGoodsSkuRequest
+    ) {
+        GoodsSkuEntity goodsSkuEntity = goodsSkuFacade.getGoodsSkuEntity(getGoodsSkuRequest.getSkuId());
+        return ResponseResult.success(GoodsSkuAssembler.toGoodsSkuResponse(goodsSkuEntity));
     }
 }
