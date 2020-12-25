@@ -44,6 +44,7 @@
         <!--
             tableName="user_passport" domainObjectName="UserPassportDO"
             tableName="sku_category" domainObjectName="SkuCategoryDO"
+            tableName="goods_sku" domainObjectName="GoodsSkuDO"
         -->
         <table schema="warehouse"
                tableName="" domainObjectName=""
