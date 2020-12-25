@@ -30,6 +30,7 @@ public class GoodsSkuFactory {
 
     public static GoodsSkuDO toGoodsSkuDO(GoodsSkuEntity goodsSkuEntity) {
         GoodsSkuDO goodsSkuDO = new GoodsSkuDO();
+        goodsSkuDO.setId(goodsSkuEntity.getSkuId());
         goodsSkuDO.setSkuName(goodsSkuEntity.getSkuName());
         goodsSkuDO.setCategoryId(goodsSkuEntity.getCategoryId());
         return goodsSkuDO;
