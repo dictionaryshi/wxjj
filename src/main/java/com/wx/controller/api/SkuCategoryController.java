@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * ---------------------------------------
  * Desc    : 品类用户接口
  */
-@Api(tags = "品类")
+@Api(tags = "品类API")
 @Slf4j
 @RequestMapping("/category")
 @RestController
