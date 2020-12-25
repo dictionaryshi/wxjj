@@ -24,7 +24,7 @@ CREATE TABLE `goods_sku` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  KEY `idx_category_id` (`category_id`),
-  KEY `idx_sku_name` (`sku_name`)
+  UNIQUE KEY `uniq_sku_name` (`sku_name`),
+  KEY `idx_category_id` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品';
 
