@@ -82,4 +82,12 @@ public class GoodsSkuDomainService {
         return CollectionUtil.map(goodsSkuEntities, GoodsSkuEntity::getCategoryId)
                 .distinct().collect(Collectors.toList());
     }
+
+    public List<GoodsSkuEntity> listByCategoryId(long categoryId) {
+        GoodsSkuDOExample goodsSkuDOExample = new GoodsSkuDOExample();
+        GoodsSkuDOExample.Criteria criteria = goodsSkuDOExample.createCriteria();
+        criteria.andCategoryIdEqualTo(categoryId);
+        List<GoodsSkuDO> goodsSkus = goodsSkuDOMapper.selectByExample(goodsSkuDOExample);
+        return CollectionUtil.map(goodsSkus, GoodsSkuFactory::toGoodsSkuEntity).collect(Collectors.toList());
+    }
 }
