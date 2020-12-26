@@ -3,13 +3,18 @@ package com.wx.domain.sku.service;
 import com.scy.core.CollectionUtil;
 import com.scy.core.DiffUtil;
 import com.scy.core.ObjectUtil;
+import com.scy.core.StringUtil;
 import com.scy.core.exception.BusinessException;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.model.DiffBO;
+import com.scy.core.page.PageParam;
+import com.scy.core.page.PageResult;
 import com.scy.db.util.ForceMasterHelper;
 import com.wx.dao.warehouse.mapper.GoodsSkuDOMapper;
+import com.wx.dao.warehouse.mapper.extend.GoodsSkuDOMapperExtend;
 import com.wx.dao.warehouse.model.GoodsSkuDO;
 import com.wx.dao.warehouse.model.GoodsSkuDOExample;
+import com.wx.dao.warehouse.model.extend.GoodsSkuDOExampleExtend;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
 import com.wx.domain.sku.factory.GoodsSkuFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +37,9 @@ public class GoodsSkuDomainService {
 
     @Autowired
     private GoodsSkuDOMapper goodsSkuDOMapper;
+
+    @Autowired
+    private GoodsSkuDOMapperExtend goodsSkuDOMapperExtend;
 
     public GoodsSkuEntity getGoodsSkuEntity(long skuId) {
         GoodsSkuDO goodsSkuDO = goodsSkuDOMapper.selectByPrimaryKey(skuId);
@@ -89,5 +97,33 @@ public class GoodsSkuDomainService {
         criteria.andCategoryIdEqualTo(categoryId);
         List<GoodsSkuDO> goodsSkus = goodsSkuDOMapper.selectByExample(goodsSkuDOExample);
         return CollectionUtil.map(goodsSkus, GoodsSkuFactory::toGoodsSkuEntity).collect(Collectors.toList());
+    }
+
+    public PageResult<GoodsSkuEntity> listByPage(PageParam pageParam, GoodsSkuEntity goodsSkuEntity) {
+        PageResult<GoodsSkuEntity> pageResult = new PageResult<>();
+        pageResult.setPage(pageParam.getPage());
+        pageResult.setLimit(pageParam.getLimit());
+
+        GoodsSkuDOExampleExtend goodsSkuDOExampleExtend = new GoodsSkuDOExampleExtend();
+        goodsSkuDOExampleExtend.setPageParam(pageParam);
+        GoodsSkuDOExample.Criteria criteria = goodsSkuDOExampleExtend.createCriteria();
+        if (!ObjectUtil.isNull(goodsSkuEntity.getSkuId())) {
+            criteria.andIdEqualTo(goodsSkuEntity.getSkuId());
+        }
+
+        if (!StringUtil.isEmpty(goodsSkuEntity.getSkuName())) {
+            criteria.andSkuNameEqualTo(goodsSkuEntity.getSkuName());
+        }
+
+        if (!ObjectUtil.isNull(goodsSkuEntity.getCategoryId())) {
+            criteria.andCategoryIdEqualTo(goodsSkuEntity.getCategoryId());
+        }
+
+        pageResult.setTotal((int) goodsSkuDOMapper.countByExample(goodsSkuDOExampleExtend));
+
+        List<GoodsSkuDO> goodsSkus = goodsSkuDOMapperExtend.selectByExampleExtend(goodsSkuDOExampleExtend);
+        List<GoodsSkuEntity> datas = CollectionUtil.map(goodsSkus, GoodsSkuFactory::toGoodsSkuEntity).collect(Collectors.toList());
+        pageResult.setDatas(datas);
+        return pageResult;
     }
 }
