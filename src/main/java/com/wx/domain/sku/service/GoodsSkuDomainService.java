@@ -105,6 +105,8 @@ public class GoodsSkuDomainService {
         pageResult.setLimit(pageParam.getLimit());
 
         GoodsSkuDOExampleExtend goodsSkuDOExampleExtend = new GoodsSkuDOExampleExtend();
+        pageParam.setOrderField("id");
+        pageParam.setDesc(Boolean.TRUE);
         goodsSkuDOExampleExtend.setPageParam(pageParam);
         GoodsSkuDOExample.Criteria criteria = goodsSkuDOExampleExtend.createCriteria();
         if (!ObjectUtil.isNull(goodsSkuEntity.getSkuId())) {
@@ -112,7 +114,7 @@ public class GoodsSkuDomainService {
         }
 
         if (!StringUtil.isEmpty(goodsSkuEntity.getSkuName())) {
-            criteria.andSkuNameEqualTo(goodsSkuEntity.getSkuName());
+            criteria.andSkuNameLike(goodsSkuEntity.getSkuName() + StringUtil.PERCENT);
         }
 
         if (!ObjectUtil.isNull(goodsSkuEntity.getCategoryId())) {
