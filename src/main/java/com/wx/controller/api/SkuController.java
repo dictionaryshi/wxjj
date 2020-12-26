@@ -1,12 +1,13 @@
 package com.wx.controller.api;
 
+import com.scy.core.CollectionUtil;
 import com.scy.core.model.DiffBO;
+import com.scy.core.page.PageParam;
+import com.scy.core.page.PageResult;
 import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.GoodsSkuAssembler;
-import com.wx.controller.request.goods.AddGoodsSkuRequest;
-import com.wx.controller.request.goods.GetGoodsSkuRequest;
-import com.wx.controller.request.goods.UpdateGoodsSkuRequest;
+import com.wx.controller.request.goods.*;
 import com.wx.controller.response.goods.GoodsSkuResponse;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
 import com.wx.service.GoodsSkuFacade;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -65,5 +67,28 @@ public class SkuController {
     ) {
         GoodsSkuEntity goodsSkuEntity = goodsSkuFacade.getGoodsSkuEntity(getGoodsSkuRequest.getSkuId());
         return ResponseResult.success(GoodsSkuAssembler.toGoodsSkuResponse(goodsSkuEntity));
+    }
+
+    @ApiOperation("根据分类查询所有商品")
+    @LoginCheck
+    @GetMapping("/query-sku-by-category")
+    public ResponseResult<List<GoodsSkuResponse>> querySkuByCategory(
+            @Valid QueryGoodsSkuByCategoryRequest queryGoodsSkuByCategoryRequest
+    ) {
+        List<GoodsSkuEntity> goodsSkuEntities = goodsSkuFacade.listByCategoryId(queryGoodsSkuByCategoryRequest.getCategoryId());
+        List<GoodsSkuResponse> goodsSkuResponses = CollectionUtil.map(goodsSkuEntities, GoodsSkuAssembler::toGoodsSkuResponse).collect(Collectors.toList());
+        return ResponseResult.success(goodsSkuResponses);
+    }
+
+    @ApiOperation("分页查询sku")
+    @LoginCheck
+    @GetMapping("/query-sku-by-page")
+    public ResponseResult<PageResult<GoodsSkuResponse>> querySkuByPage(
+            @Valid PageParam pageParam,
+            QueryGoodsSkuByPageRequest queryGoodsSkuByPageRequest
+    ) {
+        GoodsSkuEntity goodsSkuEntity = GoodsSkuAssembler.toGoodsSkuEntity(queryGoodsSkuByPageRequest);
+        PageResult<GoodsSkuEntity> pageResult = goodsSkuFacade.listByPage(pageParam, goodsSkuEntity);
+        return ResponseResult.success(GoodsSkuAssembler.toGoodsSkuResponsePageResult(pageResult));
     }
 }

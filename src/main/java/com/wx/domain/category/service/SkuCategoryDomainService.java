@@ -57,6 +57,10 @@ public class SkuCategoryDomainService {
     }
 
     public List<SkuCategoryEntity> listSkuCategoryEntities(List<Long> categoryIds) {
+        if (CollectionUtil.isEmpty(categoryIds)) {
+            return CollectionUtil.emptyList();
+        }
+
         SkuCategoryDOExample skuCategoryDOExample = new SkuCategoryDOExample();
         SkuCategoryDOExample.Criteria criteria = skuCategoryDOExample.createCriteria();
         criteria.andIdIn(categoryIds);
