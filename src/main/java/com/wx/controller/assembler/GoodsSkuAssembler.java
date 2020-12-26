@@ -1,6 +1,8 @@
 package com.wx.controller.assembler;
 
+import com.scy.core.CollectionUtil;
 import com.scy.core.ObjectUtil;
+import com.scy.core.page.PageResult;
 import com.wx.controller.request.goods.AddGoodsSkuRequest;
 import com.wx.controller.request.goods.QueryGoodsSkuByPageRequest;
 import com.wx.controller.request.goods.UpdateGoodsSkuRequest;
@@ -8,6 +10,8 @@ import com.wx.controller.response.goods.GoodsSkuResponse;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -53,5 +57,14 @@ public class GoodsSkuAssembler {
         goodsSkuResponse.setCategoryId(goodsSkuEntity.getCategoryId());
         goodsSkuResponse.setCategoryName(goodsSkuEntity.getCategoryName());
         return goodsSkuResponse;
+    }
+
+    public static PageResult<GoodsSkuResponse> toGoodsSkuResponsePageResult(PageResult<GoodsSkuEntity> pageResult) {
+        PageResult<GoodsSkuResponse> goodsSkuResponsePageResult = new PageResult<>();
+        goodsSkuResponsePageResult.setPage(pageResult.getPage());
+        goodsSkuResponsePageResult.setLimit(pageResult.getLimit());
+        goodsSkuResponsePageResult.setTotal(pageResult.getTotal());
+        goodsSkuResponsePageResult.setDatas(CollectionUtil.map(pageResult.getDatas(), GoodsSkuAssembler::toGoodsSkuResponse).collect(Collectors.toList()));
+        return goodsSkuResponsePageResult;
     }
 }

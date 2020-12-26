@@ -3,6 +3,7 @@ package com.wx.controller.api;
 import com.scy.core.CollectionUtil;
 import com.scy.core.model.DiffBO;
 import com.scy.core.page.PageParam;
+import com.scy.core.page.PageResult;
 import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.GoodsSkuAssembler;
@@ -82,10 +83,12 @@ public class SkuController {
     @ApiOperation("分页查询sku")
     @LoginCheck
     @GetMapping("/query-sku-by-page")
-    public ResponseResult<List<GoodsSkuResponse>> querySkuByPage(
+    public ResponseResult<PageResult<GoodsSkuResponse>> querySkuByPage(
             @Valid PageParam pageParam,
             QueryGoodsSkuByPageRequest queryGoodsSkuByPageRequest
     ) {
-        return ResponseResult.success(null);
+        GoodsSkuEntity goodsSkuEntity = GoodsSkuAssembler.toGoodsSkuEntity(queryGoodsSkuByPageRequest);
+        PageResult<GoodsSkuEntity> pageResult = goodsSkuFacade.listByPage(pageParam, goodsSkuEntity);
+        return ResponseResult.success(GoodsSkuAssembler.toGoodsSkuResponsePageResult(pageResult));
     }
 }
