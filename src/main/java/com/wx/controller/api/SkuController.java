@@ -2,13 +2,11 @@ package com.wx.controller.api;
 
 import com.scy.core.CollectionUtil;
 import com.scy.core.model.DiffBO;
+import com.scy.core.page.PageParam;
 import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.GoodsSkuAssembler;
-import com.wx.controller.request.goods.AddGoodsSkuRequest;
-import com.wx.controller.request.goods.GetGoodsSkuRequest;
-import com.wx.controller.request.goods.QueryGoodsSkuByCategoryRequest;
-import com.wx.controller.request.goods.UpdateGoodsSkuRequest;
+import com.wx.controller.request.goods.*;
 import com.wx.controller.response.goods.GoodsSkuResponse;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
 import com.wx.service.GoodsSkuFacade;
@@ -79,5 +77,15 @@ public class SkuController {
         List<GoodsSkuEntity> goodsSkuEntities = goodsSkuFacade.listByCategoryId(queryGoodsSkuByCategoryRequest.getCategoryId());
         List<GoodsSkuResponse> goodsSkuResponses = CollectionUtil.map(goodsSkuEntities, GoodsSkuAssembler::toGoodsSkuResponse).collect(Collectors.toList());
         return ResponseResult.success(goodsSkuResponses);
+    }
+
+    @ApiOperation("分页查询sku")
+    @LoginCheck
+    @GetMapping("/query-sku-by-page")
+    public ResponseResult<List<GoodsSkuResponse>> querySkuByPage(
+            @Valid PageParam pageParam,
+            QueryGoodsSkuByPageRequest queryGoodsSkuByPageRequest
+    ) {
+        return ResponseResult.success(null);
     }
 }
