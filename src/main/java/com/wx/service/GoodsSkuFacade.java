@@ -5,6 +5,8 @@ import com.scy.core.ObjectUtil;
 import com.scy.core.exception.BusinessException;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.model.DiffBO;
+import com.scy.core.page.PageParam;
+import com.scy.core.page.PageResult;
 import com.wx.domain.category.entity.SkuCategoryEntity;
 import com.wx.domain.category.service.SkuCategoryDomainService;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
@@ -68,6 +70,17 @@ public class GoodsSkuFacade {
         fillCategoryNames(goodsSkuEntities);
 
         return goodsSkuEntities;
+    }
+
+    /**
+     * 分页查询商品
+     */
+    public PageResult<GoodsSkuEntity> listByPage(PageParam pageParam, GoodsSkuEntity goodsSkuEntity) {
+        PageResult<GoodsSkuEntity> pageResult = goodsSkuDomainService.listByPage(pageParam, goodsSkuEntity);
+
+        fillCategoryNames(pageResult.getDatas());
+
+        return pageResult;
     }
 
     private void fillCategoryNames(List<GoodsSkuEntity> goodsSkuEntities) {
