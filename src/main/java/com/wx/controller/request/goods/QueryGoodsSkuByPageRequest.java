@@ -20,6 +20,12 @@ import lombok.ToString;
 public class QueryGoodsSkuByPageRequest {
 
     /**
+     * 商品id
+     */
+    @ApiModelProperty(value = "商品id", required = false, example = "123456")
+    private Long skuId;
+
+    /**
      * 商品名称
      */
     @ApiModelProperty(value = "商品名称", required = false, example = "电视柜")

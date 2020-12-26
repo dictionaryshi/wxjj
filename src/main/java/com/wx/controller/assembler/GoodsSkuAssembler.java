@@ -2,6 +2,7 @@ package com.wx.controller.assembler;
 
 import com.scy.core.ObjectUtil;
 import com.wx.controller.request.goods.AddGoodsSkuRequest;
+import com.wx.controller.request.goods.QueryGoodsSkuByPageRequest;
 import com.wx.controller.request.goods.UpdateGoodsSkuRequest;
 import com.wx.controller.response.goods.GoodsSkuResponse;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
@@ -30,6 +31,14 @@ public class GoodsSkuAssembler {
         goodsSkuEntity.setSkuId(updateGoodsSkuRequest.getSkuId());
         goodsSkuEntity.setSkuName(updateGoodsSkuRequest.getSkuName());
         goodsSkuEntity.setCategoryId(updateGoodsSkuRequest.getCategoryId());
+        return goodsSkuEntity;
+    }
+
+    public static GoodsSkuEntity toGoodsSkuEntity(QueryGoodsSkuByPageRequest queryGoodsSkuByPageRequest) {
+        GoodsSkuEntity goodsSkuEntity = new GoodsSkuEntity();
+        goodsSkuEntity.setSkuId(queryGoodsSkuByPageRequest.getSkuId());
+        goodsSkuEntity.setSkuName(queryGoodsSkuByPageRequest.getSkuName());
+        goodsSkuEntity.setCategoryId(queryGoodsSkuByPageRequest.getCategoryId());
         return goodsSkuEntity;
     }
 
