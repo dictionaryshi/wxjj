@@ -8,9 +8,10 @@ import com.wx.dao.warehouse.mapper.UserPassportDOMapper;
 import com.wx.dao.warehouse.model.UserPassportDO;
 import com.wx.domain.passport.entity.UserPassportEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.mockito.Mockito.*;
 
@@ -20,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @author shichunyang
  * Created by shichunyang on 2020/12/8.
  */
-@SpringBootTest(classes = UserPassportDomainServiceTest.class)
+@ExtendWith({SpringExtension.class})
 public class UserPassportDomainServiceTest {
 
     @InjectMocks
