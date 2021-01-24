@@ -3,8 +3,9 @@ package com.wx.domain.code.service;
 import com.scy.core.ObjectUtil;
 import com.wx.domain.code.entity.CaptchaEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * CaptchaDomainServiceTest
@@ -12,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author shichunyang
  * Created by shichunyang on 2020/12/8.
  */
-@SpringBootTest(classes = CaptchaDomainServiceTest.class)
+@ExtendWith({SpringExtension.class})
 public class CaptchaDomainServiceTest {
 
     @InjectMocks
