@@ -136,6 +136,6 @@ public class StockBaseInfoDomainService {
             ForceMasterHelper.clearForceMaster();
         }
 
-        return afterStockBaseInfoEntityOptional.map(afterBaseInfoEntity -> DiffUtil.diff(stockBaseInfoEntityOptional.get(), afterBaseInfoEntity)).orElseGet(CollectionUtil::emptyList);
+        return afterStockBaseInfoEntityOptional.map(afterStockBaseInfoEntity -> DiffUtil.diff(stockBaseInfoEntityOptional.get(), afterStockBaseInfoEntity)).orElseGet(CollectionUtil::emptyList);
     }
 }
