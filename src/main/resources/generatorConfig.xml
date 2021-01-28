@@ -46,6 +46,7 @@
             tableName="sku_category" domainObjectName="SkuCategoryDO"
             tableName="goods_sku" domainObjectName="GoodsSkuDO"
             tableName="stock_base_info" domainObjectName="StockBaseInfoDO"
+            tableName="sku_stock" domainObjectName="SkuStockDO"
         -->
         <table schema="warehouse"
                tableName="" domainObjectName=""
