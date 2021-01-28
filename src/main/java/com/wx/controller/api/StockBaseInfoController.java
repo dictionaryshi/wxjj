@@ -1,11 +1,13 @@
 package com.wx.controller.api;
 
 import com.scy.core.CollectionUtil;
+import com.scy.core.model.DiffBO;
 import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.StockBaseInfoAssembler;
 import com.wx.controller.request.stock.AddStockBaseInfoRequest;
 import com.wx.controller.request.stock.GetStockBaseInfoRequest;
+import com.wx.controller.request.stock.UpdateStockBaseInfoRequest;
 import com.wx.controller.response.stock.StockBaseInfoResponse;
 import com.wx.domain.stock.entity.StockBaseInfoEntity;
 import com.wx.service.StockBaseInfoFacade;
@@ -69,5 +71,15 @@ public class StockBaseInfoController {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         return ResponseResult.success(stockBaseInfoResponses);
+    }
+
+    @ApiOperation("修改仓库基本信息")
+    @LoginCheck
+    @PostMapping("/update-stock-base-info")
+    public ResponseResult<List<DiffBO>> updateStockBaseInfo(
+            @RequestBody @Valid UpdateStockBaseInfoRequest updateStockBaseInfoRequest
+    ) {
+        StockBaseInfoEntity stockBaseInfoEntity = StockBaseInfoAssembler.toStockBaseInfoEntity(updateStockBaseInfoRequest);
+        return ResponseResult.success(stockBaseInfoFacade.update(stockBaseInfoEntity));
     }
 }
