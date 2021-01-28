@@ -1,5 +1,6 @@
 package com.wx.controller.api;
 
+import com.scy.core.CollectionUtil;
 import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.StockBaseInfoAssembler;
@@ -15,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -52,5 +56,18 @@ public class StockBaseInfoController {
     ) {
         Optional<StockBaseInfoEntity> stockBaseInfoEntityOptional = stockBaseInfoFacade.get(getStockBaseInfoRequest.getId());
         return ResponseResult.success(stockBaseInfoEntityOptional.flatMap(StockBaseInfoAssembler::toStockBaseInfoResponse).orElse(null));
+    }
+
+    @ApiOperation("查询所有仓库基本信息")
+    @LoginCheck
+    @GetMapping("/list-all-stock-base-infos")
+    public ResponseResult<List<StockBaseInfoResponse>> listAllStockBaseInfos() {
+        List<StockBaseInfoEntity> stockBaseInfoEntities = stockBaseInfoFacade.listAll();
+        List<StockBaseInfoResponse> stockBaseInfoResponses = CollectionUtil.emptyIfNull(stockBaseInfoEntities).stream()
+                .map(StockBaseInfoAssembler::toStockBaseInfoResponse)
+                .map(optional -> optional.orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        return ResponseResult.success(stockBaseInfoResponses);
     }
 }
