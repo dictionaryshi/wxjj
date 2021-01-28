@@ -118,7 +118,7 @@ public class StockBaseInfoDomainService {
 
         Optional<StockBaseInfoEntity> stockBaseInfoEntityByNameOptional = getStockBaseInfoEntity(stockBaseInfoEntity.getName());
         if (stockBaseInfoEntityByNameOptional.isPresent() && !Objects.equals(stockBaseInfoEntityOptional.get().getName(), stockBaseInfoEntity.getName())) {
-            return CollectionUtil.emptyList();
+            throw new BusinessException(MessageUtil.format("仓库名称已存在", "name", stockBaseInfoEntity.getName()));
         }
 
         Optional<StockBaseInfoDO> stockBaseInfoOptional = StockBaseInfoFactory.toStockBaseInfoDO(stockBaseInfoEntity);
