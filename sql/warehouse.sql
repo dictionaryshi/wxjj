@@ -38,3 +38,14 @@ CREATE TABLE `stock_base_info` (
   UNIQUE KEY `uniq_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='仓库基本信息';
 
+CREATE TABLE `sku_stock` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `stock_base_info_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '仓库id',
+  `sku_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '商品id',
+  `stock` bigint(20) NOT NULL DEFAULT '0' COMMENT '库存',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_stock_base_info_id_sku_id` (`stock_base_info_id`,`sku_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品库存';
+
