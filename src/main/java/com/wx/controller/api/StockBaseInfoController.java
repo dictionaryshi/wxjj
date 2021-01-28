@@ -4,18 +4,18 @@ import com.scy.core.rest.ResponseResult;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.StockBaseInfoAssembler;
 import com.wx.controller.request.stock.AddStockBaseInfoRequest;
+import com.wx.controller.request.stock.GetStockBaseInfoRequest;
+import com.wx.controller.response.stock.StockBaseInfoResponse;
 import com.wx.domain.stock.entity.StockBaseInfoEntity;
 import com.wx.service.StockBaseInfoFacade;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 /**
  * @author : shichunyang
@@ -42,5 +42,15 @@ public class StockBaseInfoController {
         StockBaseInfoEntity stockBaseInfoEntity = StockBaseInfoAssembler.toStockBaseInfoEntity(addStockBaseInfoRequest);
         long id = stockBaseInfoFacade.insert(stockBaseInfoEntity);
         return ResponseResult.success(id);
+    }
+
+    @ApiOperation("查询仓库基本信息")
+    @LoginCheck
+    @GetMapping("/get-stock-base-info-by-id")
+    public ResponseResult<StockBaseInfoResponse> getStockBaseInfoById(
+            @Valid GetStockBaseInfoRequest getStockBaseInfoRequest
+    ) {
+        Optional<StockBaseInfoEntity> stockBaseInfoEntityOptional = stockBaseInfoFacade.get(getStockBaseInfoRequest.getId());
+        return ResponseResult.success(stockBaseInfoEntityOptional.flatMap(StockBaseInfoAssembler::toStockBaseInfoResponse).orElse(null));
     }
 }
