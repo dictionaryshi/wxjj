@@ -3,7 +3,9 @@ package com.wx.dao.warehouse.mapper.extend;
 import com.wx.dao.warehouse.mapper.SkuStockDOMapper;
 import com.wx.dao.warehouse.model.SkuStockDO;
 import com.wx.dao.warehouse.model.extend.SkuStockDOExampleExtend;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -18,4 +20,7 @@ public interface SkuStockDOMapperExtend extends SkuStockDOMapper {
 
     @SelectProvider(type = SkuStockDOSqlProviderExtend.class, method = "selectByExampleExtend")
     List<SkuStockDO> selectByExampleExtend(SkuStockDOExampleExtend example);
+
+    @Update("update `sku_stock` set `stock` = `stock` + #{number} where `id` = #{id}")
+    int addStock(@Param("id") long id, @Param("number") int number);
 }
