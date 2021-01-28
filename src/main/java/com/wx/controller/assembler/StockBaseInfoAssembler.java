@@ -1,6 +1,7 @@
 package com.wx.controller.assembler;
 
 import com.wx.controller.request.stock.AddStockBaseInfoRequest;
+import com.wx.controller.request.stock.UpdateStockBaseInfoRequest;
 import com.wx.controller.response.stock.StockBaseInfoResponse;
 import com.wx.domain.stock.entity.StockBaseInfoEntity;
 import lombok.AccessLevel;
@@ -36,5 +37,13 @@ public class StockBaseInfoAssembler {
         stockBaseInfoResponse.setName(stockBaseInfoEntity.getName());
         stockBaseInfoResponse.setAddress(stockBaseInfoEntity.getAddress());
         return Optional.of(stockBaseInfoResponse);
+    }
+
+    public static StockBaseInfoEntity toStockBaseInfoEntity(UpdateStockBaseInfoRequest updateStockBaseInfoRequest) {
+        StockBaseInfoEntity stockBaseInfoEntity = new StockBaseInfoEntity();
+        stockBaseInfoEntity.setId(updateStockBaseInfoRequest.getId());
+        stockBaseInfoEntity.setName(updateStockBaseInfoRequest.getName());
+        stockBaseInfoEntity.setAddress(updateStockBaseInfoRequest.getAddress());
+        return stockBaseInfoEntity;
     }
 }
