@@ -23,4 +23,7 @@ public interface SkuStockDOMapperExtend extends SkuStockDOMapper {
 
     @Update("update `sku_stock` set `stock` = `stock` + #{number} where `id` = #{id}")
     int addStock(@Param("id") long id, @Param("number") int number);
+
+    @Update("update `sku_stock` set `stock` = `stock` - #{number} where `id` = #{id}")
+    int reduceStock(@Param("id") long id, @Param("number") int number);
 }
