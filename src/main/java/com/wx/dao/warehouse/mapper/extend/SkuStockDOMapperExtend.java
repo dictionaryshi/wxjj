@@ -21,9 +21,9 @@ public interface SkuStockDOMapperExtend extends SkuStockDOMapper {
     @SelectProvider(type = SkuStockDOSqlProviderExtend.class, method = "selectByExampleExtend")
     List<SkuStockDO> selectByExampleExtend(SkuStockDOExampleExtend example);
 
-    @Update("update `sku_stock` set `stock` = `stock` + #{number} where `id` = #{id}")
-    int addStock(@Param("id") long id, @Param("number") int number);
+    @Update("update `sku_stock` set `stock` = `stock` + #{stockOffset} where `id` = #{id}")
+    int addStock(@Param("id") long id, @Param("stockOffset") long stockOffset);
 
-    @Update("update `sku_stock` set `stock` = `stock` - #{number} where `id` = #{id}")
-    int reduceStock(@Param("id") long id, @Param("number") int number);
+    @Update("update `sku_stock` set `stock` = `stock` - #{stockOffset} where `id` = #{id}")
+    int reduceStock(@Param("id") long id, @Param("stockOffset") long stockOffset);
 }
