@@ -78,17 +78,65 @@ public class SkuStockDomainService {
             Optional<SkuStockDO> skuStockOptional = SkuStockFactory.toSkuStockDO(skuStockEntityForUpdate);
             skuStockOptional.ifPresent(skuStockDO -> skuStockDOMapper.updateByPrimaryKeySelective(skuStockDO));
 
-            try {
-                ForceMasterHelper.forceMaster();
-                skuStockEntityForUpdate.operateStockAfter(skuStockEntityOptional.get().getStock(),
-                        getSkuStock(skuStockEntity.getStockBaseInfoId(), skuStockEntity.getSkuId()).orElse(null));
-            } finally {
-                ForceMasterHelper.clearForceMaster();
-            }
-
-            return skuStockEntityForUpdate.getStockOperateValueobject();
+            return operateStockAfter(skuStockEntityForUpdate, skuStockEntityOptional.get().getStock());
         } finally {
             redisLock.unlock(lockKey);
+        }
+    }
+
+    public StockOperateValueobject addStock(SkuStockEntity skuStockEntity) {
+        String lockKey = skuStockEntity.getLockKey();
+        try {
+            redisLock.lock(lockKey);
+            Optional<SkuStockEntity> skuStockEntityOptional = getSkuStockEntity(skuStockEntity.getStockBaseInfoId(), skuStockEntity.getSkuId());
+            if (!skuStockEntityOptional.isPresent()) {
+                SkuStockEntity skuStockEntityForInsert = new SkuStockEntity();
+                skuStockEntityForInsert.setStockBaseInfoId(skuStockEntity.getStockBaseInfoId());
+                skuStockEntityForInsert.setSkuId(skuStockEntity.getSkuId());
+                skuStockEntityForInsert.setStock(skuStockEntity.getStockOperateValueobject().getStockOffset());
+                insert(skuStockEntityForInsert);
+
+                return operateStockAfter(skuStockEntity, null);
+            }
+
+            skuStockDOMapper.addStock(skuStockEntityOptional.get().getId(), skuStockEntity.getStockOperateValueobject().getStockOffset());
+            return operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
+        } finally {
+            redisLock.unlock(lockKey);
+        }
+    }
+
+    public StockOperateValueobject reduceStock(SkuStockEntity skuStockEntity) {
+        String lockKey = skuStockEntity.getLockKey();
+        try {
+            redisLock.lock(lockKey);
+            Optional<SkuStockEntity> skuStockEntityOptional = getSkuStockEntity(skuStockEntity.getStockBaseInfoId(), skuStockEntity.getSkuId());
+            if (!skuStockEntityOptional.isPresent()) {
+                throw new BusinessException(MessageUtil.format("库存不存在",
+                        "stockBaseInfoId", skuStockEntity.getStockBaseInfoId(), "skuId", skuStockEntity.getSkuId()));
+            }
+
+            long dbStock = skuStockEntityOptional.get().getStock();
+            if (dbStock < skuStockEntity.getStockOperateValueobject().getStockOffset()) {
+                throw new BusinessException(MessageUtil.format("库存不足",
+                        "stockBaseInfoId", skuStockEntity.getStockBaseInfoId(), "skuId", skuStockEntity.getSkuId()));
+            }
+
+            skuStockDOMapper.reduceStock(skuStockEntityOptional.get().getId(), skuStockEntity.getStockOperateValueobject().getStockOffset());
+            return operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
+        } finally {
+            redisLock.unlock(lockKey);
+        }
+    }
+
+    private StockOperateValueobject operateStockAfter(SkuStockEntity skuStockEntity, Long stockBefore) {
+        try {
+            ForceMasterHelper.forceMaster();
+            skuStockEntity.operateStockAfter(stockBefore,
+                    getSkuStock(skuStockEntity.getStockBaseInfoId(), skuStockEntity.getSkuId()).orElse(null));
+            return skuStockEntity.getStockOperateValueobject();
+        } finally {
+            ForceMasterHelper.clearForceMaster();
         }
     }
 }
