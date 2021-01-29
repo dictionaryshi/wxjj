@@ -1,6 +1,9 @@
 package com.wx.domain.stock.entity;
 
+import com.scy.core.StringUtil;
 import com.scy.core.format.NumberUtil;
+import com.scy.redis.util.RedisUtil;
+import com.wx.constant.RedisKeyEnum;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -60,5 +63,9 @@ public class SkuStockEntity {
     public void operateStockAfter(Long stockBefore, Long stockAfter) {
         this.stockOperateValueobject.setStockBefore(stockBefore);
         this.stockOperateValueobject.setStockAfter(stockAfter);
+    }
+
+    public String getLockKey() {
+        return RedisUtil.getRedisKey(RedisKeyEnum.SKU_STOCK_LOCK.getRedisKeyPrefix(), stockBaseInfoId + StringUtil.POINT + skuId);
     }
 }
