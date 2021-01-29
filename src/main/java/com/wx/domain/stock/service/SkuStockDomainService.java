@@ -74,11 +74,11 @@ public class SkuStockDomainService {
             SkuStockEntity skuStockEntityForUpdate = new SkuStockEntity();
             skuStockEntityForUpdate.setId(skuStockEntityOptional.get().getId());
             skuStockEntityForUpdate.setStock(skuStockEntity.getStock());
-            skuStockEntityForUpdate.operateStock(skuStockEntity.getStock());
             Optional<SkuStockDO> skuStockOptional = SkuStockFactory.toSkuStockDO(skuStockEntityForUpdate);
             skuStockOptional.ifPresent(skuStockDO -> skuStockDOMapper.updateByPrimaryKeySelective(skuStockDO));
 
-            return operateStockAfter(skuStockEntityForUpdate, skuStockEntityOptional.get().getStock());
+            skuStockEntity.operateStock(skuStockEntity.getStock());
+            return operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
         } finally {
             redisLock.unlock(lockKey);
         }
