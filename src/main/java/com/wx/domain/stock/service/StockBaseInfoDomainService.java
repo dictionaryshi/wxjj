@@ -77,13 +77,13 @@ public class StockBaseInfoDomainService {
         return stockBaseInfos.stream().map(StockBaseInfoFactory::toStockBaseInfoEntity).map(Optional::get).collect(Collectors.toList());
     }
 
-    public Map<Long, StockBaseInfoEntity> getStockBaseInfoMap(List<Long> ids) {
+    public Map<Long, String> getStockNameMap(List<Long> ids) {
         if (CollectionUtil.isEmpty(ids)) {
             return CollectionUtil.emptyMap();
         }
 
         List<StockBaseInfoEntity> stockBaseInfoEntities = listStockBaseInfoEntities(ids);
-        return stockBaseInfoEntities.stream().collect(Collectors.toMap(StockBaseInfoEntity::getId, Function.identity(), (oldValue, newValue) -> newValue));
+        return stockBaseInfoEntities.stream().collect(Collectors.toMap(StockBaseInfoEntity::getId, StockBaseInfoEntity::getName, (oldValue, newValue) -> newValue));
     }
 
     public List<StockBaseInfoEntity> listAllStockBaseInfoEntities() {

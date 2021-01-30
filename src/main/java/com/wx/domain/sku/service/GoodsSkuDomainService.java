@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -127,5 +128,26 @@ public class GoodsSkuDomainService {
         List<GoodsSkuEntity> datas = CollectionUtil.map(goodsSkus, GoodsSkuFactory::toGoodsSkuEntity).collect(Collectors.toList());
         pageResult.setDatas(datas);
         return pageResult;
+    }
+
+    public List<GoodsSkuEntity> listGoodsSkuEntities(List<Long> ids) {
+        if (CollectionUtil.isEmpty(ids)) {
+            return CollectionUtil.emptyList();
+        }
+
+        GoodsSkuDOExample goodsSkuDOExample = new GoodsSkuDOExample();
+        GoodsSkuDOExample.Criteria criteria = goodsSkuDOExample.createCriteria();
+        criteria.andIdIn(ids);
+        List<GoodsSkuDO> goodsSkus = goodsSkuDOMapper.selectByExample(goodsSkuDOExample);
+        return goodsSkus.stream().map(GoodsSkuFactory::toGoodsSkuEntity).collect(Collectors.toList());
+    }
+
+    public Map<Long, String> getSkuNameMap(List<Long> ids) {
+        if (CollectionUtil.isEmpty(ids)) {
+            return CollectionUtil.emptyMap();
+        }
+
+        List<GoodsSkuEntity> goodsSkuEntities = listGoodsSkuEntities(ids);
+        return goodsSkuEntities.stream().collect(Collectors.toMap(GoodsSkuEntity::getSkuId, GoodsSkuEntity::getSkuName, (oldValue, newValue) -> newValue));
     }
 }
