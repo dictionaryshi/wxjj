@@ -56,6 +56,14 @@ public class GoodsSkuDomainService {
         return GoodsSkuFactory.toGoodsSkuEntity(goodsSkuDO);
     }
 
+    public List<Long> listIdsByName(String skuName) {
+        GoodsSkuDOExample goodsSkuDOExample = new GoodsSkuDOExample();
+        GoodsSkuDOExample.Criteria criteria = goodsSkuDOExample.createCriteria();
+        criteria.andSkuNameLike(skuName + StringUtil.PERCENT);
+        List<GoodsSkuDO> goodsSkus = goodsSkuDOMapper.selectByExample(goodsSkuDOExample);
+        return goodsSkus.stream().map(GoodsSkuDO::getId).collect(Collectors.toList());
+    }
+
     public long add(GoodsSkuEntity goodsSkuEntity) {
         if (!ObjectUtil.isNull(getGoodsSkuEntity(goodsSkuEntity.getSkuName()))) {
             throw new BusinessException(MessageUtil.format("商品已存在", "skuName", goodsSkuEntity.getSkuName()));
