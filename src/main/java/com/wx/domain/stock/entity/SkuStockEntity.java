@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 /**
  * @author : shichunyang
  * Date    : 2021/1/29
@@ -31,14 +33,20 @@ public class SkuStockEntity {
     private Long stockBaseInfoId;
 
     /**
-     * 仓库名称
-     */
-    private String stockName;
-
-    /**
      * 商品id
      */
     private Long skuId;
+
+    /**
+     * 库存
+     */
+    private Long stock;
+
+
+    /**
+     * 仓库名称
+     */
+    private String stockName;
 
     /**
      * 商品名称
@@ -46,9 +54,9 @@ public class SkuStockEntity {
     private String skuName;
 
     /**
-     * 库存
+     * 商品id集合
      */
-    private Long stock;
+    private List<Long> skuIds;
 
     /**
      * 库存操作
