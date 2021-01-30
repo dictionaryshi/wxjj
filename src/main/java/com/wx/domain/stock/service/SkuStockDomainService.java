@@ -12,7 +12,6 @@ import com.wx.dao.warehouse.model.SkuStockDO;
 import com.wx.dao.warehouse.model.SkuStockDOExample;
 import com.wx.dao.warehouse.model.extend.SkuStockDOExampleExtend;
 import com.wx.domain.stock.entity.SkuStockEntity;
-import com.wx.domain.stock.entity.StockOperateValueobject;
 import com.wx.domain.stock.factory.SkuStockFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +64,7 @@ public class SkuStockDomainService {
         return skuStockEntityOptional.map(SkuStockEntity::getStock);
     }
 
-    public StockOperateValueobject update(SkuStockEntity skuStockEntity) {
+    public SkuStockEntity updateStock(SkuStockEntity skuStockEntity) {
         String lockKey = skuStockEntity.getLockKey();
         try {
             redisLock.lock(lockKey);
@@ -88,7 +87,7 @@ public class SkuStockDomainService {
         }
     }
 
-    public StockOperateValueobject addStock(SkuStockEntity skuStockEntity) {
+    public SkuStockEntity addStock(SkuStockEntity skuStockEntity) {
         String lockKey = skuStockEntity.getLockKey();
         try {
             redisLock.lock(lockKey);
@@ -110,7 +109,7 @@ public class SkuStockDomainService {
         }
     }
 
-    public StockOperateValueobject reduceStock(SkuStockEntity skuStockEntity) {
+    public SkuStockEntity reduceStock(SkuStockEntity skuStockEntity) {
         String lockKey = skuStockEntity.getLockKey();
         try {
             redisLock.lock(lockKey);
@@ -159,12 +158,12 @@ public class SkuStockDomainService {
         return pageResult;
     }
 
-    private StockOperateValueobject operateStockAfter(SkuStockEntity skuStockEntity, Long stockBefore) {
+    private SkuStockEntity operateStockAfter(SkuStockEntity skuStockEntity, Long stockBefore) {
         try {
             ForceMasterHelper.forceMaster();
             skuStockEntity.operateStockAfter(stockBefore,
                     getSkuStock(skuStockEntity.getStockBaseInfoId(), skuStockEntity.getSkuId()).orElse(null));
-            return skuStockEntity.getStockOperateValueobject();
+            return skuStockEntity;
         } finally {
             ForceMasterHelper.clearForceMaster();
         }
