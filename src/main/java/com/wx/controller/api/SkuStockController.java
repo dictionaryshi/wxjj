@@ -3,6 +3,7 @@ package com.wx.controller.api;
 import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
 import com.scy.core.rest.ResponseResult;
+import com.scy.redis.annotation.LimitAccessFrequency;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.SkuStockAssembler;
 import com.wx.controller.request.stock.QuerySkuStockByPageRequest;
@@ -36,6 +37,7 @@ public class SkuStockController {
     private SkuStockFacade skuStockFacade;
 
     @ApiOperation("盘点库存")
+    @LimitAccessFrequency(redisKey = "updateSkuStock", timeWindow = 10_000L, limit = 1)
     @LoginCheck
     @PostMapping("/update-sku-stock")
     public ResponseResult<StockChangeResponse> updateSkuStock(
