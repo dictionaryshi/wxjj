@@ -1,6 +1,7 @@
 package com.wx.controller.assembler;
 
 import com.scy.core.page.PageResult;
+import com.wx.controller.request.stock.QuerySkuStockByPageRequest;
 import com.wx.controller.request.stock.UpdateStockRequest;
 import com.wx.controller.response.stock.SkuStockResponse;
 import com.wx.controller.response.stock.StockChangeResponse;
@@ -37,6 +38,13 @@ public class SkuStockAssembler {
         stockChangeResponse.setStockBefore(stockOperateValueobject.getStockBefore());
         stockChangeResponse.setStockAfter(stockOperateValueobject.getStockAfter());
         return stockChangeResponse;
+    }
+
+    public static SkuStockEntity toSkuStockEntity(QuerySkuStockByPageRequest querySkuStockByPageRequest) {
+        SkuStockEntity skuStockEntity = new SkuStockEntity();
+        skuStockEntity.setStockBaseInfoId(querySkuStockByPageRequest.getStockBaseInfoId());
+        skuStockEntity.setSkuName(querySkuStockByPageRequest.getSkuName());
+        return skuStockEntity;
     }
 
     public static SkuStockResponse toSkuStockResponse(SkuStockEntity skuStockEntity) {
