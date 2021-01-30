@@ -1,11 +1,15 @@
 package com.wx.controller.assembler;
 
+import com.scy.core.page.PageResult;
 import com.wx.controller.request.stock.UpdateStockRequest;
+import com.wx.controller.response.stock.SkuStockResponse;
 import com.wx.controller.response.stock.StockChangeResponse;
 import com.wx.domain.stock.entity.SkuStockEntity;
 import com.wx.domain.stock.entity.StockOperateValueobject;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -33,5 +37,25 @@ public class SkuStockAssembler {
         stockChangeResponse.setStockBefore(stockOperateValueobject.getStockBefore());
         stockChangeResponse.setStockAfter(stockOperateValueobject.getStockAfter());
         return stockChangeResponse;
+    }
+
+    public static SkuStockResponse toSkuStockResponse(SkuStockEntity skuStockEntity) {
+        SkuStockResponse skuStockResponse = new SkuStockResponse();
+        skuStockResponse.setStockBaseInfoId(skuStockEntity.getStockBaseInfoId());
+        skuStockResponse.setSkuId(skuStockEntity.getSkuId());
+        skuStockResponse.setStock(skuStockEntity.getStock());
+        skuStockResponse.setStockName(skuStockEntity.getStockName());
+        skuStockResponse.setSkuName(skuStockEntity.getSkuName());
+        return skuStockResponse;
+    }
+
+    public static PageResult<SkuStockResponse> toSkuStockResponse(PageResult<SkuStockEntity> skuStockEntityPageResult) {
+        PageResult<SkuStockResponse> pageResult = new PageResult<>();
+        pageResult.setPage(skuStockEntityPageResult.getPage());
+        pageResult.setLimit(skuStockEntityPageResult.getLimit());
+        pageResult.setTotal(skuStockEntityPageResult.getTotal());
+        pageResult.setMaxPage(skuStockEntityPageResult.getMaxPage());
+        pageResult.setDatas(skuStockEntityPageResult.getDatas().stream().map(SkuStockAssembler::toSkuStockResponse).collect(Collectors.toList()));
+        return pageResult;
     }
 }
