@@ -3,11 +3,14 @@ package com.wx.domain.stock.service;
 import com.scy.core.CollectionUtil;
 import com.scy.core.exception.BusinessException;
 import com.scy.core.format.MessageUtil;
+import com.scy.core.page.PageParam;
+import com.scy.core.page.PageResult;
 import com.scy.db.util.ForceMasterHelper;
 import com.scy.redis.lock.RedisLock;
 import com.wx.dao.warehouse.mapper.extend.SkuStockDOMapperExtend;
 import com.wx.dao.warehouse.model.SkuStockDO;
 import com.wx.dao.warehouse.model.SkuStockDOExample;
+import com.wx.dao.warehouse.model.extend.SkuStockDOExampleExtend;
 import com.wx.domain.stock.entity.SkuStockEntity;
 import com.wx.domain.stock.entity.StockOperateValueobject;
 import com.wx.domain.stock.factory.SkuStockFactory;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -127,6 +131,32 @@ public class SkuStockDomainService {
         } finally {
             redisLock.unlock(lockKey);
         }
+    }
+
+    public PageResult<SkuStockEntity> listByPage(PageParam pageParam, SkuStockEntity skuStockEntity) {
+        PageResult<SkuStockEntity> pageResult = new PageResult<>();
+        pageResult.setPage(pageParam.getPage());
+        pageResult.setLimit(pageParam.getLimit());
+
+        SkuStockDOExampleExtend skuStockDOExampleExtend = new SkuStockDOExampleExtend();
+        pageParam.setOrderField("id");
+        pageParam.setDesc(Boolean.TRUE);
+        skuStockDOExampleExtend.setPageParam(pageParam);
+
+        SkuStockDOExample.Criteria criteria = skuStockDOExampleExtend.createCriteria();
+        criteria.andStockBaseInfoIdEqualTo(skuStockEntity.getStockBaseInfoId());
+
+        if (!CollectionUtil.isEmpty(skuStockEntity.getSkuIds())) {
+            criteria.andSkuIdIn(skuStockEntity.getSkuIds());
+        }
+
+        pageResult.setTotal((int) skuStockDOMapper.countByExample(skuStockDOExampleExtend));
+
+        List<SkuStockDO> skuStocks = skuStockDOMapper.selectByExampleExtend(skuStockDOExampleExtend);
+        List<SkuStockEntity> datas = CollectionUtil.map(skuStocks, skuStock -> SkuStockFactory.toSkuStockEntity(skuStock).orElse(null))
+                .collect(Collectors.toList());
+        pageResult.setDatas(datas);
+        return pageResult;
     }
 
     private StockOperateValueobject operateStockAfter(SkuStockEntity skuStockEntity, Long stockBefore) {
