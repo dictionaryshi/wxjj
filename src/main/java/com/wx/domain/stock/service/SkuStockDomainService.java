@@ -7,12 +7,15 @@ import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
 import com.scy.db.util.ForceMasterHelper;
 import com.scy.redis.lock.RedisLock;
-import com.wx.dao.warehouse.mapper.SkuStockDetailDOMapper;
 import com.wx.dao.warehouse.mapper.extend.SkuStockDOMapperExtend;
+import com.wx.dao.warehouse.mapper.extend.SkuStockDetailDOMapperExtend;
 import com.wx.dao.warehouse.model.SkuStockDO;
 import com.wx.dao.warehouse.model.SkuStockDOExample;
 import com.wx.dao.warehouse.model.SkuStockDetailDO;
+import com.wx.dao.warehouse.model.SkuStockDetailDOExample;
 import com.wx.dao.warehouse.model.extend.SkuStockDOExampleExtend;
+import com.wx.dao.warehouse.model.extend.SkuStockDetailDOExampleExtend;
+import com.wx.domain.stock.entity.SkuStockDetailEntity;
 import com.wx.domain.stock.entity.SkuStockEntity;
 import com.wx.domain.stock.entity.valueobject.StockTypeEnum;
 import com.wx.domain.stock.factory.SkuStockFactory;
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,7 +43,7 @@ public class SkuStockDomainService {
     private SkuStockDOMapperExtend skuStockDOMapper;
 
     @Autowired
-    private SkuStockDetailDOMapper skuStockDetailDOMapper;
+    private SkuStockDetailDOMapperExtend skuStockDetailDOMapper;
 
     @Autowired
     private RedisLock redisLock;
@@ -171,6 +175,44 @@ public class SkuStockDomainService {
 
         List<SkuStockDO> skuStocks = skuStockDOMapper.selectByExampleExtend(skuStockDOExampleExtend);
         List<SkuStockEntity> datas = CollectionUtil.map(skuStocks, skuStock -> SkuStockFactory.toSkuStockEntity(skuStock).orElse(null))
+                .collect(Collectors.toList());
+        pageResult.setDatas(datas);
+        return pageResult;
+    }
+
+    public PageResult<SkuStockDetailEntity> listStockDetailByPage(PageParam pageParam, SkuStockDetailEntity skuStockDetailEntity) {
+        PageResult<SkuStockDetailEntity> pageResult = new PageResult<>();
+        pageResult.setPage(pageParam.getPage());
+        pageResult.setLimit(pageParam.getLimit());
+
+        SkuStockDetailDOExampleExtend skuStockDetailDOExampleExtend = new SkuStockDetailDOExampleExtend();
+        pageParam.setOrderField("id");
+        pageParam.setDesc(Boolean.TRUE);
+        skuStockDetailDOExampleExtend.setPageParam(pageParam);
+
+        SkuStockDetailDOExample.Criteria criteria = skuStockDetailDOExampleExtend.createCriteria();
+        criteria.andStockBaseInfoIdEqualTo(skuStockDetailEntity.getStockBaseInfoId());
+
+        if (!CollectionUtil.isEmpty(skuStockDetailEntity.getSkuIds())) {
+            criteria.andSkuIdIn(skuStockDetailEntity.getSkuIds());
+        }
+
+        if (!Objects.isNull(skuStockDetailEntity.getOrderId())) {
+            criteria.andOrderIdEqualTo(skuStockDetailEntity.getOrderId());
+        }
+
+        if (!Objects.isNull(skuStockDetailEntity.getCreatedAtStart())) {
+            criteria.andCreatedAtGreaterThanOrEqualTo(skuStockDetailEntity.getCreatedAtStart());
+        }
+
+        if (!Objects.isNull(skuStockDetailEntity.getCreatedAtEnd())) {
+            criteria.andCreatedAtLessThanOrEqualTo(skuStockDetailEntity.getCreatedAtEnd());
+        }
+
+        pageResult.setTotal((int) skuStockDetailDOMapper.countByExample(skuStockDetailDOExampleExtend));
+
+        List<SkuStockDetailDO> skuStockDetails = skuStockDetailDOMapper.selectByPage(skuStockDetailDOExampleExtend);
+        List<SkuStockDetailEntity> datas = CollectionUtil.map(skuStockDetails, SkuStockFactory::toSkuStockDetailEntity)
                 .collect(Collectors.toList());
         pageResult.setDatas(datas);
         return pageResult;

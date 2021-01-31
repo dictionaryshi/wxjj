@@ -3,6 +3,7 @@ package com.wx.domain.stock.factory;
 import com.scy.web.util.LoginUtil;
 import com.wx.dao.warehouse.model.SkuStockDO;
 import com.wx.dao.warehouse.model.SkuStockDetailDO;
+import com.wx.domain.stock.entity.SkuStockDetailEntity;
 import com.wx.domain.stock.entity.SkuStockEntity;
 import com.wx.domain.stock.entity.StockOperateValueobject;
 import com.wx.domain.stock.entity.valueobject.StockTypeEnum;
@@ -61,5 +62,20 @@ public class SkuStockFactory {
         skuStockDetailDO.setOrderId(stockOperateValueobject.getOrderId());
         skuStockDetailDO.setOperator(LoginUtil.getLoginUser().getUserId());
         return skuStockDetailDO;
+    }
+
+    public static SkuStockDetailEntity toSkuStockDetailEntity(SkuStockDetailDO skuStockDetailDO) {
+        SkuStockDetailEntity skuStockDetailEntity = new SkuStockDetailEntity();
+        skuStockDetailEntity.setStockBaseInfoId(skuStockDetailDO.getStockBaseInfoId());
+        skuStockDetailEntity.setSkuId(skuStockDetailDO.getSkuId());
+        skuStockDetailEntity.setType(skuStockDetailDO.getType());
+        skuStockDetailEntity.setStockOffset(skuStockDetailDO.getStockOffset());
+        skuStockDetailEntity.setStockBefore(skuStockDetailDO.getStockBefore());
+        skuStockDetailEntity.setStockAfter(skuStockDetailDO.getStockAfter());
+        skuStockDetailEntity.setOrderId(skuStockDetailDO.getOrderId());
+        skuStockDetailEntity.setOperator(skuStockDetailDO.getOperator());
+        skuStockDetailEntity.setCreatedAt(skuStockDetailDO.getCreatedAt());
+        skuStockDetailEntity.setTypeDesc(StockTypeEnum.getByType(skuStockDetailDO.getType()));
+        return skuStockDetailEntity;
     }
 }

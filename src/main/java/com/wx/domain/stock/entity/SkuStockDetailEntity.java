@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author : shichunyang
@@ -83,6 +84,11 @@ public class SkuStockDetailEntity {
      * 操作人姓名
      */
     private String operatorName;
+
+    /**
+     * skuId集合
+     */
+    private List<Long> skuIds;
 
     /**
      * 开始时间
