@@ -17,6 +17,11 @@ import lombok.ToString;
 public class StockOperateValueobject {
 
     /**
+     * 订单id
+     */
+    private Long orderId;
+
+    /**
      * 库存操作值
      */
     private Long stockOffset;

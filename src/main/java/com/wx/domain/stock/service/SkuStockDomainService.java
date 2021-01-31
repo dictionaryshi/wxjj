@@ -7,11 +7,14 @@ import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
 import com.scy.db.util.ForceMasterHelper;
 import com.scy.redis.lock.RedisLock;
+import com.wx.dao.warehouse.mapper.SkuStockDetailDOMapper;
 import com.wx.dao.warehouse.mapper.extend.SkuStockDOMapperExtend;
 import com.wx.dao.warehouse.model.SkuStockDO;
 import com.wx.dao.warehouse.model.SkuStockDOExample;
+import com.wx.dao.warehouse.model.SkuStockDetailDO;
 import com.wx.dao.warehouse.model.extend.SkuStockDOExampleExtend;
 import com.wx.domain.stock.entity.SkuStockEntity;
+import com.wx.domain.stock.entity.valueobject.StockTypeEnum;
 import com.wx.domain.stock.factory.SkuStockFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,9 @@ public class SkuStockDomainService {
 
     @Autowired
     private SkuStockDOMapperExtend skuStockDOMapper;
+
+    @Autowired
+    private SkuStockDetailDOMapper skuStockDetailDOMapper;
 
     @Autowired
     private RedisLock redisLock;
@@ -80,8 +86,12 @@ public class SkuStockDomainService {
             Optional<SkuStockDO> skuStockOptional = SkuStockFactory.toSkuStockDO(skuStockEntityForUpdate);
             skuStockOptional.ifPresent(skuStockDO -> skuStockDOMapper.updateByPrimaryKeySelective(skuStockDO));
 
-            skuStockEntity.operateStock(skuStockEntity.getStock());
-            return operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
+            skuStockEntity.operateStock(skuStockEntity.getStock(), null);
+            operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
+
+            SkuStockDetailDO skuStockDetailDO = SkuStockFactory.toSkuStockDetailDO(skuStockEntity, StockTypeEnum.INIT);
+            skuStockDetailDOMapper.insertSelective(skuStockDetailDO);
+            return skuStockEntity;
         } finally {
             redisLock.unlock(lockKey);
         }
@@ -99,11 +109,19 @@ public class SkuStockDomainService {
                 skuStockEntityForInsert.setStock(skuStockEntity.getStockOperateValueobject().getStockOffset());
                 insert(skuStockEntityForInsert);
 
-                return operateStockAfter(skuStockEntity, null);
+                operateStockAfter(skuStockEntity, null);
+
+                SkuStockDetailDO skuStockDetailDO = SkuStockFactory.toSkuStockDetailDO(skuStockEntity, StockTypeEnum.IN);
+                skuStockDetailDOMapper.insertSelective(skuStockDetailDO);
+                return skuStockEntity;
             }
 
             skuStockDOMapper.addStock(skuStockEntityOptional.get().getId(), skuStockEntity.getStockOperateValueobject().getStockOffset());
-            return operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
+            operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
+
+            SkuStockDetailDO skuStockDetailDO = SkuStockFactory.toSkuStockDetailDO(skuStockEntity, StockTypeEnum.IN);
+            skuStockDetailDOMapper.insertSelective(skuStockDetailDO);
+            return skuStockEntity;
         } finally {
             redisLock.unlock(lockKey);
         }
@@ -126,7 +144,11 @@ public class SkuStockDomainService {
             }
 
             skuStockDOMapper.reduceStock(skuStockEntityOptional.get().getId(), skuStockEntity.getStockOperateValueobject().getStockOffset());
-            return operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
+            operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
+
+            SkuStockDetailDO skuStockDetailDO = SkuStockFactory.toSkuStockDetailDO(skuStockEntity, StockTypeEnum.OUT);
+            skuStockDetailDOMapper.insertSelective(skuStockDetailDO);
+            return skuStockEntity;
         } finally {
             redisLock.unlock(lockKey);
         }
@@ -158,12 +180,11 @@ public class SkuStockDomainService {
         return pageResult;
     }
 
-    private SkuStockEntity operateStockAfter(SkuStockEntity skuStockEntity, Long stockBefore) {
+    private void operateStockAfter(SkuStockEntity skuStockEntity, Long stockBefore) {
         try {
             ForceMasterHelper.forceMaster();
             skuStockEntity.operateStockAfter(stockBefore,
                     getSkuStock(skuStockEntity.getStockBaseInfoId(), skuStockEntity.getSkuId()).orElse(null));
-            return skuStockEntity;
         } finally {
             ForceMasterHelper.clearForceMaster();
         }
