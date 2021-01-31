@@ -29,7 +29,7 @@ public interface UserPassportDOMapper {
 
     @Select({
             "select",
-            "id, passport, password, created_at, updated_at",
+            "id, passport, password, name, created_at, updated_at",
             "from user_passport",
             "where id = #{id,jdbcType=BIGINT}"
     })
