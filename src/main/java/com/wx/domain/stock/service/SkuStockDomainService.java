@@ -89,8 +89,7 @@ public class SkuStockDomainService {
             skuStockEntity.operateStock(skuStockEntity.getStock(), null);
             operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
 
-            SkuStockDetailDO skuStockDetailDO = SkuStockFactory.toSkuStockDetailDO(skuStockEntity, StockTypeEnum.INIT);
-            skuStockDetailDOMapper.insertSelective(skuStockDetailDO);
+            insertStockDetail(skuStockEntity, StockTypeEnum.INIT);
             return skuStockEntity;
         } finally {
             redisLock.unlock(lockKey);
@@ -111,16 +110,14 @@ public class SkuStockDomainService {
 
                 operateStockAfter(skuStockEntity, null);
 
-                SkuStockDetailDO skuStockDetailDO = SkuStockFactory.toSkuStockDetailDO(skuStockEntity, StockTypeEnum.IN);
-                skuStockDetailDOMapper.insertSelective(skuStockDetailDO);
+                insertStockDetail(skuStockEntity, StockTypeEnum.IN);
                 return skuStockEntity;
             }
 
             skuStockDOMapper.addStock(skuStockEntityOptional.get().getId(), skuStockEntity.getStockOperateValueobject().getStockOffset());
             operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
 
-            SkuStockDetailDO skuStockDetailDO = SkuStockFactory.toSkuStockDetailDO(skuStockEntity, StockTypeEnum.IN);
-            skuStockDetailDOMapper.insertSelective(skuStockDetailDO);
+            insertStockDetail(skuStockEntity, StockTypeEnum.IN);
             return skuStockEntity;
         } finally {
             redisLock.unlock(lockKey);
@@ -146,8 +143,7 @@ public class SkuStockDomainService {
             skuStockDOMapper.reduceStock(skuStockEntityOptional.get().getId(), skuStockEntity.getStockOperateValueobject().getStockOffset());
             operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
 
-            SkuStockDetailDO skuStockDetailDO = SkuStockFactory.toSkuStockDetailDO(skuStockEntity, StockTypeEnum.OUT);
-            skuStockDetailDOMapper.insertSelective(skuStockDetailDO);
+            insertStockDetail(skuStockEntity, StockTypeEnum.OUT);
             return skuStockEntity;
         } finally {
             redisLock.unlock(lockKey);
@@ -188,5 +184,10 @@ public class SkuStockDomainService {
         } finally {
             ForceMasterHelper.clearForceMaster();
         }
+    }
+
+    private void insertStockDetail(SkuStockEntity skuStockEntity, StockTypeEnum stockTypeEnum) {
+        SkuStockDetailDO skuStockDetailDO = SkuStockFactory.toSkuStockDetailDO(skuStockEntity, stockTypeEnum);
+        skuStockDetailDOMapper.insertSelective(skuStockDetailDO);
     }
 }
