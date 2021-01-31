@@ -63,9 +63,10 @@ public class SkuStockEntity {
      */
     private StockOperateValueobject stockOperateValueobject;
 
-    public void operateStock(long stockOffset) {
+    public void operateStock(long stockOffset, Long orderId) {
         this.stockOperateValueobject = new StockOperateValueobject();
         this.stockOperateValueobject.setStockOffset(NumberUtil.abs(stockOffset));
+        this.stockOperateValueobject.setOrderId(orderId);
     }
 
     public void operateStockAfter(Long stockBefore, Long stockAfter) {
