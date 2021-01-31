@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -99,5 +100,10 @@ public class UserPassportDomainService {
     public UserPassportEntity getUserPassportEntity(long userId) {
         UserPassportDO userPassportDO = userPassportDOMapper.selectByPrimaryKey(userId);
         return UserPassportFactory.toUserPassportEntity(userPassportDO);
+    }
+
+    public Map<Long, String> getAllPassportMap() {
+        List<UserPassportEntity> userPassportEntities = listAllUserPassports();
+        return userPassportEntities.stream().collect(Collectors.toMap(UserPassportEntity::getUserId, UserPassportEntity::getPassport, (oldValue, newValue) -> newValue));
     }
 }
