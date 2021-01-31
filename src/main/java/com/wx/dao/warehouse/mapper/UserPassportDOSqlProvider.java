@@ -37,6 +37,10 @@ public class UserPassportDOSqlProvider {
             sql.VALUES("password", "#{password,jdbcType=VARCHAR}");
         }
 
+        if (record.getName() != null) {
+            sql.VALUES("name", "#{name,jdbcType=VARCHAR}");
+        }
+
         if (record.getCreatedAt() != null) {
             sql.VALUES("created_at", "#{createdAt,jdbcType=TIMESTAMP}");
         }
@@ -57,6 +61,7 @@ public class UserPassportDOSqlProvider {
         }
         sql.SELECT("passport");
         sql.SELECT("password");
+        sql.SELECT("name");
         sql.SELECT("created_at");
         sql.SELECT("updated_at");
         sql.FROM("user_passport");
@@ -88,6 +93,10 @@ public class UserPassportDOSqlProvider {
             sql.SET("password = #{record.password,jdbcType=VARCHAR}");
         }
 
+        if (record.getName() != null) {
+            sql.SET("name = #{record.name,jdbcType=VARCHAR}");
+        }
+
         if (record.getCreatedAt() != null) {
             sql.SET("created_at = #{record.createdAt,jdbcType=TIMESTAMP}");
         }
@@ -110,6 +119,10 @@ public class UserPassportDOSqlProvider {
 
         if (record.getPassword() != null) {
             sql.SET("password = #{password,jdbcType=VARCHAR}");
+        }
+
+        if (record.getName() != null) {
+            sql.SET("name = #{name,jdbcType=VARCHAR}");
         }
 
         if (record.getCreatedAt() != null) {

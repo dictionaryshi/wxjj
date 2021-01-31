@@ -24,6 +24,11 @@ public class UserPassportDO {
     private String password;
 
     /**
+     * 姓名
+     */
+    private String name;
+
+    /**
      * 创建时间
      */
     private Date createdAt;
@@ -43,6 +48,10 @@ public class UserPassportDO {
 
     public void setPassword(String password) {
         this.password = password == null ? null : password.trim();
+    }
+
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
     public void setCreatedAt(Date createdAt) {
