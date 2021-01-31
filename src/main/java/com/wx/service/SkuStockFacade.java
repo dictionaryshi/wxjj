@@ -4,7 +4,9 @@ import com.scy.core.CollectionUtil;
 import com.scy.core.StringUtil;
 import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
+import com.wx.domain.passport.service.UserPassportDomainService;
 import com.wx.domain.sku.service.GoodsSkuDomainService;
+import com.wx.domain.stock.entity.SkuStockDetailEntity;
 import com.wx.domain.stock.entity.SkuStockEntity;
 import com.wx.domain.stock.service.SkuStockDomainService;
 import com.wx.domain.stock.service.StockBaseInfoDomainService;
@@ -34,6 +36,9 @@ public class SkuStockFacade {
 
     @Autowired
     private GoodsSkuDomainService goodsSkuDomainService;
+
+    @Autowired
+    private UserPassportDomainService userPassportDomainService;
 
     /**
      * 盘点库存
@@ -67,6 +72,39 @@ public class SkuStockFacade {
         datas.forEach(skuStock -> {
             skuStock.setStockName(stockNameMap.get(skuStock.getStockBaseInfoId()));
             skuStock.setSkuName(skuNameMap.get(skuStock.getSkuId()));
+        });
+
+        return pageResult;
+    }
+
+    /**
+     * 分页查询库存操作记录
+     */
+    public PageResult<SkuStockDetailEntity> listStockDetailByPage(PageParam pageParam, SkuStockDetailEntity skuStockDetailEntity) {
+        if (!StringUtil.isEmpty(skuStockDetailEntity.getSkuName())) {
+            List<Long> skuIds = goodsSkuDomainService.listIdsByName(skuStockDetailEntity.getSkuName());
+            if (CollectionUtil.isEmpty(skuIds)) {
+                skuIds = Collections.singletonList(-1L);
+            }
+            skuStockDetailEntity.setSkuIds(skuIds);
+        }
+
+        PageResult<SkuStockDetailEntity> pageResult = skuStockDomainService.listStockDetailByPage(pageParam, skuStockDetailEntity);
+        List<SkuStockDetailEntity> datas = CollectionUtil.emptyIfNull(pageResult.getDatas());
+        pageResult.setDatas(datas);
+
+        List<Long> stockBaseInfoIds = datas.stream().map(SkuStockDetailEntity::getStockBaseInfoId).distinct().collect(Collectors.toList());
+        Map<Long, String> stockNameMap = stockBaseInfoDomainService.getStockNameMap(stockBaseInfoIds);
+
+        List<Long> skuIds = datas.stream().map(SkuStockDetailEntity::getSkuId).distinct().collect(Collectors.toList());
+        Map<Long, String> skuNameMap = goodsSkuDomainService.getSkuNameMap(skuIds);
+
+        Map<Long, String> allPassportMap = userPassportDomainService.getAllPassportMap();
+
+        datas.forEach(stockDetail -> {
+            stockDetail.setStockBaseInfoName(stockNameMap.get(stockDetail.getStockBaseInfoId()));
+            stockDetail.setSkuName(skuNameMap.get(stockDetail.getSkuId()));
+            stockDetail.setOperatorName(allPassportMap.get(stockDetail.getOperator()));
         });
 
         return pageResult;
