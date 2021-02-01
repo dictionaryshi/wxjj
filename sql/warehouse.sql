@@ -69,3 +69,22 @@ CREATE TABLE `sku_stock_detail` (
   KEY `idx_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='库存操作明细';
 
+CREATE TABLE `sku_order` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `order_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '订单id',
+  `type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '订单类型',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '订单状态',
+  `confirm_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '订单提交时间',
+  `operator` bigint(20) NOT NULL DEFAULT '0' COMMENT '操作人',
+  `price` bigint(20) NOT NULL DEFAULT '0' COMMENT '金额',
+  `customer_name` varchar(256) NOT NULL DEFAULT '' COMMENT '客户姓名',
+  `customer_phone` varchar(64) NOT NULL DEFAULT '' COMMENT '客户电话',
+  `customer_address` varchar(512) NOT NULL DEFAULT '' COMMENT '客户地址',
+  `remark` varchar(256) NOT NULL DEFAULT '' COMMENT '备注',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_order_id` (`order_id`),
+  KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品订单';
+
