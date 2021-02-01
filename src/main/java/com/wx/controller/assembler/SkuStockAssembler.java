@@ -1,10 +1,14 @@
 package com.wx.controller.assembler;
 
+import com.scy.core.format.DateUtil;
 import com.scy.core.page.PageResult;
 import com.wx.controller.request.stock.QuerySkuStockByPageRequest;
+import com.wx.controller.request.stock.QueryStockDetailByPageRequest;
 import com.wx.controller.request.stock.UpdateStockRequest;
+import com.wx.controller.response.stock.SkuStockDetailResponse;
 import com.wx.controller.response.stock.SkuStockResponse;
 import com.wx.controller.response.stock.StockChangeResponse;
+import com.wx.domain.stock.entity.SkuStockDetailEntity;
 import com.wx.domain.stock.entity.SkuStockEntity;
 import com.wx.domain.stock.entity.StockOperateValueobject;
 import lombok.AccessLevel;
@@ -64,6 +68,40 @@ public class SkuStockAssembler {
         pageResult.setTotal(skuStockEntityPageResult.getTotal());
         pageResult.setMaxPage(skuStockEntityPageResult.getMaxPage());
         pageResult.setDatas(skuStockEntityPageResult.getDatas().stream().map(SkuStockAssembler::toSkuStockResponse).collect(Collectors.toList()));
+        return pageResult;
+    }
+
+    public static SkuStockDetailEntity toSkuStockDetailEntity(QueryStockDetailByPageRequest queryStockDetailByPageRequest) {
+        SkuStockDetailEntity skuStockDetailEntity = new SkuStockDetailEntity();
+        skuStockDetailEntity.setStockBaseInfoId(queryStockDetailByPageRequest.getStockBaseInfoId());
+        skuStockDetailEntity.setOrderId(queryStockDetailByPageRequest.getOrderId());
+        skuStockDetailEntity.setSkuName(queryStockDetailByPageRequest.getSkuName());
+        skuStockDetailEntity.setCreatedAtStart(DateUtil.str2Date(queryStockDetailByPageRequest.getStartTime(), DateUtil.PATTERN_SECOND));
+        skuStockDetailEntity.setCreatedAtEnd(DateUtil.str2Date(queryStockDetailByPageRequest.getEndTime(), DateUtil.PATTERN_SECOND));
+        return skuStockDetailEntity;
+    }
+
+    public static SkuStockDetailResponse toSkuStockDetailResponse(SkuStockDetailEntity skuStockDetailEntity) {
+        SkuStockDetailResponse skuStockDetailResponse = new SkuStockDetailResponse();
+        skuStockDetailResponse.setStockOffset(skuStockDetailEntity.getStockOffset());
+        skuStockDetailResponse.setStockBefore(skuStockDetailEntity.getStockBefore());
+        skuStockDetailResponse.setStockAfter(skuStockDetailEntity.getStockAfter());
+        skuStockDetailResponse.setOrderId(skuStockDetailEntity.getOrderId());
+        skuStockDetailResponse.setCreatedAt(skuStockDetailEntity.getCreatedAt());
+        skuStockDetailResponse.setStockBaseInfoName(skuStockDetailEntity.getStockBaseInfoName());
+        skuStockDetailResponse.setSkuName(skuStockDetailEntity.getSkuName());
+        skuStockDetailResponse.setTypeDesc(skuStockDetailEntity.getTypeDesc());
+        skuStockDetailResponse.setOperatorName(skuStockDetailEntity.getOperatorName());
+        return skuStockDetailResponse;
+    }
+
+    public static PageResult<SkuStockDetailResponse> toSkuStockDetailResponse(PageResult<SkuStockDetailEntity> skuStockDetailEntityPageResult) {
+        PageResult<SkuStockDetailResponse> pageResult = new PageResult<>();
+        pageResult.setPage(skuStockDetailEntityPageResult.getPage());
+        pageResult.setLimit(skuStockDetailEntityPageResult.getLimit());
+        pageResult.setTotal(skuStockDetailEntityPageResult.getTotal());
+        pageResult.setMaxPage(skuStockDetailEntityPageResult.getMaxPage());
+        pageResult.setDatas(skuStockDetailEntityPageResult.getDatas().stream().map(SkuStockAssembler::toSkuStockDetailResponse).collect(Collectors.toList()));
         return pageResult;
     }
 }

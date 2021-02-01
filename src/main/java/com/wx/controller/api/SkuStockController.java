@@ -7,9 +7,12 @@ import com.scy.redis.annotation.LimitAccessFrequency;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.SkuStockAssembler;
 import com.wx.controller.request.stock.QuerySkuStockByPageRequest;
+import com.wx.controller.request.stock.QueryStockDetailByPageRequest;
 import com.wx.controller.request.stock.UpdateStockRequest;
+import com.wx.controller.response.stock.SkuStockDetailResponse;
 import com.wx.controller.response.stock.SkuStockResponse;
 import com.wx.controller.response.stock.StockChangeResponse;
+import com.wx.domain.stock.entity.SkuStockDetailEntity;
 import com.wx.domain.stock.entity.SkuStockEntity;
 import com.wx.service.SkuStockFacade;
 import io.swagger.annotations.Api;
@@ -58,5 +61,16 @@ public class SkuStockController {
     ) {
         PageResult<SkuStockEntity> pageResult = skuStockFacade.listByPage(pageParam, SkuStockAssembler.toSkuStockEntity(querySkuStockByPageRequest));
         return ResponseResult.success(SkuStockAssembler.toSkuStockResponse(pageResult));
+    }
+
+    @ApiOperation("分页查询库存操作明细")
+    @LoginCheck
+    @GetMapping("/query-stock-detail-by-page")
+    public ResponseResult<PageResult<SkuStockDetailResponse>> queryStockDetailByPage(
+            @Valid PageParam pageParam,
+            @Valid QueryStockDetailByPageRequest queryStockDetailByPageRequest
+    ) {
+        PageResult<SkuStockDetailEntity> pageResult = skuStockFacade.listStockDetailByPage(pageParam, SkuStockAssembler.toSkuStockDetailEntity(queryStockDetailByPageRequest));
+        return ResponseResult.success(SkuStockAssembler.toSkuStockDetailResponse(pageResult));
     }
 }
