@@ -1,10 +1,13 @@
 package com.wx.controller.assembler;
 
+import com.scy.core.format.DateUtil;
 import com.scy.core.page.PageResult;
 import com.wx.controller.request.stock.QuerySkuStockByPageRequest;
+import com.wx.controller.request.stock.QueryStockDetailByPageRequest;
 import com.wx.controller.request.stock.UpdateStockRequest;
 import com.wx.controller.response.stock.SkuStockResponse;
 import com.wx.controller.response.stock.StockChangeResponse;
+import com.wx.domain.stock.entity.SkuStockDetailEntity;
 import com.wx.domain.stock.entity.SkuStockEntity;
 import com.wx.domain.stock.entity.StockOperateValueobject;
 import lombok.AccessLevel;
@@ -65,5 +68,15 @@ public class SkuStockAssembler {
         pageResult.setMaxPage(skuStockEntityPageResult.getMaxPage());
         pageResult.setDatas(skuStockEntityPageResult.getDatas().stream().map(SkuStockAssembler::toSkuStockResponse).collect(Collectors.toList()));
         return pageResult;
+    }
+
+    public static SkuStockDetailEntity toSkuStockDetailEntity(QueryStockDetailByPageRequest queryStockDetailByPageRequest) {
+        SkuStockDetailEntity skuStockDetailEntity = new SkuStockDetailEntity();
+        skuStockDetailEntity.setStockBaseInfoId(queryStockDetailByPageRequest.getStockBaseInfoId());
+        skuStockDetailEntity.setOrderId(queryStockDetailByPageRequest.getOrderId());
+        skuStockDetailEntity.setSkuName(queryStockDetailByPageRequest.getSkuName());
+        skuStockDetailEntity.setCreatedAtStart(DateUtil.str2Date(queryStockDetailByPageRequest.getStartTime(), DateUtil.PATTERN_SECOND));
+        skuStockDetailEntity.setCreatedAtEnd(DateUtil.str2Date(queryStockDetailByPageRequest.getEndTime(), DateUtil.PATTERN_SECOND));
+        return skuStockDetailEntity;
     }
 }
