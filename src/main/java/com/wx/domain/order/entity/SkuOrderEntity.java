@@ -1,5 +1,6 @@
 package com.wx.domain.order.entity;
 
+import com.wx.domain.order.entity.valueobject.OrderStatusEnum;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -104,4 +105,19 @@ public class SkuOrderEntity {
      * 结束时间
      */
     private Date createdAtEnd;
+
+    /**
+     * 待提交
+     */
+    public void waitConfirm() {
+        this.status = OrderStatusEnum.WAIT_TO_CONFIRMED.getStatus();
+    }
+
+    /**
+     * 提交
+     */
+    public void confirm() {
+        this.status = OrderStatusEnum.HAS_BEEN_CONFIRMED.getStatus();
+        this.confirmTime = System.currentTimeMillis();
+    }
 }
