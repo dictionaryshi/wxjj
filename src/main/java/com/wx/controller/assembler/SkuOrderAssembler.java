@@ -1,14 +1,19 @@
 package com.wx.controller.assembler;
 
+import com.scy.core.StringUtil;
+import com.scy.core.format.DateUtil;
 import com.scy.core.format.NumberUtil;
+import com.scy.core.page.PageResult;
 import com.scy.web.util.LoginUtil;
 import com.wx.controller.request.order.CreateOrderRequest;
+import com.wx.controller.request.order.QueryOrderByPageRequest;
 import com.wx.controller.response.order.SkuOrderResponse;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -48,5 +53,30 @@ public class SkuOrderAssembler {
         skuOrderResponse.setConfirmTimeDate(skuOrderEntity.getConfirmTimeDate());
         skuOrderResponse.setOperatorName(skuOrderEntity.getOperatorName());
         return skuOrderResponse;
+    }
+
+    public static PageResult<SkuOrderResponse> toSkuOrderResponse(PageResult<SkuOrderEntity> skuOrderEntityPageResult) {
+        PageResult<SkuOrderResponse> pageResult = new PageResult<>();
+        pageResult.setPage(skuOrderEntityPageResult.getPage());
+        pageResult.setLimit(skuOrderEntityPageResult.getLimit());
+        pageResult.setTotal(skuOrderEntityPageResult.getTotal());
+        pageResult.setMaxPage(skuOrderEntityPageResult.getMaxPage());
+        pageResult.setDatas(skuOrderEntityPageResult.getDatas().stream().map(SkuOrderAssembler::toSkuOrderResponse).collect(Collectors.toList()));
+        return pageResult;
+    }
+
+    public static SkuOrderEntity toSkuOrderEntity(QueryOrderByPageRequest queryOrderByPageRequest) {
+        SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
+        skuOrderEntity.setOrderId(queryOrderByPageRequest.getOrderId());
+        skuOrderEntity.setType(queryOrderByPageRequest.getType());
+        skuOrderEntity.setStatus(queryOrderByPageRequest.getStatus());
+        skuOrderEntity.setCustomerPhone(queryOrderByPageRequest.getCustomerPhone());
+        if (!StringUtil.isEmpty(queryOrderByPageRequest.getStartTime())) {
+            skuOrderEntity.setCreatedAtStart(DateUtil.str2Date(queryOrderByPageRequest.getStartTime(), DateUtil.PATTERN_SECOND));
+        }
+        if (!StringUtil.isEmpty(queryOrderByPageRequest.getEndTime())) {
+            skuOrderEntity.setCreatedAtEnd(DateUtil.str2Date(queryOrderByPageRequest.getEndTime(), DateUtil.PATTERN_SECOND));
+        }
+        return skuOrderEntity;
     }
 }
