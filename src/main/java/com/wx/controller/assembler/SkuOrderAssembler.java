@@ -3,6 +3,7 @@ package com.wx.controller.assembler;
 import com.scy.core.format.NumberUtil;
 import com.scy.web.util.LoginUtil;
 import com.wx.controller.request.order.CreateOrderRequest;
+import com.wx.controller.response.order.SkuOrderResponse;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -31,5 +32,21 @@ public class SkuOrderAssembler {
         skuOrderEntity.setCustomerAddress(createOrderRequest.getCustomerAddress());
         skuOrderEntity.setRemark(createOrderRequest.getRemark());
         return skuOrderEntity;
+    }
+
+    public static SkuOrderResponse toSkuOrderResponse(SkuOrderEntity skuOrderEntity) {
+        SkuOrderResponse skuOrderResponse = new SkuOrderResponse();
+        skuOrderResponse.setOrderId(skuOrderEntity.getOrderId());
+        skuOrderResponse.setPrice(NumberUtil.fenToYuan(skuOrderEntity.getPrice()));
+        skuOrderResponse.setCustomerName(skuOrderEntity.getCustomerName());
+        skuOrderResponse.setCustomerPhone(skuOrderEntity.getCustomerPhone());
+        skuOrderResponse.setCustomerAddress(skuOrderEntity.getCustomerAddress());
+        skuOrderResponse.setRemark(skuOrderEntity.getRemark());
+        skuOrderResponse.setCreatedAt(skuOrderEntity.getCreatedAt());
+        skuOrderResponse.setTypeDesc(skuOrderEntity.getTypeDesc());
+        skuOrderResponse.setStatusDesc(skuOrderEntity.getStatusDesc());
+        skuOrderResponse.setConfirmTimeDate(skuOrderEntity.getConfirmTimeDate());
+        skuOrderResponse.setOperatorName(skuOrderEntity.getOperatorName());
+        return skuOrderResponse;
     }
 }

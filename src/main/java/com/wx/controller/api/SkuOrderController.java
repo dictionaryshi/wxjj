@@ -5,18 +5,18 @@ import com.scy.redis.annotation.LimitAccessFrequency;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.SkuOrderAssembler;
 import com.wx.controller.request.order.CreateOrderRequest;
+import com.wx.controller.request.order.GetOrderRequest;
+import com.wx.controller.response.order.SkuOrderResponse;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.service.SkuOrderFacade;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 /**
  * @author : shichunyang
@@ -44,5 +44,15 @@ public class SkuOrderController {
         SkuOrderEntity skuOrderEntity = SkuOrderAssembler.toSkuOrderEntity(createOrderRequest);
         long orderId = skuOrderFacade.insertSkuOrder(skuOrderEntity);
         return ResponseResult.success(orderId);
+    }
+
+    @ApiOperation("查询订单")
+    @LoginCheck
+    @GetMapping("/get-order")
+    public ResponseResult<SkuOrderResponse> getOrder(
+            @RequestBody @Valid GetOrderRequest getOrderRequest
+    ) {
+        Optional<SkuOrderEntity> skuOrderEntityOptional = skuOrderFacade.getOrder(getOrderRequest.getOrderId());
+        return ResponseResult.success(skuOrderEntityOptional.map(SkuOrderAssembler::toSkuOrderResponse).orElse(null));
     }
 }
