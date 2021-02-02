@@ -1,11 +1,15 @@
 package com.wx.service;
 
+import com.scy.core.CollectionUtil;
+import com.scy.core.page.PageParam;
+import com.scy.core.page.PageResult;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.domain.order.service.SkuOrderDomainService;
 import com.wx.domain.passport.service.UserPassportDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,5 +46,17 @@ public class SkuOrderFacade {
             skuOrderEntity.setOperatorName(allPassportMap.get(skuOrderEntity.getOperator()));
         });
         return skuOrderEntityOptional;
+    }
+
+    /**
+     * 分页查询订单
+     */
+    public PageResult<SkuOrderEntity> listByPage(PageParam pageParam, SkuOrderEntity skuOrderEntity) {
+        Map<Long, String> allPassportMap = userPassportDomainService.getAllPassportMap();
+
+        PageResult<SkuOrderEntity> pageResult = skuOrderDomainService.listByPage(pageParam, skuOrderEntity);
+        List<SkuOrderEntity> datas = CollectionUtil.emptyIfNull(pageResult.getDatas());
+        datas.forEach(skuOrder -> skuOrder.setOperatorName(allPassportMap.get(skuOrder.getOperator())));
+        return pageResult;
     }
 }
