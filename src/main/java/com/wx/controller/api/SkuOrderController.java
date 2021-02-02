@@ -50,7 +50,7 @@ public class SkuOrderController {
     @LoginCheck
     @GetMapping("/get-order")
     public ResponseResult<SkuOrderResponse> getOrder(
-            @RequestBody @Valid GetOrderRequest getOrderRequest
+            @Valid GetOrderRequest getOrderRequest
     ) {
         Optional<SkuOrderEntity> skuOrderEntityOptional = skuOrderFacade.getOrder(getOrderRequest.getOrderId());
         return ResponseResult.success(skuOrderEntityOptional.map(SkuOrderAssembler::toSkuOrderResponse).orElse(null));
