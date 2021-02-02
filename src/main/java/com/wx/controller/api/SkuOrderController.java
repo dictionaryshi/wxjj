@@ -1,11 +1,14 @@
 package com.wx.controller.api;
 
+import com.scy.core.page.PageParam;
+import com.scy.core.page.PageResult;
 import com.scy.core.rest.ResponseResult;
 import com.scy.redis.annotation.LimitAccessFrequency;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.SkuOrderAssembler;
 import com.wx.controller.request.order.CreateOrderRequest;
 import com.wx.controller.request.order.GetOrderRequest;
+import com.wx.controller.request.order.QueryOrderByPageRequest;
 import com.wx.controller.response.order.SkuOrderResponse;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.service.SkuOrderFacade;
@@ -54,5 +57,16 @@ public class SkuOrderController {
     ) {
         Optional<SkuOrderEntity> skuOrderEntityOptional = skuOrderFacade.getOrder(getOrderRequest.getOrderId());
         return ResponseResult.success(skuOrderEntityOptional.map(SkuOrderAssembler::toSkuOrderResponse).orElse(null));
+    }
+
+    @ApiOperation("分页查询订单")
+    @LoginCheck
+    @GetMapping("/list-orders-by-page")
+    public ResponseResult<PageResult<SkuOrderResponse>> listOrdersByPage(
+            @Valid PageParam pageParam,
+            @Valid QueryOrderByPageRequest queryOrderByPageRequest
+    ) {
+        PageResult<SkuOrderEntity> pageResult = skuOrderFacade.listByPage(pageParam, SkuOrderAssembler.toSkuOrderEntity(queryOrderByPageRequest));
+        return ResponseResult.success(SkuOrderAssembler.toSkuOrderResponse(pageResult));
     }
 }
