@@ -2,8 +2,14 @@ package com.wx.domain.order.factory;
 
 import com.wx.dao.warehouse.model.SkuOrderDO;
 import com.wx.domain.order.entity.SkuOrderEntity;
+import com.wx.domain.order.entity.valueobject.OrderStatusEnum;
+import com.wx.domain.stock.entity.valueobject.StockTypeEnum;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author : shichunyang
@@ -28,5 +34,30 @@ public class SkuOrderFactory {
         skuOrderDO.setCustomerAddress(skuOrderEntity.getCustomerAddress());
         skuOrderDO.setRemark(skuOrderEntity.getRemark());
         return skuOrderDO;
+    }
+
+    public static Optional<SkuOrderEntity> toSkuOrderEntity(SkuOrderDO skuOrderDO) {
+        if (Objects.isNull(skuOrderDO)) {
+            return Optional.empty();
+        }
+
+        SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
+        skuOrderEntity.setOrderId(skuOrderDO.getOrderId());
+        skuOrderEntity.setType(skuOrderDO.getType());
+        skuOrderEntity.setStatus(skuOrderDO.getStatus());
+        skuOrderEntity.setConfirmTime(skuOrderDO.getConfirmTime());
+        skuOrderEntity.setOperator(skuOrderDO.getOperator());
+        skuOrderEntity.setPrice(skuOrderDO.getPrice());
+        skuOrderEntity.setCustomerName(skuOrderDO.getCustomerName());
+        skuOrderEntity.setCustomerPhone(skuOrderDO.getCustomerPhone());
+        skuOrderEntity.setCustomerAddress(skuOrderDO.getCustomerAddress());
+        skuOrderEntity.setRemark(skuOrderDO.getRemark());
+        skuOrderEntity.setCreatedAt(skuOrderDO.getCreatedAt());
+        skuOrderEntity.setTypeDesc(StockTypeEnum.getByType(skuOrderDO.getType()));
+        skuOrderEntity.setStatusDesc(OrderStatusEnum.getByStatus(skuOrderDO.getStatus()));
+        if (skuOrderDO.getConfirmTime() > 0) {
+            skuOrderEntity.setConfirmTimeDate(new Date(skuOrderDO.getConfirmTime()));
+        }
+        return Optional.of(skuOrderEntity);
     }
 }
