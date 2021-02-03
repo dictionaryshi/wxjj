@@ -120,4 +120,11 @@ public class SkuOrderAssembler {
         orderItemEntity.setNumber(updateOrderItemRequest.getNumber());
         return orderItemEntity;
     }
+
+    public static OrderItemEntity toOrderItemEntity(DeleteOrderItemRequest deleteOrderItemRequest) {
+        OrderItemEntity orderItemEntity = new OrderItemEntity();
+        orderItemEntity.setOrderId(deleteOrderItemRequest.getOrderId());
+        orderItemEntity.setSkuId(deleteOrderItemRequest.getSkuId());
+        return orderItemEntity;
+    }
 }

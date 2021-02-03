@@ -118,4 +118,15 @@ public class SkuOrderController {
         List<DiffBO> diffs = skuOrderFacade.updateOrderItemEntity(orderItemEntity);
         return ResponseResult.success(diffs);
     }
+
+    @ApiOperation("删除订单条目")
+    @LoginCheck
+    @PostMapping("/delete-order-item")
+    public ResponseResult<Boolean> deleteOrderItem(
+            @RequestBody @Valid DeleteOrderItemRequest deleteOrderItemRequest
+    ) {
+        OrderItemEntity orderItemEntity = SkuOrderAssembler.toOrderItemEntity(deleteOrderItemRequest);
+        boolean isDelete = skuOrderFacade.deleteOrderItemEntity(orderItemEntity);
+        return ResponseResult.success(isDelete);
+    }
 }
