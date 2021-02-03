@@ -7,6 +7,7 @@ import com.scy.core.page.PageResult;
 import com.scy.web.util.LoginUtil;
 import com.wx.controller.request.order.CreateOrderRequest;
 import com.wx.controller.request.order.QueryOrderByPageRequest;
+import com.wx.controller.request.order.UpdateOrderRequest;
 import com.wx.controller.response.order.SkuOrderResponse;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import lombok.AccessLevel;
@@ -77,6 +78,20 @@ public class SkuOrderAssembler {
         if (!StringUtil.isEmpty(queryOrderByPageRequest.getEndTime())) {
             skuOrderEntity.setCreatedAtEnd(DateUtil.str2Date(queryOrderByPageRequest.getEndTime(), DateUtil.PATTERN_SECOND));
         }
+        return skuOrderEntity;
+    }
+
+    public static SkuOrderEntity toSkuOrderEntity(UpdateOrderRequest updateOrderRequest) {
+        SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
+        skuOrderEntity.setOrderId(updateOrderRequest.getOrderId());
+        skuOrderEntity.setOperator(LoginUtil.getLoginUser().getUserId());
+        if (!Objects.isNull(updateOrderRequest.getPrice())) {
+            skuOrderEntity.setPrice(NumberUtil.yuanToFen(updateOrderRequest.getPrice()));
+        }
+        skuOrderEntity.setCustomerName(updateOrderRequest.getCustomerName());
+        skuOrderEntity.setCustomerPhone(updateOrderRequest.getCustomerPhone());
+        skuOrderEntity.setCustomerAddress(updateOrderRequest.getCustomerAddress());
+        skuOrderEntity.setRemark(updateOrderRequest.getRemark());
         return skuOrderEntity;
     }
 }
