@@ -4,15 +4,18 @@ import com.scy.core.CollectionUtil;
 import com.scy.core.model.DiffBO;
 import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
+import com.wx.domain.order.entity.OrderItemEntity;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.domain.order.service.SkuOrderDomainService;
 import com.wx.domain.passport.service.UserPassportDomainService;
+import com.wx.domain.sku.service.GoodsSkuDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -29,6 +32,9 @@ public class SkuOrderFacade {
 
     @Autowired
     private UserPassportDomainService userPassportDomainService;
+
+    @Autowired
+    private GoodsSkuDomainService goodsSkuDomainService;
 
     /**
      * 创建出库/入库订单
@@ -66,5 +72,18 @@ public class SkuOrderFacade {
      */
     public List<DiffBO> updateOrder(SkuOrderEntity skuOrderEntity) {
         return skuOrderDomainService.updateOrder(skuOrderEntity);
+    }
+
+    /**
+     * 查询订单所有条目
+     */
+    public List<OrderItemEntity> listOrderItemEntities(long orderId) {
+        List<OrderItemEntity> orderItemEntities = skuOrderDomainService.listOrderItemEntities(orderId);
+
+        List<Long> skuIds = orderItemEntities.stream().map(OrderItemEntity::getSkuId).distinct().collect(Collectors.toList());
+        Map<Long, String> skuNameMap = goodsSkuDomainService.getSkuNameMap(skuIds);
+
+        orderItemEntities.forEach(orderItemEntity -> orderItemEntity.setSkuName(skuNameMap.get(orderItemEntity.getSkuId())));
+        return orderItemEntities;
     }
 }
