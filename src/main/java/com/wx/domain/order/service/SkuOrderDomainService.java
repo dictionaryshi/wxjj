@@ -201,4 +201,41 @@ public class SkuOrderDomainService {
             redisLock.unlock(lockKey);
         }
     }
+
+    public List<DiffBO> updateOrderItemEntity(OrderItemEntity orderItemEntity) {
+        if (orderItemEntity.getNumber() <= 0) {
+            throw new BusinessException(MessageUtil.format("商品数量必须大于0", "number", orderItemEntity.getNumber()));
+        }
+
+        String lockKey = orderItemEntity.getLockKey();
+        try {
+            redisLock.lock(lockKey);
+            Optional<SkuOrderEntity> orderEntityOptional = getOrder(orderItemEntity.getOrderId());
+            if (!orderEntityOptional.isPresent()) {
+                throw new BusinessException(MessageUtil.format("订单不存在", "orderId", orderItemEntity.getOrderId()));
+            }
+
+            int status = orderEntityOptional.get().getStatus();
+            if (!Objects.equals(status, OrderStatusEnum.WAIT_TO_CONFIRMED.getStatus())) {
+                throw new BusinessException(MessageUtil.format("订单已确认不能修改订单条目", "orderId", orderItemEntity.getOrderId()));
+            }
+
+            Optional<OrderItemEntity> orderItemEntityOptional = getOrderItemEntity(orderItemEntity.getOrderId(), orderItemEntity.getSkuId());
+            if (!orderItemEntityOptional.isPresent()) {
+                throw new BusinessException(MessageUtil.format("订单条目不存在"));
+            }
+
+            OrderItemDO orderItemDO = new OrderItemDO();
+            orderItemDO.setId(orderItemEntityOptional.get().getId());
+            orderItemDO.setNumber(orderItemEntity.getNumber());
+            orderItemDOMapper.updateByPrimaryKeySelective(orderItemDO);
+
+            ForceMasterHelper.forceMaster();
+            Optional<OrderItemEntity> afterOrderItemEntityOptional = getOrderItemEntity(orderItemEntity.getOrderId(), orderItemEntity.getSkuId());
+            return afterOrderItemEntityOptional.map(afterOrderItemEntity -> DiffUtil.diff(orderItemEntityOptional.get(), afterOrderItemEntity)).orElse(Collections.emptyList());
+        } finally {
+            ForceMasterHelper.clearForceMaster();
+            redisLock.unlock(lockKey);
+        }
+    }
 }
