@@ -102,4 +102,11 @@ public class SkuOrderFacade {
 
         return skuOrderDomainService.insertOrderItemEntity(orderItemEntity);
     }
+
+    /**
+     * 修改订单条目
+     */
+    public List<DiffBO> updateOrderItemEntity(OrderItemEntity orderItemEntity) {
+        return skuOrderDomainService.updateOrderItemEntity(orderItemEntity);
+    }
 }
