@@ -10,10 +10,14 @@ import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
 import com.scy.db.util.ForceMasterHelper;
 import com.scy.redis.lock.RedisLock;
+import com.wx.dao.warehouse.mapper.OrderItemDOMapper;
 import com.wx.dao.warehouse.mapper.extend.SkuOrderDOMapperExtend;
+import com.wx.dao.warehouse.model.OrderItemDO;
+import com.wx.dao.warehouse.model.OrderItemDOExample;
 import com.wx.dao.warehouse.model.SkuOrderDO;
 import com.wx.dao.warehouse.model.SkuOrderDOExample;
 import com.wx.dao.warehouse.model.extend.SkuOrderDOExampleExtend;
+import com.wx.domain.order.entity.OrderItemEntity;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.domain.order.entity.valueobject.OrderStatusEnum;
 import com.wx.domain.order.factory.SkuOrderFactory;
@@ -39,6 +43,9 @@ public class SkuOrderDomainService {
 
     @Autowired
     private SkuOrderDOMapperExtend skuOrderDOMapper;
+
+    @Autowired
+    private OrderItemDOMapper orderItemDOMapper;
 
     @Autowired
     private IdService idService;
@@ -142,5 +149,25 @@ public class SkuOrderDomainService {
             ForceMasterHelper.clearForceMaster();
             redisLock.unlock(lockKey);
         }
+    }
+
+    public Optional<OrderItemEntity> getOrderItemEntity(long orderId, long skuId) {
+        OrderItemDOExample orderItemDOExample = new OrderItemDOExample();
+        OrderItemDOExample.Criteria criteria = orderItemDOExample.createCriteria();
+        criteria.andOrderIdEqualTo(orderId);
+        criteria.andSkuIdEqualTo(skuId);
+
+        List<OrderItemDO> orderItems = orderItemDOMapper.selectByExample(orderItemDOExample);
+        OrderItemDO orderItemDO = CollectionUtil.firstElement(orderItems);
+        return SkuOrderFactory.toOrderItemEntity(orderItemDO);
+    }
+
+    public List<OrderItemEntity> listOrderItemEntities(long orderId) {
+        OrderItemDOExample orderItemDOExample = new OrderItemDOExample();
+        OrderItemDOExample.Criteria criteria = orderItemDOExample.createCriteria();
+        criteria.andOrderIdEqualTo(orderId);
+
+        List<OrderItemDO> orderItems = orderItemDOMapper.selectByExample(orderItemDOExample);
+        return CollectionUtil.map(orderItems, orderItemDO -> SkuOrderFactory.toOrderItemEntity(orderItemDO).orElse(null)).collect(Collectors.toList());
     }
 }
