@@ -8,7 +8,9 @@ import com.scy.web.util.LoginUtil;
 import com.wx.controller.request.order.CreateOrderRequest;
 import com.wx.controller.request.order.QueryOrderByPageRequest;
 import com.wx.controller.request.order.UpdateOrderRequest;
+import com.wx.controller.response.order.OrderItemResponse;
 import com.wx.controller.response.order.SkuOrderResponse;
+import com.wx.domain.order.entity.OrderItemEntity;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -93,5 +95,15 @@ public class SkuOrderAssembler {
         skuOrderEntity.setCustomerAddress(updateOrderRequest.getCustomerAddress());
         skuOrderEntity.setRemark(updateOrderRequest.getRemark());
         return skuOrderEntity;
+    }
+
+    public static OrderItemResponse toOrderItemResponse(OrderItemEntity orderItemEntity) {
+        OrderItemResponse orderItemResponse = new OrderItemResponse();
+        orderItemResponse.setOrderId(orderItemEntity.getOrderId());
+        orderItemResponse.setSkuId(orderItemEntity.getSkuId());
+        orderItemResponse.setNumber(orderItemEntity.getNumber());
+        orderItemResponse.setCreatedAt(orderItemEntity.getCreatedAt());
+        orderItemResponse.setSkuName(orderItemEntity.getSkuName());
+        return orderItemResponse;
     }
 }

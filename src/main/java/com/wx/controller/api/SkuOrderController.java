@@ -1,5 +1,6 @@
 package com.wx.controller.api;
 
+import com.scy.core.CollectionUtil;
 import com.scy.core.model.DiffBO;
 import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
@@ -7,11 +8,10 @@ import com.scy.core.rest.ResponseResult;
 import com.scy.redis.annotation.LimitAccessFrequency;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.SkuOrderAssembler;
-import com.wx.controller.request.order.CreateOrderRequest;
-import com.wx.controller.request.order.GetOrderRequest;
-import com.wx.controller.request.order.QueryOrderByPageRequest;
-import com.wx.controller.request.order.UpdateOrderRequest;
+import com.wx.controller.request.order.*;
+import com.wx.controller.response.order.OrderItemResponse;
 import com.wx.controller.response.order.SkuOrderResponse;
+import com.wx.domain.order.entity.OrderItemEntity;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.service.SkuOrderFacade;
 import io.swagger.annotations.Api;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -83,5 +84,15 @@ public class SkuOrderController {
         SkuOrderEntity skuOrderEntity = SkuOrderAssembler.toSkuOrderEntity(updateOrderRequest);
         List<DiffBO> diffs = skuOrderFacade.updateOrder(skuOrderEntity);
         return ResponseResult.success(diffs);
+    }
+
+    @ApiOperation("查询订单条目")
+    @LoginCheck
+    @GetMapping("/query-order-items")
+    public ResponseResult<List<OrderItemResponse>> queryOrderItems(
+            @Valid QueryOrderItemRequest queryOrderItemRequest
+    ) {
+        List<OrderItemEntity> orderItemEntities = skuOrderFacade.listOrderItemEntities(queryOrderItemRequest.getOrderId());
+        return ResponseResult.success(CollectionUtil.map(orderItemEntities, SkuOrderAssembler::toOrderItemResponse).collect(Collectors.toList()));
     }
 }
