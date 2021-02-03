@@ -88,3 +88,14 @@ CREATE TABLE `sku_order` (
   KEY `idx_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品订单';
 
+CREATE TABLE `order_item` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `order_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '订单id',
+  `sku_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '商品id',
+  `number` bigint(20) NOT NULL DEFAULT '0' COMMENT '数量',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_order_id_sku_id` (`order_id`,`sku_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单条目';
+
