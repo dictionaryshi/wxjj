@@ -1,19 +1,27 @@
 package com.wx.domain.order.service;
 
 import com.scy.core.CollectionUtil;
+import com.scy.core.DiffUtil;
 import com.scy.core.StringUtil;
+import com.scy.core.exception.BusinessException;
+import com.scy.core.format.MessageUtil;
+import com.scy.core.model.DiffBO;
 import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
+import com.scy.db.util.ForceMasterHelper;
+import com.scy.redis.lock.RedisLock;
 import com.wx.dao.warehouse.mapper.extend.SkuOrderDOMapperExtend;
 import com.wx.dao.warehouse.model.SkuOrderDO;
 import com.wx.dao.warehouse.model.SkuOrderDOExample;
 import com.wx.dao.warehouse.model.extend.SkuOrderDOExampleExtend;
 import com.wx.domain.order.entity.SkuOrderEntity;
+import com.wx.domain.order.entity.valueobject.OrderStatusEnum;
 import com.wx.domain.order.factory.SkuOrderFactory;
 import com.wx.infrastructure.service.IdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +42,9 @@ public class SkuOrderDomainService {
 
     @Autowired
     private IdService idService;
+
+    @Autowired
+    private RedisLock redisLock;
 
     public long insertSkuOrder(SkuOrderEntity skuOrderEntity) {
         skuOrderEntity.setOrderId(idService.getId());
@@ -94,5 +105,42 @@ public class SkuOrderDomainService {
                 .collect(Collectors.toList());
         pageResult.setDatas(datas);
         return pageResult;
+    }
+
+    public List<DiffBO> updateOrder(SkuOrderEntity skuOrderEntity) {
+        Optional<SkuOrderEntity> skuOrderEntityOptional = getOrder(skuOrderEntity.getOrderId());
+        if (!skuOrderEntityOptional.isPresent()) {
+            throw new BusinessException(MessageUtil.format("订单不存在", "orderId", skuOrderEntity.getOrderId()));
+        }
+
+        String lockKey = skuOrderEntity.getLockKey();
+        try {
+            redisLock.lock(lockKey);
+
+            int status = skuOrderEntityOptional.get().getStatus();
+            if (!Objects.equals(status, OrderStatusEnum.WAIT_TO_CONFIRMED.getStatus())) {
+                throw new BusinessException(MessageUtil.format("订单已确认不能修改", "orderId", skuOrderEntity.getOrderId()));
+            }
+
+            SkuOrderDO skuOrderDO = new SkuOrderDO();
+            skuOrderDO.setOperator(skuOrderEntity.getOperator());
+            skuOrderDO.setPrice(skuOrderEntity.getPrice());
+            skuOrderDO.setCustomerName(skuOrderEntity.getCustomerName());
+            skuOrderDO.setCustomerPhone(skuOrderEntity.getCustomerPhone());
+            skuOrderDO.setCustomerAddress(skuOrderEntity.getCustomerAddress());
+            skuOrderDO.setRemark(skuOrderEntity.getRemark());
+
+            SkuOrderDOExample skuOrderDOExample = new SkuOrderDOExample();
+            SkuOrderDOExample.Criteria criteria = skuOrderDOExample.createCriteria();
+            criteria.andOrderIdEqualTo(skuOrderEntity.getOrderId());
+            skuOrderDOMapper.updateByExampleSelective(skuOrderDO, skuOrderDOExample);
+
+            ForceMasterHelper.forceMaster();
+            Optional<SkuOrderEntity> afterSkuOrderEntityOptional = getOrder(skuOrderEntity.getOrderId());
+            return afterSkuOrderEntityOptional.map(afterSkuOrderEntity -> DiffUtil.diff(skuOrderEntityOptional.get(), afterSkuOrderEntity)).orElse(Collections.emptyList());
+        } finally {
+            ForceMasterHelper.clearForceMaster();
+            redisLock.unlock(lockKey);
+        }
     }
 }
