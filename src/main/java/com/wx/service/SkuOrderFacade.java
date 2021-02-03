@@ -109,4 +109,11 @@ public class SkuOrderFacade {
     public List<DiffBO> updateOrderItemEntity(OrderItemEntity orderItemEntity) {
         return skuOrderDomainService.updateOrderItemEntity(orderItemEntity);
     }
+
+    /**
+     * 删除订单条目
+     */
+    public boolean deleteOrderItemEntity(OrderItemEntity orderItemEntity) {
+        return skuOrderDomainService.deleteOrderItemEntity(orderItemEntity);
+    }
 }

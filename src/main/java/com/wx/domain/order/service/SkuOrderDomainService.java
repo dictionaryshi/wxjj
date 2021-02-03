@@ -238,4 +238,29 @@ public class SkuOrderDomainService {
             redisLock.unlock(lockKey);
         }
     }
+
+    public boolean deleteOrderItemEntity(OrderItemEntity orderItemEntity) {
+        String lockKey = orderItemEntity.getLockKey();
+        try {
+            redisLock.lock(lockKey);
+            Optional<SkuOrderEntity> orderEntityOptional = getOrder(orderItemEntity.getOrderId());
+            if (!orderEntityOptional.isPresent()) {
+                throw new BusinessException(MessageUtil.format("订单不存在", "orderId", orderItemEntity.getOrderId()));
+            }
+
+            int status = orderEntityOptional.get().getStatus();
+            if (!Objects.equals(status, OrderStatusEnum.WAIT_TO_CONFIRMED.getStatus())) {
+                throw new BusinessException(MessageUtil.format("订单已确认不能删除订单条目", "orderId", orderItemEntity.getOrderId()));
+            }
+
+            Optional<OrderItemEntity> orderItemEntityOptional = getOrderItemEntity(orderItemEntity.getOrderId(), orderItemEntity.getSkuId());
+            if (!orderItemEntityOptional.isPresent()) {
+                throw new BusinessException(MessageUtil.format("订单条目不存在"));
+            }
+
+            return orderItemDOMapper.deleteByPrimaryKey(orderItemEntityOptional.get().getId()) == 1;
+        } finally {
+            redisLock.unlock(lockKey);
+        }
+    }
 }
