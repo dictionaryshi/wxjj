@@ -107,4 +107,15 @@ public class SkuOrderController {
         long id = skuOrderFacade.insertOrderItemEntity(orderItemEntity);
         return ResponseResult.success(id);
     }
+
+    @ApiOperation("修改订单条目")
+    @LoginCheck
+    @PostMapping("/update-order-item")
+    public ResponseResult<List<DiffBO>> updateOrderItem(
+            @RequestBody @Valid UpdateOrderItemRequest updateOrderItemRequest
+    ) {
+        OrderItemEntity orderItemEntity = SkuOrderAssembler.toOrderItemEntity(updateOrderItemRequest);
+        List<DiffBO> diffs = skuOrderFacade.updateOrderItemEntity(orderItemEntity);
+        return ResponseResult.success(diffs);
+    }
 }
