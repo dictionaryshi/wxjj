@@ -5,10 +5,7 @@ import com.scy.core.format.DateUtil;
 import com.scy.core.format.NumberUtil;
 import com.scy.core.page.PageResult;
 import com.scy.web.util.LoginUtil;
-import com.wx.controller.request.order.AddOrderItemRequest;
-import com.wx.controller.request.order.CreateOrderRequest;
-import com.wx.controller.request.order.QueryOrderByPageRequest;
-import com.wx.controller.request.order.UpdateOrderRequest;
+import com.wx.controller.request.order.*;
 import com.wx.controller.response.order.OrderItemResponse;
 import com.wx.controller.response.order.SkuOrderResponse;
 import com.wx.domain.order.entity.OrderItemEntity;
@@ -113,6 +110,14 @@ public class SkuOrderAssembler {
         orderItemEntity.setOrderId(addOrderItemRequest.getOrderId());
         orderItemEntity.setSkuId(addOrderItemRequest.getSkuId());
         orderItemEntity.setNumber(addOrderItemRequest.getNumber());
+        return orderItemEntity;
+    }
+
+    public static OrderItemEntity toOrderItemEntity(UpdateOrderItemRequest updateOrderItemRequest) {
+        OrderItemEntity orderItemEntity = new OrderItemEntity();
+        orderItemEntity.setOrderId(updateOrderItemRequest.getOrderId());
+        orderItemEntity.setSkuId(updateOrderItemRequest.getSkuId());
+        orderItemEntity.setNumber(updateOrderItemRequest.getNumber());
         return orderItemEntity;
     }
 }
