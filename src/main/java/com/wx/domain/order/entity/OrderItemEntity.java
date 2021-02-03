@@ -1,5 +1,7 @@
 package com.wx.domain.order.entity;
 
+import com.scy.redis.util.RedisUtil;
+import com.wx.constant.RedisKeyEnum;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -48,4 +50,8 @@ public class OrderItemEntity {
      * 商品名称
      */
     private String skuName;
+
+    public String getLockKey() {
+        return RedisUtil.getRedisKey(RedisKeyEnum.SKU_ORDER_LOCK.getRedisKeyPrefix(), String.valueOf(orderId));
+    }
 }

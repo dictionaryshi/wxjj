@@ -5,6 +5,7 @@ import com.scy.core.format.DateUtil;
 import com.scy.core.format.NumberUtil;
 import com.scy.core.page.PageResult;
 import com.scy.web.util.LoginUtil;
+import com.wx.controller.request.order.AddOrderItemRequest;
 import com.wx.controller.request.order.CreateOrderRequest;
 import com.wx.controller.request.order.QueryOrderByPageRequest;
 import com.wx.controller.request.order.UpdateOrderRequest;
@@ -105,5 +106,13 @@ public class SkuOrderAssembler {
         orderItemResponse.setCreatedAt(orderItemEntity.getCreatedAt());
         orderItemResponse.setSkuName(orderItemEntity.getSkuName());
         return orderItemResponse;
+    }
+
+    public static OrderItemEntity toOrderItemEntity(AddOrderItemRequest addOrderItemRequest) {
+        OrderItemEntity orderItemEntity = new OrderItemEntity();
+        orderItemEntity.setOrderId(addOrderItemRequest.getOrderId());
+        orderItemEntity.setSkuId(addOrderItemRequest.getSkuId());
+        orderItemEntity.setNumber(addOrderItemRequest.getNumber());
+        return orderItemEntity;
     }
 }
