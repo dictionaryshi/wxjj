@@ -124,6 +124,6 @@ public class SkuOrderEntity {
     }
 
     public String getLockKey() {
-        return RedisUtil.getRedisKey(RedisKeyEnum.SKU_ORDER.getRedisKeyPrefix(), String.valueOf(orderId));
+        return RedisUtil.getRedisKey(RedisKeyEnum.SKU_ORDER_LOCK.getRedisKeyPrefix(), String.valueOf(orderId));
     }
 }

@@ -1,6 +1,7 @@
 package com.wx.service;
 
 import com.scy.core.CollectionUtil;
+import com.scy.core.model.DiffBO;
 import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
 import com.wx.domain.order.entity.SkuOrderEntity;
@@ -58,5 +59,12 @@ public class SkuOrderFacade {
         List<SkuOrderEntity> datas = CollectionUtil.emptyIfNull(pageResult.getDatas());
         datas.forEach(skuOrder -> skuOrder.setOperatorName(allPassportMap.get(skuOrder.getOperator())));
         return pageResult;
+    }
+
+    /**
+     * 修改订单
+     */
+    public List<DiffBO> updateOrder(SkuOrderEntity skuOrderEntity) {
+        return skuOrderDomainService.updateOrder(skuOrderEntity);
     }
 }

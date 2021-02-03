@@ -21,7 +21,7 @@ public enum RedisKeyEnum {
     SSO_CAPTCHA("sso_captcha", "图片验证码"),
     LOGIN_TOKEN("login_token", "登陆token"),
     SKU_STOCK_LOCK("sku_stock_lock", "库存分布式锁"),
-    SKU_ORDER("sku_order", "商品订单分布式锁"),
+    SKU_ORDER_LOCK("sku_order_lock", "商品订单分布式锁"),
     ;
 
     private final String redisKeyPrefix;
