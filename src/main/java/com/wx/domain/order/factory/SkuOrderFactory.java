@@ -1,6 +1,8 @@
 package com.wx.domain.order.factory;
 
+import com.wx.dao.warehouse.model.OrderItemDO;
 import com.wx.dao.warehouse.model.SkuOrderDO;
+import com.wx.domain.order.entity.OrderItemEntity;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.domain.order.entity.valueobject.OrderStatusEnum;
 import com.wx.domain.stock.entity.valueobject.StockTypeEnum;
@@ -59,5 +61,27 @@ public class SkuOrderFactory {
             skuOrderEntity.setConfirmTimeDate(new Date(skuOrderDO.getConfirmTime()));
         }
         return Optional.of(skuOrderEntity);
+    }
+
+    public static OrderItemDO toOrderItemDO(OrderItemEntity orderItemEntity) {
+        OrderItemDO orderItemDO = new OrderItemDO();
+        orderItemDO.setOrderId(orderItemEntity.getOrderId());
+        orderItemDO.setSkuId(orderItemEntity.getSkuId());
+        orderItemDO.setNumber(orderItemEntity.getNumber());
+        return orderItemDO;
+    }
+
+    public static Optional<OrderItemEntity> toOrderItemEntity(OrderItemDO orderItemDO) {
+        if (Objects.isNull(orderItemDO)) {
+            return Optional.empty();
+        }
+
+        OrderItemEntity orderItemEntity = new OrderItemEntity();
+        orderItemEntity.setId(orderItemDO.getId());
+        orderItemEntity.setOrderId(orderItemDO.getOrderId());
+        orderItemEntity.setSkuId(orderItemDO.getSkuId());
+        orderItemEntity.setNumber(orderItemDO.getNumber());
+        orderItemEntity.setCreatedAt(orderItemDO.getCreatedAt());
+        return Optional.of(orderItemEntity);
     }
 }
