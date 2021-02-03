@@ -1,5 +1,6 @@
 package com.wx.controller.api;
 
+import com.scy.core.model.DiffBO;
 import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
 import com.scy.core.rest.ResponseResult;
@@ -9,6 +10,7 @@ import com.wx.controller.assembler.SkuOrderAssembler;
 import com.wx.controller.request.order.CreateOrderRequest;
 import com.wx.controller.request.order.GetOrderRequest;
 import com.wx.controller.request.order.QueryOrderByPageRequest;
+import com.wx.controller.request.order.UpdateOrderRequest;
 import com.wx.controller.response.order.SkuOrderResponse;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.service.SkuOrderFacade;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -68,5 +71,17 @@ public class SkuOrderController {
     ) {
         PageResult<SkuOrderEntity> pageResult = skuOrderFacade.listByPage(pageParam, SkuOrderAssembler.toSkuOrderEntity(queryOrderByPageRequest));
         return ResponseResult.success(SkuOrderAssembler.toSkuOrderResponse(pageResult));
+    }
+
+    @ApiOperation("修改订单")
+    @LimitAccessFrequency(redisKey = "updateOrder", timeWindow = 10_000L, limit = 1)
+    @LoginCheck
+    @PostMapping("/update-order")
+    public ResponseResult<List<DiffBO>> updateOrder(
+            @RequestBody @Valid UpdateOrderRequest updateOrderRequest
+    ) {
+        SkuOrderEntity skuOrderEntity = SkuOrderAssembler.toSkuOrderEntity(updateOrderRequest);
+        List<DiffBO> diffs = skuOrderFacade.updateOrder(skuOrderEntity);
+        return ResponseResult.success(diffs);
     }
 }

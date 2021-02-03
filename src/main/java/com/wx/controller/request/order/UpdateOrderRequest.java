@@ -10,23 +10,23 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @author : shichunyang
- * Date    : 2021/2/2
- * Time    : 2:09 下午
+ * Date    : 2021/2/3
+ * Time    : 1:26 下午
  * ---------------------------------------
- * Desc    : 创建订单请求
+ * Desc    : 修改订单请求
  */
-@ApiModel("创建订单请求")
+@ApiModel("修改订单请求")
 @Getter
 @Setter
 @ToString
-public class CreateOrderRequest {
+public class UpdateOrderRequest {
 
     /**
-     * 订单类型
+     * 订单id
      */
-    @NotNull(message = "订单类型 不为null")
-    @ApiModelProperty(value = "订单类型(1:入库, 2:出库)", required = true, example = "1")
-    private Integer type;
+    @NotNull(message = "orderId 不为null")
+    @ApiModelProperty(value = "订单id", required = true, example = "123456")
+    private Long orderId;
 
     /**
      * 金额(元)
