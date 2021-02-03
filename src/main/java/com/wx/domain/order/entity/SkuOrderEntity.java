@@ -1,6 +1,7 @@
 package com.wx.domain.order.entity;
 
 import com.scy.redis.util.RedisUtil;
+import com.scy.web.util.LoginUtil;
 import com.wx.constant.RedisKeyEnum;
 import com.wx.domain.order.entity.valueobject.OrderStatusEnum;
 import lombok.Getter;
@@ -121,6 +122,7 @@ public class SkuOrderEntity {
     public void confirm() {
         this.status = OrderStatusEnum.HAS_BEEN_CONFIRMED.getStatus();
         this.confirmTime = System.currentTimeMillis();
+        this.operator = LoginUtil.getLoginUser().getUserId();
     }
 
     public String getLockKey() {
