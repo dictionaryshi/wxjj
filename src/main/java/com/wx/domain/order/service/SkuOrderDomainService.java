@@ -263,4 +263,33 @@ public class SkuOrderDomainService {
             redisLock.unlock(lockKey);
         }
     }
+
+    public boolean confirmSkuOrder(long orderId) {
+        SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
+        skuOrderEntity.setOrderId(orderId);
+        skuOrderEntity.confirm();
+
+        String lockKey = skuOrderEntity.getLockKey();
+        try {
+            redisLock.lock(lockKey);
+            Optional<SkuOrderEntity> orderEntityOptional = getOrder(orderId);
+            if (!orderEntityOptional.isPresent()) {
+                throw new BusinessException(MessageUtil.format("订单不存在", "orderId", orderId));
+            }
+
+            int status = orderEntityOptional.get().getStatus();
+            if (!Objects.equals(status, OrderStatusEnum.WAIT_TO_CONFIRMED.getStatus())) {
+                throw new BusinessException(MessageUtil.format("订单已确认", "orderId", orderId));
+            }
+
+            SkuOrderDO skuOrderDO = SkuOrderFactory.toSkuOrderDO(skuOrderEntity);
+
+            SkuOrderDOExample skuOrderDOExample = new SkuOrderDOExample();
+            SkuOrderDOExample.Criteria criteria = skuOrderDOExample.createCriteria();
+            criteria.andOrderIdEqualTo(orderId);
+            return skuOrderDOMapper.updateByExampleSelective(skuOrderDO, skuOrderDOExample) == 1;
+        } finally {
+            redisLock.unlock(lockKey);
+        }
+    }
 }
