@@ -95,4 +95,16 @@ public class SkuOrderController {
         List<OrderItemEntity> orderItemEntities = skuOrderFacade.listOrderItemEntities(queryOrderItemRequest.getOrderId());
         return ResponseResult.success(CollectionUtil.map(orderItemEntities, SkuOrderAssembler::toOrderItemResponse).collect(Collectors.toList()));
     }
+
+    @ApiOperation("添加订单条目")
+    @LimitAccessFrequency(redisKey = "addOrderItem", timeWindow = 10_000L, limit = 1)
+    @LoginCheck
+    @PostMapping("/add-order-item")
+    public ResponseResult<Long> addOrderItem(
+            @RequestBody @Valid AddOrderItemRequest addOrderItemRequest
+    ) {
+        OrderItemEntity orderItemEntity = SkuOrderAssembler.toOrderItemEntity(addOrderItemRequest);
+        long id = skuOrderFacade.insertOrderItemEntity(orderItemEntity);
+        return ResponseResult.success(id);
+    }
 }
