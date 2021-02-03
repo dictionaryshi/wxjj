@@ -170,4 +170,35 @@ public class SkuOrderDomainService {
         List<OrderItemDO> orderItems = orderItemDOMapper.selectByExample(orderItemDOExample);
         return CollectionUtil.map(orderItems, orderItemDO -> SkuOrderFactory.toOrderItemEntity(orderItemDO).orElse(null)).collect(Collectors.toList());
     }
+
+    public long insertOrderItemEntity(OrderItemEntity orderItemEntity) {
+        if (orderItemEntity.getNumber() <= 0) {
+            throw new BusinessException(MessageUtil.format("商品数量必须大于0", "number", orderItemEntity.getNumber()));
+        }
+
+        String lockKey = orderItemEntity.getLockKey();
+        try {
+            redisLock.lock(lockKey);
+            Optional<SkuOrderEntity> orderEntityOptional = getOrder(orderItemEntity.getOrderId());
+            if (!orderEntityOptional.isPresent()) {
+                throw new BusinessException(MessageUtil.format("订单不存在", "orderId", orderItemEntity.getOrderId()));
+            }
+
+            int status = orderEntityOptional.get().getStatus();
+            if (!Objects.equals(status, OrderStatusEnum.WAIT_TO_CONFIRMED.getStatus())) {
+                throw new BusinessException(MessageUtil.format("订单已确认不能添加订单条目", "orderId", orderItemEntity.getOrderId()));
+            }
+
+            Optional<OrderItemEntity> orderItemEntityOptional = getOrderItemEntity(orderItemEntity.getOrderId(), orderItemEntity.getSkuId());
+            if (orderItemEntityOptional.isPresent()) {
+                throw new BusinessException(MessageUtil.format("订单条目已存在"));
+            }
+
+            OrderItemDO orderItemDO = SkuOrderFactory.toOrderItemDO(orderItemEntity);
+            orderItemDOMapper.insertSelective(orderItemDO);
+            return orderItemDO.getId();
+        } finally {
+            redisLock.unlock(lockKey);
+        }
+    }
 }
