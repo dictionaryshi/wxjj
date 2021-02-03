@@ -1,6 +1,8 @@
 package com.wx.service;
 
 import com.scy.core.CollectionUtil;
+import com.scy.core.exception.BusinessException;
+import com.scy.core.format.MessageUtil;
 import com.scy.core.model.DiffBO;
 import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
@@ -8,12 +10,14 @@ import com.wx.domain.order.entity.OrderItemEntity;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.domain.order.service.SkuOrderDomainService;
 import com.wx.domain.passport.service.UserPassportDomainService;
+import com.wx.domain.sku.entity.GoodsSkuEntity;
 import com.wx.domain.sku.service.GoodsSkuDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -85,5 +89,17 @@ public class SkuOrderFacade {
 
         orderItemEntities.forEach(orderItemEntity -> orderItemEntity.setSkuName(skuNameMap.get(orderItemEntity.getSkuId())));
         return orderItemEntities;
+    }
+
+    /**
+     * 添加订单条目
+     */
+    public long insertOrderItemEntity(OrderItemEntity orderItemEntity) {
+        GoodsSkuEntity goodsSkuEntity = goodsSkuDomainService.getGoodsSkuEntity(orderItemEntity.getSkuId());
+        if (Objects.isNull(goodsSkuEntity)) {
+            throw new BusinessException(MessageUtil.format("商品不存在", "skuId", orderItemEntity.getSkuId()));
+        }
+
+        return skuOrderDomainService.insertOrderItemEntity(orderItemEntity);
     }
 }
