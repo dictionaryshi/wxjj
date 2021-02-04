@@ -130,6 +130,7 @@ public class SkuOrderDomainService {
             }
 
             SkuOrderDO skuOrderDO = new SkuOrderDO();
+            skuOrderDO.setStockBaseInfoId(skuOrderEntity.getStockBaseInfoId());
             skuOrderDO.setOperator(skuOrderEntity.getOperator());
             skuOrderDO.setPrice(skuOrderEntity.getPrice());
             skuOrderDO.setCustomerName(skuOrderEntity.getCustomerName());
