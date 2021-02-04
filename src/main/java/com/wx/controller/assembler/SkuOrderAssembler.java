@@ -50,6 +50,7 @@ public class SkuOrderAssembler {
         skuOrderResponse.setCustomerAddress(skuOrderEntity.getCustomerAddress());
         skuOrderResponse.setRemark(skuOrderEntity.getRemark());
         skuOrderResponse.setCreatedAt(skuOrderEntity.getCreatedAt());
+        skuOrderResponse.setStockBaseInfoName(skuOrderEntity.getStockBaseInfoName());
         skuOrderResponse.setTypeDesc(skuOrderEntity.getTypeDesc());
         skuOrderResponse.setStatusDesc(skuOrderEntity.getStatusDesc());
         skuOrderResponse.setConfirmTimeDate(skuOrderEntity.getConfirmTimeDate());

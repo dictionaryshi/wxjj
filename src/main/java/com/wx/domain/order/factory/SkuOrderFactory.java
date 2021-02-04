@@ -46,6 +46,7 @@ public class SkuOrderFactory {
 
         SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
         skuOrderEntity.setOrderId(skuOrderDO.getOrderId());
+        skuOrderEntity.setStockBaseInfoId(skuOrderDO.getStockBaseInfoId());
         skuOrderEntity.setType(skuOrderDO.getType());
         skuOrderEntity.setStatus(skuOrderDO.getStatus());
         skuOrderEntity.setConfirmTime(skuOrderDO.getConfirmTime());

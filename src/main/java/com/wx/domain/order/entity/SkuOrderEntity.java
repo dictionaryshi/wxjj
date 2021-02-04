@@ -84,6 +84,11 @@ public class SkuOrderEntity {
 
 
     /**
+     * 仓库名称
+     */
+    private String stockBaseInfoName;
+
+    /**
      * 订单类型描述
      */
     private String typeDesc;
