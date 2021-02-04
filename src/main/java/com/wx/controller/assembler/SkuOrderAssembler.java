@@ -85,6 +85,7 @@ public class SkuOrderAssembler {
     public static SkuOrderEntity toSkuOrderEntity(UpdateOrderRequest updateOrderRequest) {
         SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
         skuOrderEntity.setOrderId(updateOrderRequest.getOrderId());
+        skuOrderEntity.setStockBaseInfoId(updateOrderRequest.getStockBaseInfoId());
         skuOrderEntity.setOperator(LoginUtil.getLoginUser().getUserId());
         if (!Objects.isNull(updateOrderRequest.getPrice())) {
             skuOrderEntity.setPrice(NumberUtil.yuanToFen(updateOrderRequest.getPrice()));

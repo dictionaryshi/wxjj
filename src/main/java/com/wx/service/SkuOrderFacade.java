@@ -85,6 +85,11 @@ public class SkuOrderFacade {
      * 修改订单
      */
     public List<DiffBO> updateOrder(SkuOrderEntity skuOrderEntity) {
+        Optional<StockBaseInfoEntity> stockBaseInfoEntityOptional = stockBaseInfoDomainService.getStockBaseInfoEntity(skuOrderEntity.getStockBaseInfoId());
+        if (!stockBaseInfoEntityOptional.isPresent()) {
+            throw new BusinessException("仓库不存在");
+        }
+
         return skuOrderDomainService.updateOrder(skuOrderEntity);
     }
 

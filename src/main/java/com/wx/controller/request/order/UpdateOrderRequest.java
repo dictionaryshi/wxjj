@@ -29,6 +29,13 @@ public class UpdateOrderRequest {
     private Long orderId;
 
     /**
+     * 仓库id
+     */
+    @NotNull(message = "stockBaseInfoId 不为null")
+    @ApiModelProperty(value = "仓库id", required = true, example = "123456")
+    private Long stockBaseInfoId;
+
+    /**
      * 金额(元)
      */
     @ApiModelProperty(value = "订单总金额(元)", required = false, example = "325.32")
