@@ -71,6 +71,7 @@ public class SkuOrderAssembler {
     public static SkuOrderEntity toSkuOrderEntity(QueryOrderByPageRequest queryOrderByPageRequest) {
         SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
         skuOrderEntity.setOrderId(queryOrderByPageRequest.getOrderId());
+        skuOrderEntity.setStockBaseInfoId(queryOrderByPageRequest.getStockBaseInfoId());
         skuOrderEntity.setType(queryOrderByPageRequest.getType());
         skuOrderEntity.setStatus(queryOrderByPageRequest.getStatus());
         skuOrderEntity.setCustomerPhone(queryOrderByPageRequest.getCustomerPhone());
