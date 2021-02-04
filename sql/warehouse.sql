@@ -72,6 +72,7 @@ CREATE TABLE `sku_stock_detail` (
 CREATE TABLE `sku_order` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
   `order_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '订单id',
+  `stock_base_info_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '仓库id',
   `type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '订单类型',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '订单状态',
   `confirm_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '订单提交时间',
