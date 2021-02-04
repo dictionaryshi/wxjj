@@ -6,16 +6,25 @@ import com.scy.core.format.MessageUtil;
 import com.scy.core.model.DiffBO;
 import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
+import com.scy.db.constant.DbConstant;
+import com.wx.constant.CommonConstant;
 import com.wx.domain.order.entity.OrderItemEntity;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.domain.order.service.SkuOrderDomainService;
 import com.wx.domain.passport.service.UserPassportDomainService;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
 import com.wx.domain.sku.service.GoodsSkuDomainService;
+import com.wx.domain.stock.entity.SkuStockEntity;
 import com.wx.domain.stock.entity.StockBaseInfoEntity;
+import com.wx.domain.stock.entity.valueobject.StockTypeEnum;
+import com.wx.domain.stock.service.SkuStockDomainService;
 import com.wx.domain.stock.service.StockBaseInfoDomainService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +39,7 @@ import java.util.stream.Collectors;
  * ---------------------------------------
  * Desc    : 商品订单
  */
+@Slf4j
 @Service
 public class SkuOrderFacade {
 
@@ -44,6 +54,9 @@ public class SkuOrderFacade {
 
     @Autowired
     private StockBaseInfoDomainService stockBaseInfoDomainService;
+
+    @Autowired
+    private SkuStockDomainService skuStockDomainService;
 
     /**
      * 创建出库/入库订单
@@ -138,5 +151,57 @@ public class SkuOrderFacade {
      */
     public boolean deleteOrderItemEntity(OrderItemEntity orderItemEntity) {
         return skuOrderDomainService.deleteOrderItemEntity(orderItemEntity);
+    }
+
+    /**
+     * 提交订单
+     */
+    @Transactional(value = CommonConstant.WAREHOUSE + DbConstant.TRANSACTION_MANAGER,
+            propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public boolean confirmSkuOrder(long orderId) {
+        // 提交订单
+        SkuOrderEntity skuOrderEntity = skuOrderDomainService.confirmSkuOrder(orderId);
+
+        // 查询订单条目
+        List<OrderItemEntity> orderItemEntities = listOrderItemEntities(orderId);
+        if (CollectionUtil.isEmpty(orderItemEntities)) {
+            throw new BusinessException(MessageUtil.format("订单条目不存在", "orderId", orderId));
+        }
+
+        if (Objects.equals(skuOrderEntity.getType(), StockTypeEnum.IN.getType())) {
+            return inStock(skuOrderEntity, orderItemEntities);
+        }
+
+        return outStock(skuOrderEntity, orderItemEntities);
+    }
+
+    private boolean outStock(SkuOrderEntity skuOrderEntity, List<OrderItemEntity> orderItemEntities) {
+        orderItemEntities.forEach(orderItemEntity -> {
+            SkuStockEntity skuStockEntity = new SkuStockEntity();
+            skuStockEntity.setStockBaseInfoId(skuOrderEntity.getStockBaseInfoId());
+            skuStockEntity.setSkuId(orderItemEntity.getSkuId());
+            skuStockEntity.operateStock(orderItemEntity.getNumber(), skuOrderEntity.getOrderId());
+
+            SkuStockEntity operateSkuStockResult = skuStockDomainService.reduceStock(skuStockEntity);
+            log.info(MessageUtil.format("outStock",
+                    "stockBaseInfoId", skuOrderEntity.getStockBaseInfoId(), "skuId", orderItemEntity.getSkuId(),
+                    "operateResult", operateSkuStockResult.getStockOperateValueobject()));
+        });
+        return Boolean.TRUE;
+    }
+
+    private boolean inStock(SkuOrderEntity skuOrderEntity, List<OrderItemEntity> orderItemEntities) {
+        orderItemEntities.forEach(orderItemEntity -> {
+            SkuStockEntity skuStockEntity = new SkuStockEntity();
+            skuStockEntity.setStockBaseInfoId(skuOrderEntity.getStockBaseInfoId());
+            skuStockEntity.setSkuId(orderItemEntity.getSkuId());
+            skuStockEntity.operateStock(orderItemEntity.getNumber(), skuOrderEntity.getOrderId());
+
+            SkuStockEntity operateSkuStockResult = skuStockDomainService.addStock(skuStockEntity);
+            log.info(MessageUtil.format("inStock",
+                    "stockBaseInfoId", skuOrderEntity.getStockBaseInfoId(), "skuId", orderItemEntity.getSkuId(),
+                    "operateResult", operateSkuStockResult.getStockOperateValueobject()));
+        });
+        return Boolean.TRUE;
     }
 }
