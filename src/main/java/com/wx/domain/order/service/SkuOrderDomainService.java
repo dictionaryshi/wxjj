@@ -264,7 +264,7 @@ public class SkuOrderDomainService {
         }
     }
 
-    public boolean confirmSkuOrder(long orderId) {
+    public SkuOrderEntity confirmSkuOrder(long orderId) {
         SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
         skuOrderEntity.setOrderId(orderId);
         skuOrderEntity.confirm();
@@ -287,8 +287,12 @@ public class SkuOrderDomainService {
             SkuOrderDOExample skuOrderDOExample = new SkuOrderDOExample();
             SkuOrderDOExample.Criteria criteria = skuOrderDOExample.createCriteria();
             criteria.andOrderIdEqualTo(orderId);
-            return skuOrderDOMapper.updateByExampleSelective(skuOrderDO, skuOrderDOExample) == 1;
+            skuOrderDOMapper.updateByExampleSelective(skuOrderDO, skuOrderDOExample);
+
+            ForceMasterHelper.forceMaster();
+            return getOrder(orderId).get();
         } finally {
+            ForceMasterHelper.clearForceMaster();
             redisLock.unlock(lockKey);
         }
     }
