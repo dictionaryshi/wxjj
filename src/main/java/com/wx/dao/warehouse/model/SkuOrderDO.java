@@ -19,6 +19,11 @@ public class SkuOrderDO {
     private Long orderId;
 
     /**
+     * 仓库id
+     */
+    private Long stockBaseInfoId;
+
+    /**
      * 订单类型
      */
     private Integer type;
@@ -79,6 +84,10 @@ public class SkuOrderDO {
 
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    public void setStockBaseInfoId(Long stockBaseInfoId) {
+        this.stockBaseInfoId = stockBaseInfoId;
     }
 
     public void setType(Integer type) {

@@ -225,6 +225,66 @@ public class SkuOrderDOExample {
             return (Criteria) this;
         }
 
+        public Criteria andStockBaseInfoIdIsNull() {
+            addCriterion("stock_base_info_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdIsNotNull() {
+            addCriterion("stock_base_info_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdEqualTo(Long value) {
+            addCriterion("stock_base_info_id =", value, "stockBaseInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdNotEqualTo(Long value) {
+            addCriterion("stock_base_info_id <>", value, "stockBaseInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdGreaterThan(Long value) {
+            addCriterion("stock_base_info_id >", value, "stockBaseInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("stock_base_info_id >=", value, "stockBaseInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdLessThan(Long value) {
+            addCriterion("stock_base_info_id <", value, "stockBaseInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdLessThanOrEqualTo(Long value) {
+            addCriterion("stock_base_info_id <=", value, "stockBaseInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdIn(List<Long> values) {
+            addCriterion("stock_base_info_id in", values, "stockBaseInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdNotIn(List<Long> values) {
+            addCriterion("stock_base_info_id not in", values, "stockBaseInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdBetween(Long value1, Long value2) {
+            addCriterion("stock_base_info_id between", value1, value2, "stockBaseInfoId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockBaseInfoIdNotBetween(Long value1, Long value2) {
+            addCriterion("stock_base_info_id not between", value1, value2, "stockBaseInfoId");
+            return (Criteria) this;
+        }
+
         public Criteria andTypeIsNull() {
             addCriterion("type is null");
             return (Criteria) this;
