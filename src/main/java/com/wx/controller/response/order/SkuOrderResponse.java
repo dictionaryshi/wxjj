@@ -66,6 +66,12 @@ public class SkuOrderResponse {
 
 
     /**
+     * 仓库名称
+     */
+    @ApiModelProperty(value = "仓库名称", required = false, example = "北京仓库")
+    private String stockBaseInfoName;
+
+    /**
      * 订单类型描述
      */
     @ApiModelProperty(value = "订单类型描述", required = true, example = "出库/入库")

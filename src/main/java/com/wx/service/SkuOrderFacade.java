@@ -65,6 +65,7 @@ public class SkuOrderFacade {
         skuOrderEntityOptional.ifPresent(skuOrderEntity -> {
             Map<Long, String> allPassportMap = userPassportDomainService.getAllPassportMap();
             skuOrderEntity.setOperatorName(allPassportMap.get(skuOrderEntity.getOperator()));
+            skuOrderEntity.setStockBaseInfoName(stockBaseInfoDomainService.getStockName(skuOrderEntity.getStockBaseInfoId()));
         });
         return skuOrderEntityOptional;
     }
