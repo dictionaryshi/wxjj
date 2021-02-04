@@ -33,6 +33,10 @@ public class SkuOrderDOSqlProvider {
             sql.VALUES("order_id", "#{orderId,jdbcType=BIGINT}");
         }
 
+        if (record.getStockBaseInfoId() != null) {
+            sql.VALUES("stock_base_info_id", "#{stockBaseInfoId,jdbcType=BIGINT}");
+        }
+
         if (record.getType() != null) {
             sql.VALUES("type", "#{type,jdbcType=TINYINT}");
         }
@@ -88,6 +92,7 @@ public class SkuOrderDOSqlProvider {
             sql.SELECT("id");
         }
         sql.SELECT("order_id");
+        sql.SELECT("stock_base_info_id");
         sql.SELECT("type");
         sql.SELECT("status");
         sql.SELECT("confirm_time");
@@ -122,6 +127,10 @@ public class SkuOrderDOSqlProvider {
 
         if (record.getOrderId() != null) {
             sql.SET("order_id = #{record.orderId,jdbcType=BIGINT}");
+        }
+
+        if (record.getStockBaseInfoId() != null) {
+            sql.SET("stock_base_info_id = #{record.stockBaseInfoId,jdbcType=BIGINT}");
         }
 
         if (record.getType() != null) {
@@ -178,6 +187,10 @@ public class SkuOrderDOSqlProvider {
 
         if (record.getOrderId() != null) {
             sql.SET("order_id = #{orderId,jdbcType=BIGINT}");
+        }
+
+        if (record.getStockBaseInfoId() != null) {
+            sql.SET("stock_base_info_id = #{stockBaseInfoId,jdbcType=BIGINT}");
         }
 
         if (record.getType() != null) {

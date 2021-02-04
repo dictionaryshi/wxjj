@@ -29,8 +29,8 @@ public interface SkuOrderDOMapper {
 
     @Select({
             "select",
-            "id, order_id, type, status, confirm_time, operator, price, customer_name, customer_phone, ",
-            "customer_address, remark, created_at, updated_at",
+            "id, order_id, stock_base_info_id, type, status, confirm_time, operator, price, ",
+            "customer_name, customer_phone, customer_address, remark, created_at, updated_at",
             "from sku_order",
             "where id = #{id,jdbcType=BIGINT}"
     })
