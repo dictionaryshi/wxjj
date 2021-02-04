@@ -22,6 +22,13 @@ import javax.validation.constraints.NotNull;
 public class CreateOrderRequest {
 
     /**
+     * 仓库id
+     */
+    @NotNull(message = "stockBaseInfoId 不为null")
+    @ApiModelProperty(value = "仓库id", required = true, example = "123456")
+    private Long stockBaseInfoId;
+
+    /**
      * 订单类型
      */
     @NotNull(message = "订单类型 不为null")

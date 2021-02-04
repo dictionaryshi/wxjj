@@ -12,6 +12,8 @@ import com.wx.domain.order.service.SkuOrderDomainService;
 import com.wx.domain.passport.service.UserPassportDomainService;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
 import com.wx.domain.sku.service.GoodsSkuDomainService;
+import com.wx.domain.stock.entity.StockBaseInfoEntity;
+import com.wx.domain.stock.service.StockBaseInfoDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,10 +42,18 @@ public class SkuOrderFacade {
     @Autowired
     private GoodsSkuDomainService goodsSkuDomainService;
 
+    @Autowired
+    private StockBaseInfoDomainService stockBaseInfoDomainService;
+
     /**
      * 创建出库/入库订单
      */
     public long insertSkuOrder(SkuOrderEntity skuOrderEntity) {
+        Optional<StockBaseInfoEntity> stockBaseInfoEntityOptional = stockBaseInfoDomainService.getStockBaseInfoEntity(skuOrderEntity.getStockBaseInfoId());
+        if (!stockBaseInfoEntityOptional.isPresent()) {
+            throw new BusinessException("仓库不存在");
+        }
+
         return skuOrderDomainService.insertSkuOrder(skuOrderEntity);
     }
 

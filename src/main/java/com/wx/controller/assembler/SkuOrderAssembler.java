@@ -28,6 +28,7 @@ public class SkuOrderAssembler {
 
     public static SkuOrderEntity toSkuOrderEntity(CreateOrderRequest createOrderRequest) {
         SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
+        skuOrderEntity.setStockBaseInfoId(createOrderRequest.getStockBaseInfoId());
         skuOrderEntity.setType(createOrderRequest.getType());
         skuOrderEntity.setOperator(LoginUtil.getLoginUser().getUserId());
         if (!Objects.isNull(createOrderRequest.getPrice())) {
