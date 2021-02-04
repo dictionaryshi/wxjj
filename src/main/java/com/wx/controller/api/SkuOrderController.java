@@ -140,4 +140,14 @@ public class SkuOrderController {
         boolean flag = skuOrderFacade.confirmSkuOrder(confirmOrderRequest.getOrderId());
         return ResponseResult.success(flag);
     }
+
+    @ApiOperation("删除订单")
+    @LoginCheck
+    @PostMapping("/delete-order")
+    public ResponseResult<Boolean> deleteOrder(
+            @RequestBody @Valid DeleteOrderRequest deleteOrderRequest
+    ) {
+        boolean flag = skuOrderFacade.deleteOrder(deleteOrderRequest.getOrderId());
+        return ResponseResult.success(flag);
+    }
 }
