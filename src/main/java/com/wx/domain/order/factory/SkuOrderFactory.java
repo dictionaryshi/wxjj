@@ -26,6 +26,7 @@ public class SkuOrderFactory {
     public static SkuOrderDO toSkuOrderDO(SkuOrderEntity skuOrderEntity) {
         SkuOrderDO skuOrderDO = new SkuOrderDO();
         skuOrderDO.setOrderId(skuOrderEntity.getOrderId());
+        skuOrderDO.setStockBaseInfoId(skuOrderEntity.getStockBaseInfoId());
         skuOrderDO.setType(skuOrderEntity.getType());
         skuOrderDO.setStatus(skuOrderEntity.getStatus());
         skuOrderDO.setConfirmTime(skuOrderEntity.getConfirmTime());

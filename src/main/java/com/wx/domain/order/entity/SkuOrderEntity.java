@@ -28,6 +28,11 @@ public class SkuOrderEntity {
     private Long orderId;
 
     /**
+     * 仓库id
+     */
+    private Long stockBaseInfoId;
+
+    /**
      * 订单类型
      */
     private Integer type;
