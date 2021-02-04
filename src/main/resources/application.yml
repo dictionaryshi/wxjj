@@ -75,6 +75,26 @@ logging:
 spring:
   profiles: stag
 
+db-config:
+  - name: warehouse
+    basePackages: com.wx.dao.warehouse.mapper
+    useGeneratedKeys: true
+    defaultStatementTimeout: 10
+    master:
+      url: 127.0.0.1:3306/warehouse
+      username: root
+      password: flzx@3qc
+      minIdle: 10
+      initialSize: 10
+      maxActive: 20
+    slave:
+      url: 127.0.0.1:3306/warehouse
+      username: warehouse_read
+      password: Ab123456
+      minIdle: 10
+      initialSize: 10
+      maxActive: 20
+
 #日志配置文件位置
 logging:
   config: classpath:logback-stag.xml
