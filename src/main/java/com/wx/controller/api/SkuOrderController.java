@@ -129,4 +129,15 @@ public class SkuOrderController {
         boolean isDelete = skuOrderFacade.deleteOrderItemEntity(orderItemEntity);
         return ResponseResult.success(isDelete);
     }
+
+    @ApiOperation("提交订单")
+    @LimitAccessFrequency(redisKey = "confirmOrder", timeWindow = 10_000L, limit = 1)
+    @LoginCheck
+    @PostMapping("/confirm-order")
+    public ResponseResult<Boolean> confirmOrder(
+            @RequestBody @Valid ConfirmOrderRequest confirmOrderRequest
+    ) {
+        boolean flag = skuOrderFacade.confirmSkuOrder(confirmOrderRequest.getOrderId());
+        return ResponseResult.success(flag);
+    }
 }
