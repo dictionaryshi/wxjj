@@ -89,6 +89,10 @@ public class SkuOrderDomainService {
             criteria.andOrderIdEqualTo(skuOrderEntity.getOrderId());
         }
 
+        if (!Objects.isNull(skuOrderEntity.getStockBaseInfoId())) {
+            criteria.andStockBaseInfoIdEqualTo(skuOrderEntity.getStockBaseInfoId());
+        }
+
         if (!Objects.isNull(skuOrderEntity.getCreatedAtStart())) {
             criteria.andCreatedAtGreaterThanOrEqualTo(skuOrderEntity.getCreatedAtStart());
         }

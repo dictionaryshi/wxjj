@@ -74,11 +74,18 @@ public class SkuOrderFacade {
      * 分页查询订单
      */
     public PageResult<SkuOrderEntity> listByPage(PageParam pageParam, SkuOrderEntity skuOrderEntity) {
-        Map<Long, String> allPassportMap = userPassportDomainService.getAllPassportMap();
-
         PageResult<SkuOrderEntity> pageResult = skuOrderDomainService.listByPage(pageParam, skuOrderEntity);
         List<SkuOrderEntity> datas = CollectionUtil.emptyIfNull(pageResult.getDatas());
-        datas.forEach(skuOrder -> skuOrder.setOperatorName(allPassportMap.get(skuOrder.getOperator())));
+
+        List<Long> stockBaseInfoIds = datas.stream().map(SkuOrderEntity::getStockBaseInfoId).distinct().collect(Collectors.toList());
+        Map<Long, String> stockNameMap = stockBaseInfoDomainService.getStockNameMap(stockBaseInfoIds);
+
+        Map<Long, String> allPassportMap = userPassportDomainService.getAllPassportMap();
+
+        datas.forEach(skuOrder -> {
+            skuOrder.setOperatorName(allPassportMap.get(skuOrder.getOperator()));
+            skuOrder.setStockBaseInfoName(stockNameMap.get(skuOrder.getStockBaseInfoId()));
+        });
         return pageResult;
     }
 

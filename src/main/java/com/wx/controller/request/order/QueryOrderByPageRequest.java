@@ -36,6 +36,12 @@ public class QueryOrderByPageRequest {
     private Long orderId;
 
     /**
+     * 仓库id
+     */
+    @ApiModelProperty(value = "仓库id", required = false, example = "123456")
+    private Long stockBaseInfoId;
+
+    /**
      * 开始时间
      */
     @ApiModelProperty(value = "开始时间", required = false, example = DateUtil.DEFAULT_TIME)
