@@ -301,4 +301,35 @@ public class SkuOrderDomainService {
             redisLock.unlock(lockKey);
         }
     }
+
+    public boolean deleteOrder(long orderId) {
+        SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
+        skuOrderEntity.setOrderId(orderId);
+        String lockKey = skuOrderEntity.getLockKey();
+        try {
+            redisLock.lock(lockKey);
+            Optional<SkuOrderEntity> orderEntityOptional = getOrder(skuOrderEntity.getOrderId());
+            if (!orderEntityOptional.isPresent()) {
+                throw new BusinessException(MessageUtil.format("订单不存在", "orderId", skuOrderEntity.getOrderId()));
+            }
+
+            int status = orderEntityOptional.get().getStatus();
+            if (!Objects.equals(status, OrderStatusEnum.WAIT_TO_CONFIRMED.getStatus())) {
+                throw new BusinessException(MessageUtil.format("订单已确认不能被删除", "orderId", skuOrderEntity.getOrderId()));
+            }
+
+            List<OrderItemEntity> orderItemEntities = listOrderItemEntities(skuOrderEntity.getOrderId());
+            if (!CollectionUtil.isEmpty(orderItemEntities)) {
+                throw new BusinessException(MessageUtil.format("订单存在订单条目不能被删除", "orderId", skuOrderEntity.getOrderId()));
+            }
+
+            SkuOrderDOExample skuOrderDOExample = new SkuOrderDOExample();
+            SkuOrderDOExample.Criteria criteria = skuOrderDOExample.createCriteria();
+            criteria.andOrderIdEqualTo(skuOrderEntity.getOrderId());
+
+            return skuOrderDOMapper.deleteByExample(skuOrderDOExample) == 1;
+        } finally {
+            redisLock.unlock(lockKey);
+        }
+    }
 }

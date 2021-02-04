@@ -175,6 +175,13 @@ public class SkuOrderFacade {
         return outStock(skuOrderEntity, orderItemEntities);
     }
 
+    /**
+     * 删除订单
+     */
+    public boolean deleteOrder(long orderId) {
+        return skuOrderDomainService.deleteOrder(orderId);
+    }
+
     private boolean outStock(SkuOrderEntity skuOrderEntity, List<OrderItemEntity> orderItemEntities) {
         orderItemEntities.forEach(orderItemEntity -> {
             SkuStockEntity skuStockEntity = new SkuStockEntity();
