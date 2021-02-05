@@ -46,7 +46,9 @@ redis-config:
 
 ---
 spring:
-  profiles: dev
+  config:
+    activate:
+      on-profile: dev
 
 db-config:
   - name: warehouse
@@ -73,7 +75,9 @@ logging:
   config: classpath:logback-dev.xml
 ---
 spring:
-  profiles: stag
+  config:
+    activate:
+      on-profile: stag
 
 db-config:
   - name: warehouse
