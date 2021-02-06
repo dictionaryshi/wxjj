@@ -43,7 +43,8 @@ function stopServer() {
     processId=$(getProcessId)
     if [[ ${processId} ]]; then
       echo "start stop ${server_name} ,time use ${use_time} seconds"
-      if (( ${use_time} < ${force_kill_time} )) then
+      if (( ${use_time} < ${force_kill_time} ))
+      then
         echo "kill ${processId}"
         kill ${processId}
       else
