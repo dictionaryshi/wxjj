@@ -19,6 +19,11 @@ function monitor() {
       echo -e "\e[1;32m ${server_name} 服务正常 \e[0m"
     else
       echo -e "\e[1;31m ${server_name} 宕机, 开始重启... \e[0m"
+      stopServer
+      sleep 5
+      nohup java -jar ${server_start} > ${server_log_file} 2>&1 &
+      echo -e "\e[1;31m ${server_name} 启动完毕 \e[0m"
+      sleep 60
     fi
   else
     echo -e "\e[1;31m ${server_name} 进程id不存在, 开始启动服务... \e[0m"
