@@ -29,6 +29,31 @@ function monitor() {
   echo ""
 }
 
+function stopServer() {
+  use_time=0
+  end_time=90
+  force_kill_time=60
+  while (( "${use_time} < ${end_time}" ))
+  do
+    processId=$(getProcessId)
+    if [[ ${processId} ]]; then
+      echo "start stop ${server_name} ,time use ${use_time} seconds"
+      if (( ${use_time} < ${force_kill_time} )) then
+        echo "kill ${processId}"
+        kill ${processId}
+      else
+        echo "force kill ${processId}"
+        kill -9 ${processId}
+      fi
+    else
+      echo "${server_name} already stopped"
+      return 0
+    fi
+    let "use_time+=5"
+    sleep 5
+  done
+}
+
 function getProcessId() {
     processId=$(jps -l | grep ${server_name} | awk '{print $1}')
     echo ${processId}
