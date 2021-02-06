@@ -8,6 +8,8 @@ server_start="-server -Xms256m -Xmx256m -Xmn128m -Xss256k -XX:MetaspaceSize=256m
 -XX:+AlwaysPreTouch -XX:+DisableExplicitGC ${server_name}"
 
 function monitor() {
+  echo $(date '+%Y-%m-%d %H:%M:%S')
+
   processId=$(getProcessId)
   echo "${server_name} 进程id=> ${processId}"
   if [[ ${processId} ]]; then
@@ -24,6 +26,7 @@ function monitor() {
     echo -e "\e[1;31m ${server_name} 启动完毕 \e[0m"
     sleep 60
   fi
+  echo ""
 }
 
 function getProcessId() {
