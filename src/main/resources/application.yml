@@ -87,14 +87,14 @@ db-config:
     master:
       url: 127.0.0.1:3306/warehouse
       username: root
-      password: flzx@3qc
+      password: Flzx@3qc
       minIdle: 10
       initialSize: 10
       maxActive: 20
     slave:
       url: 127.0.0.1:3306/warehouse
       username: warehouse_read
-      password: Ab123456
+      password: Flzx@3qc
       minIdle: 10
       initialSize: 10
       maxActive: 20
