@@ -43,7 +43,7 @@ public class SkuOrderAssembler {
 
     public static SkuOrderResponse toSkuOrderResponse(SkuOrderEntity skuOrderEntity) {
         SkuOrderResponse skuOrderResponse = new SkuOrderResponse();
-        skuOrderResponse.setOrderId(skuOrderEntity.getOrderId());
+        skuOrderResponse.setOrderId(Objects.isNull(skuOrderEntity.getOrderId()) ? StringUtil.EMPTY : String.valueOf(skuOrderEntity.getOrderId()));
         skuOrderResponse.setPrice(NumberUtil.fenToYuan(skuOrderEntity.getPrice()));
         skuOrderResponse.setCustomerName(skuOrderEntity.getCustomerName());
         skuOrderResponse.setCustomerPhone(skuOrderEntity.getCustomerPhone());
@@ -70,7 +70,7 @@ public class SkuOrderAssembler {
 
     public static SkuOrderEntity toSkuOrderEntity(QueryOrderByPageRequest queryOrderByPageRequest) {
         SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
-        skuOrderEntity.setOrderId(queryOrderByPageRequest.getOrderId());
+        skuOrderEntity.setOrderId(StringUtil.isEmpty(queryOrderByPageRequest.getOrderId()) ? null : Long.parseLong(queryOrderByPageRequest.getOrderId()));
         skuOrderEntity.setStockBaseInfoId(queryOrderByPageRequest.getStockBaseInfoId());
         skuOrderEntity.setType(queryOrderByPageRequest.getType());
         skuOrderEntity.setStatus(queryOrderByPageRequest.getStatus());
@@ -86,7 +86,7 @@ public class SkuOrderAssembler {
 
     public static SkuOrderEntity toSkuOrderEntity(UpdateOrderRequest updateOrderRequest) {
         SkuOrderEntity skuOrderEntity = new SkuOrderEntity();
-        skuOrderEntity.setOrderId(updateOrderRequest.getOrderId());
+        skuOrderEntity.setOrderId(Long.parseLong(updateOrderRequest.getOrderId()));
         skuOrderEntity.setStockBaseInfoId(updateOrderRequest.getStockBaseInfoId());
         skuOrderEntity.setOperator(LoginUtil.getLoginUser().getUserId());
         if (!Objects.isNull(updateOrderRequest.getPrice())) {
@@ -101,7 +101,7 @@ public class SkuOrderAssembler {
 
     public static OrderItemResponse toOrderItemResponse(OrderItemEntity orderItemEntity) {
         OrderItemResponse orderItemResponse = new OrderItemResponse();
-        orderItemResponse.setOrderId(orderItemEntity.getOrderId());
+        orderItemResponse.setOrderId(Objects.isNull(orderItemEntity.getOrderId()) ? StringUtil.EMPTY : String.valueOf(orderItemEntity.getOrderId()));
         orderItemResponse.setSkuId(orderItemEntity.getSkuId());
         orderItemResponse.setNumber(orderItemEntity.getNumber());
         orderItemResponse.setCreatedAt(orderItemEntity.getCreatedAt());
@@ -111,7 +111,7 @@ public class SkuOrderAssembler {
 
     public static OrderItemEntity toOrderItemEntity(AddOrderItemRequest addOrderItemRequest) {
         OrderItemEntity orderItemEntity = new OrderItemEntity();
-        orderItemEntity.setOrderId(addOrderItemRequest.getOrderId());
+        orderItemEntity.setOrderId(Long.parseLong(addOrderItemRequest.getOrderId()));
         orderItemEntity.setSkuId(addOrderItemRequest.getSkuId());
         orderItemEntity.setNumber(addOrderItemRequest.getNumber());
         return orderItemEntity;
@@ -119,7 +119,7 @@ public class SkuOrderAssembler {
 
     public static OrderItemEntity toOrderItemEntity(UpdateOrderItemRequest updateOrderItemRequest) {
         OrderItemEntity orderItemEntity = new OrderItemEntity();
-        orderItemEntity.setOrderId(updateOrderItemRequest.getOrderId());
+        orderItemEntity.setOrderId(Long.parseLong(updateOrderItemRequest.getOrderId()));
         orderItemEntity.setSkuId(updateOrderItemRequest.getSkuId());
         orderItemEntity.setNumber(updateOrderItemRequest.getNumber());
         return orderItemEntity;
@@ -127,7 +127,7 @@ public class SkuOrderAssembler {
 
     public static OrderItemEntity toOrderItemEntity(DeleteOrderItemRequest deleteOrderItemRequest) {
         OrderItemEntity orderItemEntity = new OrderItemEntity();
-        orderItemEntity.setOrderId(deleteOrderItemRequest.getOrderId());
+        orderItemEntity.setOrderId(Long.parseLong(deleteOrderItemRequest.getOrderId()));
         orderItemEntity.setSkuId(deleteOrderItemRequest.getSkuId());
         return orderItemEntity;
     }

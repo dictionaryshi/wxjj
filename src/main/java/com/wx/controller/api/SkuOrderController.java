@@ -59,7 +59,7 @@ public class SkuOrderController {
     public ResponseResult<SkuOrderResponse> getOrder(
             @Valid GetOrderRequest getOrderRequest
     ) {
-        Optional<SkuOrderEntity> skuOrderEntityOptional = skuOrderFacade.getOrder(getOrderRequest.getOrderId());
+        Optional<SkuOrderEntity> skuOrderEntityOptional = skuOrderFacade.getOrder(Long.parseLong(getOrderRequest.getOrderId()));
         return ResponseResult.success(skuOrderEntityOptional.map(SkuOrderAssembler::toSkuOrderResponse).orElse(null));
     }
 
@@ -92,7 +92,7 @@ public class SkuOrderController {
     public ResponseResult<List<OrderItemResponse>> queryOrderItems(
             @Valid QueryOrderItemRequest queryOrderItemRequest
     ) {
-        List<OrderItemEntity> orderItemEntities = skuOrderFacade.listOrderItemEntities(queryOrderItemRequest.getOrderId());
+        List<OrderItemEntity> orderItemEntities = skuOrderFacade.listOrderItemEntities(Long.parseLong(queryOrderItemRequest.getOrderId()));
         return ResponseResult.success(CollectionUtil.map(orderItemEntities, SkuOrderAssembler::toOrderItemResponse).collect(Collectors.toList()));
     }
 
@@ -137,7 +137,7 @@ public class SkuOrderController {
     public ResponseResult<Boolean> confirmOrder(
             @RequestBody @Valid ConfirmOrderRequest confirmOrderRequest
     ) {
-        boolean flag = skuOrderFacade.confirmSkuOrder(confirmOrderRequest.getOrderId());
+        boolean flag = skuOrderFacade.confirmSkuOrder(Long.parseLong(confirmOrderRequest.getOrderId()));
         return ResponseResult.success(flag);
     }
 
@@ -147,7 +147,7 @@ public class SkuOrderController {
     public ResponseResult<Boolean> deleteOrder(
             @RequestBody @Valid DeleteOrderRequest deleteOrderRequest
     ) {
-        boolean flag = skuOrderFacade.deleteOrder(deleteOrderRequest.getOrderId());
+        boolean flag = skuOrderFacade.deleteOrder(Long.parseLong(deleteOrderRequest.getOrderId()));
         return ResponseResult.success(flag);
     }
 }
