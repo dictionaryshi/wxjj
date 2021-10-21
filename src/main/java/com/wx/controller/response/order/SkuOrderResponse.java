@@ -26,7 +26,7 @@ public class SkuOrderResponse {
      * 订单id
      */
     @ApiModelProperty(value = "订单id", required = true, example = "123456")
-    private Long orderId;
+    private String orderId;
 
     /**
      * 金额(元)

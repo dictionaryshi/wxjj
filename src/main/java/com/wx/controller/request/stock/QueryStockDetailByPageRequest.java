@@ -40,7 +40,7 @@ public class QueryStockDetailByPageRequest {
      * 订单id
      */
     @ApiModelProperty(value = "订单id", required = false, example = "123456")
-    private Long orderId;
+    private String orderId;
 
     /**
      * 开始时间

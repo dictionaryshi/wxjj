@@ -33,7 +33,7 @@ public class QueryOrderByPageRequest {
      * 订单id
      */
     @ApiModelProperty(value = "订单id", required = false, example = "123456")
-    private Long orderId;
+    private String orderId;
 
     /**
      * 仓库id

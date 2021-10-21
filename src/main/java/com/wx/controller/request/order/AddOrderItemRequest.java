@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -24,9 +25,9 @@ public class AddOrderItemRequest {
     /**
      * 订单id
      */
-    @NotNull(message = "orderId 不为null")
+    @NotBlank(message = "orderId 不为null")
     @ApiModelProperty(value = "订单id", required = true, example = "123456")
-    private Long orderId;
+    private String orderId;
 
     /**
      * 商品id
