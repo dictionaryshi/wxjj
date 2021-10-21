@@ -64,6 +64,11 @@ public class SkuOrderResponse {
     @ApiModelProperty(value = "创建时间", required = true, example = DateUtil.DEFAULT_TIME)
     private Date createdAt;
 
+    /**
+     * 仓库id
+     */
+    @ApiModelProperty(value = "仓库id", required = true, example = "123456")
+    private Long stockBaseInfoId;
 
     /**
      * 仓库名称
@@ -72,10 +77,22 @@ public class SkuOrderResponse {
     private String stockBaseInfoName;
 
     /**
+     * 订单类型
+     */
+    @ApiModelProperty(value = "订单类型(1:入库, 2:出库)", required = true, example = "1")
+    private Integer type;
+
+    /**
      * 订单类型描述
      */
     @ApiModelProperty(value = "订单类型描述", required = true, example = "出库/入库")
     private String typeDesc;
+
+    /**
+     * 订单状态
+     */
+    @ApiModelProperty(value = "订单状态(0:未提交, 1:已提交)", required = false, example = "1")
+    private Integer status;
 
     /**
      * 订单状态描述
