@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -21,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class DeleteOrderRequest {
 
-    @NotNull(message = "orderId 不为null")
+    @NotBlank(message = "orderId 不为空")
     @ApiModelProperty(value = "订单id", required = true, example = "123456")
-    private Long orderId;
+    private String orderId;
 }
