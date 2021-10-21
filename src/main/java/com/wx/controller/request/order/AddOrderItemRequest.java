@@ -25,7 +25,7 @@ public class AddOrderItemRequest {
     /**
      * 订单id
      */
-    @NotBlank(message = "orderId 不为null")
+    @NotBlank(message = "orderId 不为空")
     @ApiModelProperty(value = "订单id", required = true, example = "123456")
     private String orderId;
 

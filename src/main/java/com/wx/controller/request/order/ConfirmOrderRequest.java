@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class ConfirmOrderRequest {
 
-    @NotBlank(message = "orderId 不为null")
+    @NotBlank(message = "orderId 不为空")
     @ApiModelProperty(value = "订单id", required = true, example = "123456")
     private String orderId;
 }
