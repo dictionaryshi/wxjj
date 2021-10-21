@@ -1,5 +1,6 @@
 package com.wx.controller.assembler;
 
+import com.scy.core.StringUtil;
 import com.scy.core.format.DateUtil;
 import com.scy.core.page.PageResult;
 import com.wx.controller.request.stock.QuerySkuStockByPageRequest;
@@ -14,6 +15,7 @@ import com.wx.domain.stock.entity.StockOperateValueobject;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -74,7 +76,7 @@ public class SkuStockAssembler {
     public static SkuStockDetailEntity toSkuStockDetailEntity(QueryStockDetailByPageRequest queryStockDetailByPageRequest) {
         SkuStockDetailEntity skuStockDetailEntity = new SkuStockDetailEntity();
         skuStockDetailEntity.setStockBaseInfoId(queryStockDetailByPageRequest.getStockBaseInfoId());
-        skuStockDetailEntity.setOrderId(queryStockDetailByPageRequest.getOrderId());
+        skuStockDetailEntity.setOrderId(StringUtil.isEmpty(queryStockDetailByPageRequest.getOrderId()) ? null : Long.parseLong(queryStockDetailByPageRequest.getOrderId()));
         skuStockDetailEntity.setSkuName(queryStockDetailByPageRequest.getSkuName());
         skuStockDetailEntity.setCreatedAtStart(DateUtil.str2Date(queryStockDetailByPageRequest.getStartTime(), DateUtil.PATTERN_SECOND));
         skuStockDetailEntity.setCreatedAtEnd(DateUtil.str2Date(queryStockDetailByPageRequest.getEndTime(), DateUtil.PATTERN_SECOND));
@@ -86,7 +88,7 @@ public class SkuStockAssembler {
         skuStockDetailResponse.setStockOffset(skuStockDetailEntity.getStockOffset());
         skuStockDetailResponse.setStockBefore(skuStockDetailEntity.getStockBefore());
         skuStockDetailResponse.setStockAfter(skuStockDetailEntity.getStockAfter());
-        skuStockDetailResponse.setOrderId(skuStockDetailEntity.getOrderId());
+        skuStockDetailResponse.setOrderId(Objects.isNull(skuStockDetailEntity.getOrderId()) ? StringUtil.EMPTY : String.valueOf(skuStockDetailEntity.getOrderId()));
         skuStockDetailResponse.setCreatedAt(skuStockDetailEntity.getCreatedAt());
         skuStockDetailResponse.setStockBaseInfoName(skuStockDetailEntity.getStockBaseInfoName());
         skuStockDetailResponse.setSkuName(skuStockDetailEntity.getSkuName());
