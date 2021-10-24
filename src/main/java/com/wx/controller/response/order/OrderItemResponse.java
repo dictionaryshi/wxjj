@@ -23,6 +23,12 @@ import java.util.Date;
 public class OrderItemResponse {
 
     /**
+     * 订单项id
+     */
+    @ApiModelProperty(value = "订单项id", required = true, example = "123456")
+    private Long orderItemId;
+
+    /**
      * 订单id
      */
     @ApiModelProperty(value = "订单id", required = true, example = "123456")

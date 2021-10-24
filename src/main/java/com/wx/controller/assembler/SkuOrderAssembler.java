@@ -104,17 +104,20 @@ public class SkuOrderAssembler {
     }
 
     public static OrderItemResponse toOrderItemResponse(OrderItemEntity orderItemEntity, SkuOrderEntity skuOrderEntity) {
-        OrderItemResponse orderItemResponse = new OrderItemResponse();
-        orderItemResponse.setOrderId(Objects.isNull(orderItemEntity.getOrderId()) ? StringUtil.EMPTY : String.valueOf(orderItemEntity.getOrderId()));
-        orderItemResponse.setSkuId(orderItemEntity.getSkuId());
-        orderItemResponse.setNumber(orderItemEntity.getNumber());
-        orderItemResponse.setCreatedAt(orderItemEntity.getCreatedAt());
-        orderItemResponse.setSkuName(orderItemEntity.getSkuName());
-        Optional.ofNullable(skuOrderEntity).ifPresent(skuOrder -> {
-            orderItemResponse.setStatus(skuOrder.getStatus());
-            orderItemResponse.setStatusDesc(skuOrder.getStatusDesc());
-        });
-        return orderItemResponse;
+        return Optional.ofNullable(orderItemEntity).map(order -> {
+            OrderItemResponse orderItemResponse = new OrderItemResponse();
+            orderItemResponse.setOrderItemId(orderItemEntity.getId());
+            orderItemResponse.setOrderId(Objects.isNull(orderItemEntity.getOrderId()) ? StringUtil.EMPTY : String.valueOf(orderItemEntity.getOrderId()));
+            orderItemResponse.setSkuId(orderItemEntity.getSkuId());
+            orderItemResponse.setNumber(orderItemEntity.getNumber());
+            orderItemResponse.setCreatedAt(orderItemEntity.getCreatedAt());
+            orderItemResponse.setSkuName(orderItemEntity.getSkuName());
+            Optional.ofNullable(skuOrderEntity).ifPresent(skuOrder -> {
+                orderItemResponse.setStatus(skuOrder.getStatus());
+                orderItemResponse.setStatusDesc(skuOrder.getStatusDesc());
+            });
+            return orderItemResponse;
+        }).orElse(null);
     }
 
     public static OrderItemEntity toOrderItemEntity(AddOrderItemRequest addOrderItemRequest) {

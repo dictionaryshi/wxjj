@@ -128,6 +128,13 @@ public class SkuOrderFacade {
     }
 
     /**
+     * 根据条目id查询订单条目
+     */
+    public Optional<OrderItemEntity> getOrderItemEntity(long orderItemId) {
+        return skuOrderDomainService.getOrderItemEntity(orderItemId);
+    }
+
+    /**
      * 添加订单条目
      */
     public long insertOrderItemEntity(OrderItemEntity orderItemEntity) {
