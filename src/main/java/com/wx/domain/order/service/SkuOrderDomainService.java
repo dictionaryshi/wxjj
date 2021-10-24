@@ -167,6 +167,11 @@ public class SkuOrderDomainService {
         return SkuOrderFactory.toOrderItemEntity(orderItemDO);
     }
 
+    public Optional<OrderItemEntity> getOrderItemEntity(long orderItemId) {
+        OrderItemDO orderItemDO = orderItemDOMapper.selectByPrimaryKey(orderItemId);
+        return SkuOrderFactory.toOrderItemEntity(orderItemDO);
+    }
+
     public List<OrderItemEntity> listOrderItemEntities(long orderId) {
         OrderItemDOExample orderItemDOExample = new OrderItemDOExample();
         OrderItemDOExample.Criteria criteria = orderItemDOExample.createCriteria();

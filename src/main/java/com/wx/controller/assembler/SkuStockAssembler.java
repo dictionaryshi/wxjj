@@ -54,6 +54,10 @@ public class SkuStockAssembler {
     }
 
     public static SkuStockResponse toSkuStockResponse(SkuStockEntity skuStockEntity) {
+        if (Objects.isNull(skuStockEntity)) {
+            return null;
+        }
+
         SkuStockResponse skuStockResponse = new SkuStockResponse();
         skuStockResponse.setStockBaseInfoId(skuStockEntity.getStockBaseInfoId());
         skuStockResponse.setSkuId(skuStockEntity.getSkuId());

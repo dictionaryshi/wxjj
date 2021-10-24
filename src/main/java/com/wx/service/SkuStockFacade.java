@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +46,24 @@ public class SkuStockFacade {
      */
     public SkuStockEntity updateStock(SkuStockEntity skuStockEntity) {
         return skuStockDomainService.updateStock(skuStockEntity);
+    }
+
+    /**
+     * 查询库存
+     */
+    public Optional<SkuStockEntity> getSkuStockEntity(long stockBaseInfoId, long skuId) {
+        Optional<SkuStockEntity> skuStockEntityOptional = skuStockDomainService.getSkuStockEntity(stockBaseInfoId, skuId);
+        skuStockEntityOptional.ifPresent(skuStockEntity -> {
+            List<Long> stockBaseInfoIds = Collections.singletonList(skuStockEntity.getStockBaseInfoId());
+            Map<Long, String> stockNameMap = stockBaseInfoDomainService.getStockNameMap(stockBaseInfoIds);
+
+            List<Long> skuIds = Collections.singletonList(skuStockEntity.getSkuId());
+            Map<Long, String> skuNameMap = goodsSkuDomainService.getSkuNameMap(skuIds);
+
+            skuStockEntity.setStockName(stockNameMap.get(skuStockEntity.getStockBaseInfoId()));
+            skuStockEntity.setSkuName(skuNameMap.get(skuStockEntity.getSkuId()));
+        });
+        return skuStockEntityOptional;
     }
 
     /**

@@ -23,6 +23,12 @@ import java.util.Date;
 public class OrderItemResponse {
 
     /**
+     * 订单项id
+     */
+    @ApiModelProperty(value = "订单项id", required = true, example = "123456")
+    private Long orderItemId;
+
+    /**
      * 订单id
      */
     @ApiModelProperty(value = "订单id", required = true, example = "123456")
@@ -52,4 +58,16 @@ public class OrderItemResponse {
      */
     @ApiModelProperty(value = "商品名称", required = false, example = "桌子")
     private String skuName;
+
+    /**
+     * 订单状态
+     */
+    @ApiModelProperty(value = "订单状态(0:未提交, 1:已提交)", required = false, example = "1")
+    private Integer status;
+
+    /**
+     * 订单状态描述
+     */
+    @ApiModelProperty(value = "订单状态描述", required = true, example = "未提交/已提交")
+    private String statusDesc;
 }

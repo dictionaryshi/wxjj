@@ -86,6 +86,17 @@ public class SkuOrderController {
         return ResponseResult.success(diffs);
     }
 
+    @ApiOperation("根据条目id查询订单条目")
+    @LoginCheck
+    @GetMapping("/get-order-item-by-id")
+    public ResponseResult<OrderItemResponse> getOrderItemById(
+            @Valid GetOrderItemRequest getOrderItemRequest
+    ) {
+        Optional<OrderItemEntity> orderItemEntityOptional = skuOrderFacade.getOrderItemEntity(getOrderItemRequest.getOrderItemId());
+        Optional<SkuOrderEntity> skuOrderEntityOptional = skuOrderFacade.getOrder(Long.parseLong(getOrderItemRequest.getOrderId()));
+        return ResponseResult.success(SkuOrderAssembler.toOrderItemResponse(orderItemEntityOptional.orElse(null), skuOrderEntityOptional.orElse(null)));
+    }
+
     @ApiOperation("查询订单条目")
     @LoginCheck
     @GetMapping("/query-order-items")
@@ -93,7 +104,8 @@ public class SkuOrderController {
             @Valid QueryOrderItemRequest queryOrderItemRequest
     ) {
         List<OrderItemEntity> orderItemEntities = skuOrderFacade.listOrderItemEntities(Long.parseLong(queryOrderItemRequest.getOrderId()));
-        return ResponseResult.success(CollectionUtil.map(orderItemEntities, SkuOrderAssembler::toOrderItemResponse).collect(Collectors.toList()));
+        Optional<SkuOrderEntity> skuOrderEntityOptional = skuOrderFacade.getOrder(Long.parseLong(queryOrderItemRequest.getOrderId()));
+        return ResponseResult.success(CollectionUtil.map(orderItemEntities, orderItemEntity -> SkuOrderAssembler.toOrderItemResponse(orderItemEntity, skuOrderEntityOptional.orElse(null))).collect(Collectors.toList()));
     }
 
     @ApiOperation("添加订单条目")
