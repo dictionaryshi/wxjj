@@ -83,7 +83,10 @@ public class SkuOrderDomainService {
         skuOrderDOExampleExtend.setPageParam(pageParam);
 
         SkuOrderDOExample.Criteria criteria = skuOrderDOExampleExtend.createCriteria();
-        criteria.andTypeEqualTo(skuOrderEntity.getType());
+
+        if (!Objects.isNull(skuOrderEntity.getType())) {
+            criteria.andTypeEqualTo(skuOrderEntity.getType());
+        }
 
         if (!Objects.isNull(skuOrderEntity.getOrderId())) {
             criteria.andOrderIdEqualTo(skuOrderEntity.getOrderId());

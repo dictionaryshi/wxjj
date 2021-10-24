@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * @author : shichunyang
  * Date    : 2021/2/2
@@ -25,7 +23,6 @@ public class QueryOrderByPageRequest {
     /**
      * 订单类型
      */
-    @NotNull(message = "type 不为null")
     @ApiModelProperty(value = "订单类型(1:入库, 2:出库)", required = true, example = "1")
     private Integer type;
 
