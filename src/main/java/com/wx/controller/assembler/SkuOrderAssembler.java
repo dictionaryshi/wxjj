@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -102,13 +103,17 @@ public class SkuOrderAssembler {
         return skuOrderEntity;
     }
 
-    public static OrderItemResponse toOrderItemResponse(OrderItemEntity orderItemEntity) {
+    public static OrderItemResponse toOrderItemResponse(OrderItemEntity orderItemEntity, SkuOrderEntity skuOrderEntity) {
         OrderItemResponse orderItemResponse = new OrderItemResponse();
         orderItemResponse.setOrderId(Objects.isNull(orderItemEntity.getOrderId()) ? StringUtil.EMPTY : String.valueOf(orderItemEntity.getOrderId()));
         orderItemResponse.setSkuId(orderItemEntity.getSkuId());
         orderItemResponse.setNumber(orderItemEntity.getNumber());
         orderItemResponse.setCreatedAt(orderItemEntity.getCreatedAt());
         orderItemResponse.setSkuName(orderItemEntity.getSkuName());
+        Optional.ofNullable(skuOrderEntity).ifPresent(skuOrder -> {
+            orderItemResponse.setStatus(skuOrder.getStatus());
+            orderItemResponse.setStatusDesc(skuOrder.getStatusDesc());
+        });
         return orderItemResponse;
     }
 
