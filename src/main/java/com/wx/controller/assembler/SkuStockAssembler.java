@@ -2,6 +2,7 @@ package com.wx.controller.assembler;
 
 import com.scy.core.StringUtil;
 import com.scy.core.format.DateUtil;
+import com.scy.core.format.NumberUtil;
 import com.scy.core.page.PageResult;
 import com.wx.controller.request.stock.QuerySkuStockByPageRequest;
 import com.wx.controller.request.stock.QueryStockDetailByPageRequest;
@@ -92,7 +93,8 @@ public class SkuStockAssembler {
         skuStockDetailResponse.setStockOffset(skuStockDetailEntity.getStockOffset());
         skuStockDetailResponse.setStockBefore(skuStockDetailEntity.getStockBefore());
         skuStockDetailResponse.setStockAfter(skuStockDetailEntity.getStockAfter());
-        skuStockDetailResponse.setOrderId(Objects.isNull(skuStockDetailEntity.getOrderId()) ? StringUtil.EMPTY : String.valueOf(skuStockDetailEntity.getOrderId()));
+        skuStockDetailResponse.setOrderId((Objects.isNull(skuStockDetailEntity.getOrderId()) || skuStockDetailEntity.getOrderId() <= NumberUtil.ZERO.longValue())
+                ? StringUtil.EMPTY : String.valueOf(skuStockDetailEntity.getOrderId()));
         skuStockDetailResponse.setCreatedAt(skuStockDetailEntity.getCreatedAt());
         skuStockDetailResponse.setStockBaseInfoName(skuStockDetailEntity.getStockBaseInfoName());
         skuStockDetailResponse.setSkuName(skuStockDetailEntity.getSkuName());
