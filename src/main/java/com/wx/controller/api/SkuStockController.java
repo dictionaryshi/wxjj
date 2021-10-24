@@ -6,6 +6,7 @@ import com.scy.core.rest.ResponseResult;
 import com.scy.redis.annotation.LimitAccessFrequency;
 import com.scy.web.annotation.LoginCheck;
 import com.wx.controller.assembler.SkuStockAssembler;
+import com.wx.controller.request.stock.GetStockRequest;
 import com.wx.controller.request.stock.QuerySkuStockByPageRequest;
 import com.wx.controller.request.stock.QueryStockDetailByPageRequest;
 import com.wx.controller.request.stock.UpdateStockRequest;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 /**
  * @author : shichunyang
@@ -50,6 +52,16 @@ public class SkuStockController {
         skuStockEntity = skuStockFacade.updateStock(skuStockEntity);
         StockChangeResponse stockChangeResponse = SkuStockAssembler.toStockChangeResponse(skuStockEntity);
         return ResponseResult.success(stockChangeResponse);
+    }
+
+    @ApiOperation("查询商品库存")
+    @LoginCheck
+    @GetMapping("/get-sku-stock")
+    public ResponseResult<SkuStockResponse> getSkuStock(
+            @Valid GetStockRequest getStockRequest
+    ) {
+        Optional<SkuStockEntity> skuStockEntityOptional = skuStockFacade.getSkuStockEntity(getStockRequest.getStockBaseInfoId(), getStockRequest.getSkuId());
+        return ResponseResult.success(SkuStockAssembler.toSkuStockResponse(skuStockEntityOptional.orElse(null)));
     }
 
     @ApiOperation("分页查询商品库存")
