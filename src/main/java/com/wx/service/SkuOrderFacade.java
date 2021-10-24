@@ -26,10 +26,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -131,7 +128,13 @@ public class SkuOrderFacade {
      * 根据条目id查询订单条目
      */
     public Optional<OrderItemEntity> getOrderItemEntity(long orderItemId) {
-        return skuOrderDomainService.getOrderItemEntity(orderItemId);
+        Optional<OrderItemEntity> orderItemEntityOptional = skuOrderDomainService.getOrderItemEntity(orderItemId);
+        orderItemEntityOptional.ifPresent(orderItemEntity -> {
+            List<Long> skuIds = Collections.singletonList(orderItemEntity.getSkuId());
+            Map<Long, String> skuNameMap = goodsSkuDomainService.getSkuNameMap(skuIds);
+            orderItemEntity.setSkuName(skuNameMap.get(orderItemEntity.getSkuId()));
+        });
+        return orderItemEntityOptional;
     }
 
     /**
