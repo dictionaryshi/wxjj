@@ -7,14 +7,13 @@ import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
 import com.scy.db.util.ForceMasterHelper;
 import com.scy.redis.lock.RedisLock;
+import com.wx.dao.warehouse.mapper.SkuStockDOMapper;
+import com.wx.dao.warehouse.mapper.SkuStockDetailDOMapper;
 import com.wx.dao.warehouse.mapper.extend.SkuStockDOMapperExtend;
-import com.wx.dao.warehouse.mapper.extend.SkuStockDetailDOMapperExtend;
 import com.wx.dao.warehouse.model.SkuStockDO;
 import com.wx.dao.warehouse.model.SkuStockDOExample;
 import com.wx.dao.warehouse.model.SkuStockDetailDO;
 import com.wx.dao.warehouse.model.SkuStockDetailDOExample;
-import com.wx.dao.warehouse.model.extend.SkuStockDOExampleExtend;
-import com.wx.dao.warehouse.model.extend.SkuStockDetailDOExampleExtend;
 import com.wx.domain.stock.entity.SkuStockDetailEntity;
 import com.wx.domain.stock.entity.SkuStockEntity;
 import com.wx.domain.stock.entity.valueobject.StockTypeEnum;
@@ -40,10 +39,13 @@ import java.util.stream.Collectors;
 public class SkuStockDomainService {
 
     @Autowired
-    private SkuStockDOMapperExtend skuStockDOMapper;
+    private SkuStockDOMapper skuStockDOMapper;
 
     @Autowired
-    private SkuStockDetailDOMapperExtend skuStockDetailDOMapper;
+    private SkuStockDOMapperExtend skuStockDOMapperExtend;
+
+    @Autowired
+    private SkuStockDetailDOMapper skuStockDetailDOMapper;
 
     @Autowired
     private RedisLock redisLock;
@@ -118,7 +120,7 @@ public class SkuStockDomainService {
                 return skuStockEntity;
             }
 
-            skuStockDOMapper.addStock(skuStockEntityOptional.get().getId(), skuStockEntity.getStockOperateValueobject().getStockOffset());
+            skuStockDOMapperExtend.addStock(skuStockEntityOptional.get().getId(), skuStockEntity.getStockOperateValueobject().getStockOffset());
             operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
 
             insertStockDetail(skuStockEntity, StockTypeEnum.IN);
@@ -144,7 +146,7 @@ public class SkuStockDomainService {
                         "stockBaseInfoId", skuStockEntity.getStockBaseInfoId(), "skuId", skuStockEntity.getSkuId()));
             }
 
-            skuStockDOMapper.reduceStock(skuStockEntityOptional.get().getId(), skuStockEntity.getStockOperateValueobject().getStockOffset());
+            skuStockDOMapperExtend.reduceStock(skuStockEntityOptional.get().getId(), skuStockEntity.getStockOperateValueobject().getStockOffset());
             operateStockAfter(skuStockEntity, skuStockEntityOptional.get().getStock());
 
             insertStockDetail(skuStockEntity, StockTypeEnum.OUT);
@@ -159,21 +161,21 @@ public class SkuStockDomainService {
         pageResult.setPage(pageParam.getPage());
         pageResult.setLimit(pageParam.getLimit());
 
-        SkuStockDOExampleExtend skuStockDOExampleExtend = new SkuStockDOExampleExtend();
-        pageParam.setOrderField("id");
-        pageParam.setDesc(Boolean.TRUE);
-        skuStockDOExampleExtend.setPageParam(pageParam);
+        SkuStockDOExample skuStockDOExample = new SkuStockDOExample();
+        skuStockDOExample.setOrderByClause("id desc");
+        skuStockDOExample.setOffset(pageParam.getOffset());
+        skuStockDOExample.setLimit(pageParam.getLimit());
 
-        SkuStockDOExample.Criteria criteria = skuStockDOExampleExtend.createCriteria();
+        SkuStockDOExample.Criteria criteria = skuStockDOExample.createCriteria();
         criteria.andStockBaseInfoIdEqualTo(skuStockEntity.getStockBaseInfoId());
 
         if (!CollectionUtil.isEmpty(skuStockEntity.getSkuIds())) {
             criteria.andSkuIdIn(skuStockEntity.getSkuIds());
         }
 
-        pageResult.setTotal((int) skuStockDOMapper.countByExample(skuStockDOExampleExtend));
+        pageResult.setTotal((int) skuStockDOMapper.countByExample(skuStockDOExample));
 
-        List<SkuStockDO> skuStocks = skuStockDOMapper.selectByExampleExtend(skuStockDOExampleExtend);
+        List<SkuStockDO> skuStocks = skuStockDOMapper.selectByExample(skuStockDOExample);
         List<SkuStockEntity> datas = CollectionUtil.map(skuStocks, skuStock -> SkuStockFactory.toSkuStockEntity(skuStock).orElse(null))
                 .collect(Collectors.toList());
         pageResult.setDatas(datas);
@@ -185,12 +187,12 @@ public class SkuStockDomainService {
         pageResult.setPage(pageParam.getPage());
         pageResult.setLimit(pageParam.getLimit());
 
-        SkuStockDetailDOExampleExtend skuStockDetailDOExampleExtend = new SkuStockDetailDOExampleExtend();
-        pageParam.setOrderField("id");
-        pageParam.setDesc(Boolean.TRUE);
-        skuStockDetailDOExampleExtend.setPageParam(pageParam);
+        SkuStockDetailDOExample skuStockDetailDOExample = new SkuStockDetailDOExample();
+        skuStockDetailDOExample.setOrderByClause("id desc");
+        skuStockDetailDOExample.setOffset(pageParam.getOffset());
+        skuStockDetailDOExample.setLimit(pageParam.getLimit());
 
-        SkuStockDetailDOExample.Criteria criteria = skuStockDetailDOExampleExtend.createCriteria();
+        SkuStockDetailDOExample.Criteria criteria = skuStockDetailDOExample.createCriteria();
         criteria.andStockBaseInfoIdEqualTo(skuStockDetailEntity.getStockBaseInfoId());
 
         if (!CollectionUtil.isEmpty(skuStockDetailEntity.getSkuIds())) {
@@ -209,9 +211,9 @@ public class SkuStockDomainService {
             criteria.andCreatedAtLessThanOrEqualTo(skuStockDetailEntity.getCreatedAtEnd());
         }
 
-        pageResult.setTotal((int) skuStockDetailDOMapper.countByExample(skuStockDetailDOExampleExtend));
+        pageResult.setTotal((int) skuStockDetailDOMapper.countByExample(skuStockDetailDOExample));
 
-        List<SkuStockDetailDO> skuStockDetails = skuStockDetailDOMapper.selectByPage(skuStockDetailDOExampleExtend);
+        List<SkuStockDetailDO> skuStockDetails = skuStockDetailDOMapper.selectByExample(skuStockDetailDOExample);
         List<SkuStockDetailEntity> datas = CollectionUtil.map(skuStockDetails, SkuStockFactory::toSkuStockDetailEntity)
                 .collect(Collectors.toList());
         pageResult.setDatas(datas);

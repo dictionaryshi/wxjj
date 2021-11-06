@@ -11,12 +11,11 @@ import com.scy.core.page.PageResult;
 import com.scy.db.util.ForceMasterHelper;
 import com.scy.redis.lock.RedisLock;
 import com.wx.dao.warehouse.mapper.OrderItemDOMapper;
-import com.wx.dao.warehouse.mapper.extend.SkuOrderDOMapperExtend;
+import com.wx.dao.warehouse.mapper.SkuOrderDOMapper;
 import com.wx.dao.warehouse.model.OrderItemDO;
 import com.wx.dao.warehouse.model.OrderItemDOExample;
 import com.wx.dao.warehouse.model.SkuOrderDO;
 import com.wx.dao.warehouse.model.SkuOrderDOExample;
-import com.wx.dao.warehouse.model.extend.SkuOrderDOExampleExtend;
 import com.wx.domain.order.entity.OrderItemEntity;
 import com.wx.domain.order.entity.SkuOrderEntity;
 import com.wx.domain.order.entity.valueobject.OrderStatusEnum;
@@ -42,7 +41,7 @@ import java.util.stream.Collectors;
 public class SkuOrderDomainService {
 
     @Autowired
-    private SkuOrderDOMapperExtend skuOrderDOMapper;
+    private SkuOrderDOMapper skuOrderDOMapper;
 
     @Autowired
     private OrderItemDOMapper orderItemDOMapper;
@@ -77,12 +76,12 @@ public class SkuOrderDomainService {
         pageResult.setPage(pageParam.getPage());
         pageResult.setLimit(pageParam.getLimit());
 
-        SkuOrderDOExampleExtend skuOrderDOExampleExtend = new SkuOrderDOExampleExtend();
-        pageParam.setOrderField("id");
-        pageParam.setDesc(Boolean.TRUE);
-        skuOrderDOExampleExtend.setPageParam(pageParam);
+        SkuOrderDOExample skuOrderDOExample = new SkuOrderDOExample();
+        skuOrderDOExample.setOrderByClause("id desc");
+        skuOrderDOExample.setOffset(pageParam.getOffset());
+        skuOrderDOExample.setLimit(pageParam.getLimit());
 
-        SkuOrderDOExample.Criteria criteria = skuOrderDOExampleExtend.createCriteria();
+        SkuOrderDOExample.Criteria criteria = skuOrderDOExample.createCriteria();
 
         if (!Objects.isNull(skuOrderEntity.getType())) {
             criteria.andTypeEqualTo(skuOrderEntity.getType());
@@ -112,9 +111,9 @@ public class SkuOrderDomainService {
             criteria.andCustomerPhoneLike(skuOrderEntity.getCustomerPhone() + StringUtil.PERCENT);
         }
 
-        pageResult.setTotal((int) skuOrderDOMapper.countByExample(skuOrderDOExampleExtend));
+        pageResult.setTotal((int) skuOrderDOMapper.countByExample(skuOrderDOExample));
 
-        List<SkuOrderDO> skuOrders = skuOrderDOMapper.selectByPage(skuOrderDOExampleExtend);
+        List<SkuOrderDO> skuOrders = skuOrderDOMapper.selectByExample(skuOrderDOExample);
         List<SkuOrderEntity> datas = CollectionUtil.map(skuOrders, skuOrder -> SkuOrderFactory.toSkuOrderEntity(skuOrder).orElse(null))
                 .collect(Collectors.toList());
         pageResult.setDatas(datas);
