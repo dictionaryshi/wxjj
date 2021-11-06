@@ -71,6 +71,14 @@ public class OrderItemDOSqlProvider {
             sql.ORDER_BY(example.getOrderByClause());
         }
 
+        if (example != null && example.getLimit() != null) {
+            if (example.getOffset() == null) {
+                return sql.toString() + " limit " + example.getLimit();
+            } else {
+                return sql.toString() + " limit " + example.getOffset() + ", " + example.getLimit();
+            }
+        }
+
         return sql.toString();
     }
 
