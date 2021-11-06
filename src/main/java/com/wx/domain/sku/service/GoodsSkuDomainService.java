@@ -11,10 +11,8 @@ import com.scy.core.page.PageParam;
 import com.scy.core.page.PageResult;
 import com.scy.db.util.ForceMasterHelper;
 import com.wx.dao.warehouse.mapper.GoodsSkuDOMapper;
-import com.wx.dao.warehouse.mapper.extend.GoodsSkuDOMapperExtend;
 import com.wx.dao.warehouse.model.GoodsSkuDO;
 import com.wx.dao.warehouse.model.GoodsSkuDOExample;
-import com.wx.dao.warehouse.model.extend.GoodsSkuDOExampleExtend;
 import com.wx.domain.sku.entity.GoodsSkuEntity;
 import com.wx.domain.sku.factory.GoodsSkuFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +36,6 @@ public class GoodsSkuDomainService {
 
     @Autowired
     private GoodsSkuDOMapper goodsSkuDOMapper;
-
-    @Autowired
-    private GoodsSkuDOMapperExtend goodsSkuDOMapperExtend;
 
     public GoodsSkuEntity getGoodsSkuEntity(long skuId) {
         GoodsSkuDO goodsSkuDO = goodsSkuDOMapper.selectByPrimaryKey(skuId);
@@ -113,11 +108,12 @@ public class GoodsSkuDomainService {
         pageResult.setPage(pageParam.getPage());
         pageResult.setLimit(pageParam.getLimit());
 
-        GoodsSkuDOExampleExtend goodsSkuDOExampleExtend = new GoodsSkuDOExampleExtend();
-        pageParam.setOrderField("id");
-        pageParam.setDesc(Boolean.TRUE);
-        goodsSkuDOExampleExtend.setPageParam(pageParam);
-        GoodsSkuDOExample.Criteria criteria = goodsSkuDOExampleExtend.createCriteria();
+        GoodsSkuDOExample goodsSkuDOExample = new GoodsSkuDOExample();
+        goodsSkuDOExample.setOrderByClause("id desc");
+        goodsSkuDOExample.setOffset(pageParam.getOffset());
+        goodsSkuDOExample.setLimit(pageParam.getLimit());
+
+        GoodsSkuDOExample.Criteria criteria = goodsSkuDOExample.createCriteria();
         if (!ObjectUtil.isNull(goodsSkuEntity.getSkuId())) {
             criteria.andIdEqualTo(goodsSkuEntity.getSkuId());
         }
@@ -130,9 +126,9 @@ public class GoodsSkuDomainService {
             criteria.andCategoryIdEqualTo(goodsSkuEntity.getCategoryId());
         }
 
-        pageResult.setTotal((int) goodsSkuDOMapper.countByExample(goodsSkuDOExampleExtend));
+        pageResult.setTotal((int) goodsSkuDOMapper.countByExample(goodsSkuDOExample));
 
-        List<GoodsSkuDO> goodsSkus = goodsSkuDOMapperExtend.selectByExampleExtend(goodsSkuDOExampleExtend);
+        List<GoodsSkuDO> goodsSkus = goodsSkuDOMapper.selectByExample(goodsSkuDOExample);
         List<GoodsSkuEntity> datas = CollectionUtil.map(goodsSkus, GoodsSkuFactory::toGoodsSkuEntity).collect(Collectors.toList());
         pageResult.setDatas(datas);
         return pageResult;
