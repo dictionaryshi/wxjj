@@ -16,7 +16,7 @@ public class FirstClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        System.out.println(new Date() + ": 客户端写出数据");
+        System.out.println(new Date() + ": 客户端写数据");
 
         // 获取数据
         ByteBuf buffer = getByteBuf(ctx);
@@ -26,7 +26,7 @@ public class FirstClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     private ByteBuf getByteBuf(ChannelHandlerContext ctx) {
-        byte[] bytes = "你好，彩虹!".getBytes(Charset.forName("utf-8"));
+        byte[] bytes = "来自客户端的请求数据!".getBytes(Charset.forName("utf-8"));
 
         ByteBuf buffer = ctx.alloc().buffer();
 
