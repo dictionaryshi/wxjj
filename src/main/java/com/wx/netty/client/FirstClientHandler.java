@@ -14,6 +14,9 @@ import java.util.Date;
  */
 public class FirstClientHandler extends ChannelInboundHandlerAdapter {
 
+    /**
+     * 这个方法会在客户端连接建立成功之后被调用
+     */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         System.out.println(new Date() + ": 客户端写数据");

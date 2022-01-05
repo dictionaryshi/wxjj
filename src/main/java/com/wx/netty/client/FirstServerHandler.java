@@ -15,6 +15,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class FirstServerHandler extends ChannelInboundHandlerAdapter {
 
+    /**
+     * 这个方法在接收到客户端发来的数据之后被回调。
+     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ByteBuf byteBuf = (ByteBuf) msg;
@@ -40,6 +43,9 @@ public class FirstServerHandler extends ChannelInboundHandlerAdapter {
     private ByteBuf getByteBuf(ChannelHandlerContext ctx) {
         byte[] bytes = "来自服务端的响应数据！".getBytes(Charset.forName("utf-8"));
 
+        //  ctx.alloc() 获取到一个 ByteBuf 的内存管理器，这个
+        //
+        //内存管理器的作用就是分配一个 ByteBuf，然后我们把字符串的二进制数据填充到 ByteBuf，这样我们就获取到了 Netty 需要的一个数据格式。
         ByteBuf buffer = ctx.alloc().buffer();
 
         buffer.writeBytes(bytes);
