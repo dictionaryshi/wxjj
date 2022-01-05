@@ -1,5 +1,6 @@
 package com.wx.netty;
 
+import com.wx.netty.client.FirstServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -60,6 +61,7 @@ public class NettyServer {
                     @Override
                     public void initChannel(NioSocketChannel nioSocketChannel) {
                         System.out.println("childAttr:" + nioSocketChannel.attr(childAttr).get());
+                        nioSocketChannel.pipeline().addLast(new FirstServerHandler());
                     }
                 });
 
