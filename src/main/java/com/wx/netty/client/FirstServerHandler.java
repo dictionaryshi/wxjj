@@ -6,6 +6,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author chao.yu
@@ -24,6 +25,16 @@ public class FirstServerHandler extends ChannelInboundHandlerAdapter {
         System.out.println(new Date() + ": 服务端写数据");
         ByteBuf out = getByteBuf(ctx);
         ctx.channel().writeAndFlush(out);
+
+//        try {
+//            TimeUnit.MILLISECONDS.sleep(100);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        System.out.println(new Date() + ": 服务端写数据(测试粘包)");
+        ByteBuf data = getByteBuf(ctx);
+        ctx.channel().writeAndFlush(data);
     }
 
     private ByteBuf getByteBuf(ChannelHandlerContext ctx) {
