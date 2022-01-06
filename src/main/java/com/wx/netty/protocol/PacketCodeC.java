@@ -8,27 +8,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.wx.netty.protocol.Command.LOGIN_REQUEST;
+import static com.wx.netty.protocol.Command.LOGIN_RESPONSE;
 
 public class PacketCodeC {
 
     private static final int MAGIC_NUMBER = 0x12345678;
+
+    public static final PacketCodeC INSTANCE = new PacketCodeC();
+
     private static final Map<Integer, TypeReference<? extends Packet>> packetTypeMap;
+
     private static final Map<Byte, Serializer> serializerMap;
 
     static {
         packetTypeMap = new HashMap<>();
+
         packetTypeMap.put(LOGIN_REQUEST, new TypeReference<LoginRequestPacket>() {
+        });
+        packetTypeMap.put(LOGIN_RESPONSE, new TypeReference<LoginResponsePacket>() {
         });
 
         serializerMap = new HashMap<>();
+
         serializerMap.put(Serializer.DEFAULT.getSerializerAlogrithm(), Serializer.DEFAULT);
     }
 
-
-    public ByteBuf encode(Packet packet) {
+    public ByteBuf encode(ByteBufAllocator byteBufAllocator, Packet packet) {
         // 1. 创建 ByteBuf 对象
         // ioBuffer() 方法会返回适配 io 读写相关的内存，它会尽可能创建一个直接内存，直接内存可以理解为不受 jvm 堆管理的内存空间，写到 IO 缓冲区的效果更高。
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
+        ByteBuf byteBuf = byteBufAllocator.ioBuffer();
         // 2. 序列化 java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 
@@ -42,7 +50,6 @@ public class PacketCodeC {
 
         return byteBuf;
     }
-
 
     public Packet decode(ByteBuf byteBuf) {
         // 跳过 magic number
