@@ -2,5 +2,7 @@ package com.wx.netty.protocol;
 
 public interface Command {
 
-    Integer LOGIN_REQUEST = 1;
+    int LOGIN_REQUEST = 1;
+
+    int LOGIN_RESPONSE = 2;
 }
