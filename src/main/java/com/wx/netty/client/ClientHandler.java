@@ -12,7 +12,7 @@ import java.util.Date;
  * chao.yu@dianping.com
  * @date 2018/08/04 06:23.
  */
-public class FirstClientHandler extends ChannelInboundHandlerAdapter {
+public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     /**
      * 这个方法会在客户端连接建立成功之后被调用

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * chao.yu@dianping.com
  * @date 2018/08/04 06:21.
  */
-public class FirstServerHandler extends ChannelInboundHandlerAdapter {
+public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     /**
      * 这个方法在接收到客户端发来的数据之后被回调。
