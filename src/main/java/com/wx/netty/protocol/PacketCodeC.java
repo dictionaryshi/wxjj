@@ -7,8 +7,7 @@ import io.netty.buffer.ByteBufAllocator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.wx.netty.protocol.Command.LOGIN_REQUEST;
-import static com.wx.netty.protocol.Command.LOGIN_RESPONSE;
+import static com.wx.netty.protocol.Command.*;
 
 public class PacketCodeC {
 
@@ -26,6 +25,10 @@ public class PacketCodeC {
         packetTypeMap.put(LOGIN_REQUEST, new TypeReference<LoginRequestPacket>() {
         });
         packetTypeMap.put(LOGIN_RESPONSE, new TypeReference<LoginResponsePacket>() {
+        });
+        packetTypeMap.put(MESSAGE_REQUEST, new TypeReference<MessageRequestPacket>() {
+        });
+        packetTypeMap.put(MESSAGE_RESPONSE, new TypeReference<MessageResponsePacket>() {
         });
 
         serializerMap = new HashMap<>();

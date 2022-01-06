@@ -1,9 +1,6 @@
 package com.wx.netty.server;
 
-import com.wx.netty.protocol.LoginRequestPacket;
-import com.wx.netty.protocol.LoginResponsePacket;
-import com.wx.netty.protocol.Packet;
-import com.wx.netty.protocol.PacketCodeC;
+import com.wx.netty.protocol.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -43,6 +40,15 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             }
             // 登录响应
             ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginResponsePacket);
+            ctx.channel().writeAndFlush(responseByteBuf);
+        } else if (packet instanceof MessageRequestPacket) {
+            // 客户端发来消息
+            MessageRequestPacket messageRequestPacket = ((MessageRequestPacket) packet);
+
+            MessageResponsePacket messageResponsePacket = new MessageResponsePacket();
+            System.out.println(new Date() + ": 收到客户端消息: " + messageRequestPacket.getMessage());
+            messageResponsePacket.setMessage("服务端回复【" + messageRequestPacket.getMessage() + "】");
+            ByteBuf responseByteBuf = PacketCodeC.INSTANCE.encode(ctx.alloc(), messageResponsePacket);
             ctx.channel().writeAndFlush(responseByteBuf);
         }
     }
