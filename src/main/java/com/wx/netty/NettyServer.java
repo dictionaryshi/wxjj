@@ -1,6 +1,6 @@
 package com.wx.netty;
 
-import com.wx.netty.client.FirstServerHandler;
+import com.wx.netty.server.FirstServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;

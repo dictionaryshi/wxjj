@@ -1,4 +1,4 @@
-package com.wx.netty.client;
+package com.wx.netty.server;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
