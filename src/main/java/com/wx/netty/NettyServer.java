@@ -3,6 +3,7 @@ package com.wx.netty;
 import com.wx.netty.codec.PacketDecoder;
 import com.wx.netty.codec.PacketEncoder;
 import com.wx.netty.codec.Spliter;
+import com.wx.netty.server.AuthHandler;
 import com.wx.netty.server.LoginRequestHandler;
 import com.wx.netty.server.MessageRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
@@ -68,6 +69,7 @@ public class NettyServer {
                         nioSocketChannel.pipeline().addLast(new Spliter());
                         nioSocketChannel.pipeline().addLast(new PacketDecoder());
                         nioSocketChannel.pipeline().addLast(new LoginRequestHandler());
+                        nioSocketChannel.pipeline().addLast(new AuthHandler());
                         nioSocketChannel.pipeline().addLast(new MessageRequestHandler());
                         nioSocketChannel.pipeline().addLast(new PacketEncoder());
                     }
