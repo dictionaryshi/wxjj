@@ -25,19 +25,14 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println(new Date() + ": 客户端开始登录");
-
         // 创建登录对象
         LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
         loginRequestPacket.setUserId(UUID.randomUUID().toString());
         loginRequestPacket.setUsername("shichunyang");
         loginRequestPacket.setPassword("naodian12300");
 
-        // 编码
-        ByteBuf buffer = PacketCodeC.INSTANCE.encode(ctx.alloc(), loginRequestPacket);
-
         // 写数据
-        ctx.channel().writeAndFlush(buffer);
+        ctx.channel().writeAndFlush(loginRequestPacket);
     }
 
     @Override
