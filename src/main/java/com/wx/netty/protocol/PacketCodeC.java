@@ -2,7 +2,6 @@ package com.wx.netty.protocol;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
 
 import java.util.HashMap;
 import java.util.Map;
