@@ -1,6 +1,9 @@
 package com.wx.netty;
 
-import com.wx.netty.server.ServerHandler;
+import com.wx.netty.codec.PacketDecoder;
+import com.wx.netty.codec.PacketEncoder;
+import com.wx.netty.server.LoginRequestHandler;
+import com.wx.netty.server.MessageRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -52,7 +55,7 @@ public class NettyServer {
                 .handler(new ChannelInitializer<NioServerSocketChannel>() {
                     @Override
                     public void initChannel(NioServerSocketChannel nioServerSocketChannel) {
-                        System.out.println("attr:" + nioServerSocketChannel.attr(attr).get());
+                        System.out.println("serverAttr:" + nioServerSocketChannel.attr(attr).get());
                         System.out.println("服务端启动中");
                     }
                 })
@@ -60,8 +63,11 @@ public class NettyServer {
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     public void initChannel(NioSocketChannel nioSocketChannel) {
-                        System.out.println("childAttr:" + nioSocketChannel.attr(childAttr).get());
-                        nioSocketChannel.pipeline().addLast(new ServerHandler());
+                        System.out.println("serverChildAttr:" + nioSocketChannel.attr(childAttr).get());
+                        nioSocketChannel.pipeline().addLast(new PacketDecoder());
+                        nioSocketChannel.pipeline().addLast(new LoginRequestHandler());
+                        nioSocketChannel.pipeline().addLast(new MessageRequestHandler());
+                        nioSocketChannel.pipeline().addLast(new PacketEncoder());
                     }
                 });
 
