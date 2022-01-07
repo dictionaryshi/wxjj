@@ -2,6 +2,10 @@ package com.wx.netty;
 
 import com.wx.netty.attribute.LoginUtil;
 import com.wx.netty.client.ClientHandler;
+import com.wx.netty.client.LoginResponseHandler;
+import com.wx.netty.client.MessageResponseHandler;
+import com.wx.netty.codec.PacketDecoder;
+import com.wx.netty.codec.PacketEncoder;
 import com.wx.netty.protocol.MessageRequestPacket;
 import com.wx.netty.protocol.PacketCodeC;
 import io.netty.bootstrap.Bootstrap;
@@ -59,8 +63,11 @@ public class NettyClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel socketChannel) {
-                        System.out.println("attr:" + socketChannel.attr(attr).get());
-                        socketChannel.pipeline().addLast(new ClientHandler());
+                        System.out.println("clientAttr:" + socketChannel.attr(attr).get());
+                        socketChannel.pipeline().addLast(new PacketDecoder());
+                        socketChannel.pipeline().addLast(new LoginResponseHandler());
+                        socketChannel.pipeline().addLast(new MessageResponseHandler());
+                        socketChannel.pipeline().addLast(new PacketEncoder());
                     }
                 });
 
@@ -102,10 +109,7 @@ public class NettyClient {
                     Scanner sc = new Scanner(System.in);
                     String line = sc.nextLine();
 
-                    MessageRequestPacket packet = new MessageRequestPacket();
-                    packet.setMessage(line);
-                    ByteBuf byteBuf = PacketCodeC.INSTANCE.encode(channel.alloc(), packet);
-                    channel.writeAndFlush(byteBuf);
+                    channel.writeAndFlush(new MessageRequestPacket(line));
                 }
             }
         }).start();
