@@ -5,6 +5,7 @@ import com.wx.netty.client.LoginResponseHandler;
 import com.wx.netty.client.MessageResponseHandler;
 import com.wx.netty.codec.PacketDecoder;
 import com.wx.netty.codec.PacketEncoder;
+import com.wx.netty.codec.Spliter;
 import com.wx.netty.protocol.MessageRequestPacket;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -61,6 +62,7 @@ public class NettyClient {
                     @Override
                     public void initChannel(SocketChannel socketChannel) {
                         System.out.println("clientAttr:" + socketChannel.attr(attr).get());
+                        socketChannel.pipeline().addLast(new Spliter());
                         socketChannel.pipeline().addLast(new PacketDecoder());
                         socketChannel.pipeline().addLast(new LoginResponseHandler());
                         socketChannel.pipeline().addLast(new MessageResponseHandler());
