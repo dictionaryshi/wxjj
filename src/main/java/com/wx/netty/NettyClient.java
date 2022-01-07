@@ -1,15 +1,12 @@
 package com.wx.netty;
 
 import com.wx.netty.attribute.LoginUtil;
-import com.wx.netty.client.ClientHandler;
 import com.wx.netty.client.LoginResponseHandler;
 import com.wx.netty.client.MessageResponseHandler;
 import com.wx.netty.codec.PacketDecoder;
 import com.wx.netty.codec.PacketEncoder;
 import com.wx.netty.protocol.MessageRequestPacket;
-import com.wx.netty.protocol.PacketCodeC;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
