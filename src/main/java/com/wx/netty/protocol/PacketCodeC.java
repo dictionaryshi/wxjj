@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.wx.netty.protocol.Command.*;
 
@@ -36,10 +37,10 @@ public class PacketCodeC {
     }
 
     public ByteBuf encode(ByteBuf byteBuf, Packet packet) {
-        // 2. 序列化 java 对象
+        // 序列化 java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 
-        // 3. 实际编码过程
+        // 实际编码过程
         byteBuf.writeInt(MAGIC_NUMBER);
         byteBuf.writeByte(packet.getVersion());
         byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlogrithm());
@@ -69,21 +70,19 @@ public class PacketCodeC {
         byte[] bytes = new byte[length];
         byteBuf.readBytes(bytes);
 
-        TypeReference<? extends Packet> requestType = getRequestType(command);
-        Serializer serializer = getSerializer(serializeAlgorithm);
+        Serializer serializer = serializerMap.get(serializeAlgorithm);
+        if (Objects.isNull(serializer)) {
+            return null;
+        }
 
-        if (requestType != null && serializer != null) {
+        if (Objects.equals(serializeAlgorithm, SerializerAlogrithm.JSON)) {
+            TypeReference<? extends Packet> requestType = packetTypeMap.get(command);
+            if (Objects.isNull(requestType)) {
+                return null;
+            }
             return serializer.deserialize(bytes, requestType);
         }
 
         return null;
-    }
-
-    private Serializer getSerializer(byte serializeAlgorithm) {
-        return serializerMap.get(serializeAlgorithm);
-    }
-
-    private TypeReference<? extends Packet> getRequestType(int command) {
-        return packetTypeMap.get(command);
     }
 }
