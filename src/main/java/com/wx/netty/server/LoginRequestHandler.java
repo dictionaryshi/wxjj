@@ -1,12 +1,12 @@
 package com.wx.netty.server;
 
-import com.wx.netty.attribute.LoginUtil;
+import com.scy.core.UUIDUtil;
+import com.wx.netty.attribute.SessionUtil;
 import com.wx.netty.protocol.LoginRequestPacket;
 import com.wx.netty.protocol.LoginResponsePacket;
+import com.wx.netty.session.Session;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
-import java.util.Date;
 
 /**
  * @author : shichunyang
@@ -18,20 +18,24 @@ import java.util.Date;
 public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginRequestPacket> {
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, LoginRequestPacket loginRequestPacket) {
-        System.out.println(new Date() + ": 收到客户端登录请求……");
-
+    public void channelRead0(ChannelHandlerContext ctx, LoginRequestPacket loginRequestPacket) throws Exception {
         LoginResponsePacket loginResponsePacket = new LoginResponsePacket();
         loginResponsePacket.setVersion(loginRequestPacket.getVersion());
+        loginResponsePacket.setUserName(loginRequestPacket.getUserName());
 
         if (valid(loginRequestPacket)) {
+            System.out.println("[" + loginRequestPacket.getUserName() + "]登录成功");
+
+            String userId = UUIDUtil.uuid();
+
+            loginResponsePacket.setUserId(userId);
             loginResponsePacket.setSuccess(Boolean.TRUE);
-            System.out.println(new Date() + ": 登录成功!");
-            LoginUtil.markAsLogin(ctx.channel());
+
+            SessionUtil.bindSession(new Session(userId, loginRequestPacket.getUserName()), ctx.channel());
         } else {
             loginResponsePacket.setReason("账号密码校验失败");
             loginResponsePacket.setSuccess(Boolean.FALSE);
-            System.out.println(new Date() + ": 登录失败!");
+            System.out.println("[" + loginRequestPacket.getUserName() + "]登录失败");
         }
 
         // 登录响应
@@ -40,11 +44,6 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
 
     private boolean valid(LoginRequestPacket loginRequestPacket) {
         return true;
-    }
-
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        super.channelActive(ctx);
     }
 
     @Override
