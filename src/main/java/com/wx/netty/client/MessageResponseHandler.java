@@ -4,8 +4,6 @@ import com.wx.netty.protocol.MessageResponsePacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-import java.util.Date;
-
 /**
  * @author : shichunyang
  * Date    : 2022/1/7
@@ -17,6 +15,9 @@ public class MessageResponseHandler extends SimpleChannelInboundHandler<MessageR
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, MessageResponsePacket messageResponsePacket) throws Exception {
-        System.out.println(new Date() + ": 收到服务端的消息: " + messageResponsePacket.getMessage());
+        String fromUserId = messageResponsePacket.getFromUserId();
+        String fromUserName = messageResponsePacket.getFromUserName();
+        System.out.println(fromUserId + ":" + fromUserName + " -> " + messageResponsePacket
+                .getMessage());
     }
 }
