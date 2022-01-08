@@ -11,6 +11,10 @@ import static com.wx.netty.protocol.Command.MESSAGE_RESPONSE;
 @ToString
 public class MessageResponsePacket extends Packet {
 
+    private String fromUserId;
+
+    private String fromUserName;
+
     private String message;
 
     @Override

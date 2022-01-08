@@ -11,6 +11,10 @@ import static com.wx.netty.protocol.Command.LOGIN_RESPONSE;
 @ToString
 public class LoginResponsePacket extends Packet {
 
+    private String userId;
+
+    private String userName;
+
     private boolean success;
 
     private String reason;

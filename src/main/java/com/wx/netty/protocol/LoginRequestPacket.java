@@ -11,9 +11,7 @@ import static com.wx.netty.protocol.Command.LOGIN_REQUEST;
 @ToString
 public class LoginRequestPacket extends Packet {
 
-    private String userId;
-
-    private String username;
+    private String userName;
 
     private String password;
 
