@@ -1,10 +1,14 @@
 package com.wx.netty.protocol;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import static com.wx.netty.protocol.Command.LOGIN_RESPONSE;
 
-@Data
+@Getter
+@Setter
+@ToString
 public class LoginResponsePacket extends Packet {
 
     private boolean success;

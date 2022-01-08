@@ -1,10 +1,14 @@
 package com.wx.netty.protocol;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import static com.wx.netty.protocol.Command.LOGIN_REQUEST;
 
-@Data
+@Getter
+@Setter
+@ToString
 public class LoginRequestPacket extends Packet {
 
     private String userId;
