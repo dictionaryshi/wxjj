@@ -1,11 +1,12 @@
 package com.wx.netty;
 
-import com.wx.netty.attribute.LoginUtil;
+import com.wx.netty.attribute.SessionUtil;
 import com.wx.netty.client.LoginResponseHandler;
 import com.wx.netty.client.MessageResponseHandler;
 import com.wx.netty.codec.PacketDecoder;
 import com.wx.netty.codec.PacketEncoder;
 import com.wx.netty.codec.Spliter;
+import com.wx.netty.protocol.LoginRequestPacket;
 import com.wx.netty.protocol.MessageRequestPacket;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -92,16 +93,37 @@ public class NettyClient {
     }
 
     private static void startConsoleThread(Channel channel) {
+        Scanner sc = new Scanner(System.in);
+        LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
+
         new Thread(() -> {
             while (!Thread.interrupted()) {
-                if (LoginUtil.hasLogin(channel)) {
-                    System.out.println("请在控制台输入文字: ");
-                    Scanner sc = new Scanner(System.in);
-                    String line = sc.nextLine();
+                if (!SessionUtil.hasLogin(channel)) {
+                    System.out.print("输入用户名登录: ");
+                    String username = sc.nextLine();
+                    loginRequestPacket.setUserName(username);
 
-                    channel.writeAndFlush(new MessageRequestPacket(line));
+                    // 密码使用默认的
+                    loginRequestPacket.setPassword("pwd");
+
+                    // 发送登录数据包
+                    channel.writeAndFlush(loginRequestPacket);
+
+                    waitForLoginResponse();
+                } else {
+                    String toUserId = sc.next();
+                    String message = sc.next();
+                    channel.writeAndFlush(new MessageRequestPacket(toUserId, message));
                 }
             }
         }).start();
+    }
+
+
+    private static void waitForLoginResponse() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ignored) {
+        }
     }
 }
