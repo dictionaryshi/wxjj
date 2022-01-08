@@ -12,7 +12,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.AttributeKey;
 
 /**
  * @author : shichunyang
@@ -31,19 +30,11 @@ public class NettyServer {
         NioEventLoopGroup boosGroup = new NioEventLoopGroup();
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
 
-        AttributeKey<String> attr = AttributeKey.newInstance("attr");
-
-        AttributeKey<String> childAttr = AttributeKey.newInstance("childAttr");
-
         serverBootstrap
 
                 .group(boosGroup, workerGroup)
 
                 .channel(NioServerSocketChannel.class)
-
-                .attr(attr, "attrValue")
-
-                .childAttr(childAttr, "childAttrValue")
 
                 //如果连接建立频繁，服务器处理创建新连接较慢，可以适当调大这个参数
                 .option(ChannelOption.SO_BACKLOG, 1024)
@@ -57,15 +48,13 @@ public class NettyServer {
                 .handler(new ChannelInitializer<NioServerSocketChannel>() {
                     @Override
                     public void initChannel(NioServerSocketChannel nioServerSocketChannel) {
-                        System.out.println("serverAttr:" + nioServerSocketChannel.attr(attr).get());
-                        System.out.println("服务端启动中");
+                        System.out.println("netty服务器开始启动...");
                     }
                 })
 
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     public void initChannel(NioSocketChannel nioSocketChannel) {
-                        System.out.println("serverChildAttr:" + nioSocketChannel.attr(childAttr).get());
                         nioSocketChannel.pipeline().addLast(new Spliter());
                         nioSocketChannel.pipeline().addLast(new PacketDecoder());
                         nioSocketChannel.pipeline().addLast(new LoginRequestHandler());
@@ -82,9 +71,9 @@ public class NettyServer {
     private static void bind(final ServerBootstrap serverBootstrap, final int port) {
         serverBootstrap.bind(port).addListener(future -> {
             if (future.isSuccess()) {
-                System.out.println("端口[" + port + "]绑定成功!");
+                System.out.println("netty服务器端口[" + port + "]绑定成功，服务启动成功!");
             } else {
-                System.err.println("端口[" + port + "]绑定失败!");
+                System.err.println("netty服务器端口[" + port + "]绑定失败!");
                 bind(serverBootstrap, port + 1);
             }
         });
