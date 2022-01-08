@@ -23,13 +23,14 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
 
         LoginResponsePacket loginResponsePacket = new LoginResponsePacket();
         loginResponsePacket.setVersion(loginRequestPacket.getVersion());
+
         if (valid(loginRequestPacket)) {
-            loginResponsePacket.setSuccess(true);
+            loginResponsePacket.setSuccess(Boolean.TRUE);
             System.out.println(new Date() + ": 登录成功!");
             LoginUtil.markAsLogin(ctx.channel());
         } else {
             loginResponsePacket.setReason("账号密码校验失败");
-            loginResponsePacket.setSuccess(false);
+            loginResponsePacket.setSuccess(Boolean.FALSE);
             System.out.println(new Date() + ": 登录失败!");
         }
 
