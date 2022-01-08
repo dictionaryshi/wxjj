@@ -15,7 +15,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.AttributeKey;
 
 import java.util.Date;
 import java.util.Scanner;
@@ -38,17 +37,12 @@ public class NettyClient {
 
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
 
-        AttributeKey<String> attr = AttributeKey.newInstance("attr");
-
         bootstrap
                 // 指定线程模型
                 .group(workerGroup)
 
                 // 指定 IO 类型为 NIO
                 .channel(NioSocketChannel.class)
-
-                // 绑定自定义属性到 channel
-                .attr(attr, "attrValue")
 
                 // 设置TCP底层属性
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 500)
@@ -61,7 +55,6 @@ public class NettyClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel socketChannel) {
-                        System.out.println("clientAttr:" + socketChannel.attr(attr).get());
                         socketChannel.pipeline().addLast(new Spliter());
                         socketChannel.pipeline().addLast(new PacketDecoder());
                         socketChannel.pipeline().addLast(new LoginResponseHandler());
@@ -77,7 +70,7 @@ public class NettyClient {
     private static void connect(Bootstrap bootstrap, String host, int port, int retry) {
         bootstrap.connect(host, port).addListener(future -> {
             if (future.isSuccess()) {
-                System.out.println("连接成功!");
+                System.out.println("连接服务器成功!");
                 Channel channel = ((ChannelFuture) future).channel();
                 startConsoleThread(channel);
                 return;
@@ -90,12 +83,10 @@ public class NettyClient {
 
             // 第几次重连
             int order = (MAX_RETRY - retry) + 1;
+            System.err.println(new Date() + ": 连接失败，第" + order + "次重连……");
 
             // 本次重连的间隔
             int delay = 1 << order;
-
-            System.err.println(new Date() + ": 连接失败，第" + order + "次重连……");
-
             bootstrap.config().group().schedule(() -> connect(bootstrap, host, port, retry - 1), delay, TimeUnit.SECONDS);
         });
     }
@@ -104,7 +95,7 @@ public class NettyClient {
         new Thread(() -> {
             while (!Thread.interrupted()) {
                 if (LoginUtil.hasLogin(channel)) {
-                    System.out.println("输入消息发送至服务端: ");
+                    System.out.println("请在控制台输入文字: ");
                     Scanner sc = new Scanner(System.in);
                     String line = sc.nextLine();
 
