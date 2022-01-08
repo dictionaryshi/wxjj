@@ -73,7 +73,7 @@ public class NettyServer {
             if (future.isSuccess()) {
                 System.out.println("netty服务器端口[" + port + "]绑定成功，服务启动成功!");
             } else {
-                System.err.println("netty服务器端口[" + port + "]绑定失败!");
+                System.err.println("netty服务器端口[" + port + "]绑定失败，尝试绑定新端口...");
                 bind(serverBootstrap, port + 1);
             }
         });
