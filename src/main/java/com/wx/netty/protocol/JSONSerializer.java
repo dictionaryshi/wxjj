@@ -6,8 +6,8 @@ import com.scy.core.json.JsonUtil;
 public class JSONSerializer implements Serializer {
 
     @Override
-    public byte getSerializerAlogrithm() {
-        return SerializerAlogrithm.JSON;
+    public byte getSerializerAlgorithm() {
+        return SerializerAlgorithm.JSON;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.wx.netty.protocol;
 
-public interface SerializerAlogrithm {
+public interface SerializerAlgorithm {
+
     /**
      * json 序列化
      */

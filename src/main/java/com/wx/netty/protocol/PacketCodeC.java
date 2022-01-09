@@ -15,11 +15,11 @@ public class PacketCodeC {
 
     public static final PacketCodeC INSTANCE = new PacketCodeC();
 
-    private static final Map<Integer, TypeReference<? extends Packet>> packetTypeMap;
+    private final Map<Integer, TypeReference<? extends Packet>> packetTypeMap;
 
-    private static final Map<Byte, Serializer> serializerMap;
+    private final Map<Byte, Serializer> serializerMap;
 
-    static {
+    private PacketCodeC() {
         packetTypeMap = new HashMap<>();
 
         packetTypeMap.put(LOGIN_REQUEST, new TypeReference<LoginRequestPacket>() {
@@ -30,25 +30,31 @@ public class PacketCodeC {
         });
         packetTypeMap.put(MESSAGE_RESPONSE, new TypeReference<MessageResponsePacket>() {
         });
+        packetTypeMap.put(LOGOUT_REQUEST, new TypeReference<LogoutRequestPacket>() {
+        });
+        packetTypeMap.put(LOGOUT_RESPONSE, new TypeReference<LogoutResponsePacket>() {
+        });
+        packetTypeMap.put(CREATE_GROUP_REQUEST, new TypeReference<CreateGroupRequestPacket>() {
+        });
+        packetTypeMap.put(CREATE_GROUP_RESPONSE, new TypeReference<CreateGroupResponsePacket>() {
+        });
 
         serializerMap = new HashMap<>();
 
-        serializerMap.put(Serializer.DEFAULT.getSerializerAlogrithm(), Serializer.DEFAULT);
+        serializerMap.put(Serializer.DEFAULT.getSerializerAlgorithm(), Serializer.DEFAULT);
     }
 
-    public ByteBuf encode(ByteBuf byteBuf, Packet packet) {
+    public void encode(ByteBuf byteBuf, Packet packet) {
         // 序列化 java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 
         // 实际编码过程
         byteBuf.writeInt(MAGIC_NUMBER);
         byteBuf.writeByte(packet.getVersion());
-        byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlogrithm());
+        byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());
         byteBuf.writeInt(packet.getCommand());
         byteBuf.writeInt(bytes.length);
         byteBuf.writeBytes(bytes);
-
-        return byteBuf;
     }
 
     public Packet decode(ByteBuf byteBuf) {
@@ -75,12 +81,13 @@ public class PacketCodeC {
             return null;
         }
 
-        if (Objects.equals(serializeAlgorithm, SerializerAlogrithm.JSON)) {
-            TypeReference<? extends Packet> requestType = packetTypeMap.get(command);
-            if (Objects.isNull(requestType)) {
+        if (Objects.equals(serializeAlgorithm, SerializerAlgorithm.JSON)) {
+            TypeReference<? extends Packet> typeReference = packetTypeMap.get(command);
+            if (Objects.isNull(typeReference)) {
                 return null;
             }
-            return serializer.deserialize(bytes, requestType);
+
+            return serializer.deserialize(bytes, typeReference);
         }
 
         return null;
