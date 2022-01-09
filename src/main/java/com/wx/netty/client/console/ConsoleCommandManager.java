@@ -24,6 +24,7 @@ public class ConsoleCommandManager implements ConsoleCommand {
 
     @Override
     public void exec(Scanner scanner, Channel channel) {
+        System.out.println("已登陆用户输入命令：");
         //  获取第一个指令
         String command = scanner.next();
 
@@ -37,6 +38,11 @@ public class ConsoleCommandManager implements ConsoleCommand {
             consoleCommand.exec(scanner, channel);
         } else {
             System.err.println("无法识别[" + command + "]指令，请重新输入!");
+        }
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
         }
     }
 }
