@@ -1,5 +1,6 @@
 package com.wx.netty.client;
 
+import com.wx.netty.protocol.QuitGroupResponsePacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 

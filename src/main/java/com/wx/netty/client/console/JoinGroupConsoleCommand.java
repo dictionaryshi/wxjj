@@ -1,5 +1,6 @@
 package com.wx.netty.client.console;
 
+import com.wx.netty.protocol.JoinGroupRequestPacket;
 import io.netty.channel.Channel;
 
 import java.util.Scanner;
