@@ -17,4 +17,16 @@ public interface Command {
     int CREATE_GROUP_REQUEST = 7;
 
     int CREATE_GROUP_RESPONSE = 8;
+
+    int LIST_GROUP_MEMBERS_REQUEST = 9;
+
+    int LIST_GROUP_MEMBERS_RESPONSE = 10;
+
+    int JOIN_GROUP_REQUEST = 11;
+
+    int JOIN_GROUP_RESPONSE = 12;
+
+    int QUIT_GROUP_REQUEST = 13;
+
+    int QUIT_GROUP_RESPONSE = 14;
 }
