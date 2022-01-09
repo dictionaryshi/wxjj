@@ -9,4 +9,12 @@ public interface Command {
     int MESSAGE_REQUEST = 3;
 
     int MESSAGE_RESPONSE = 4;
+
+    int LOGOUT_REQUEST = 5;
+
+    int LOGOUT_RESPONSE = 6;
+
+    int CREATE_GROUP_REQUEST = 7;
+
+    int CREATE_GROUP_RESPONSE = 8;
 }
