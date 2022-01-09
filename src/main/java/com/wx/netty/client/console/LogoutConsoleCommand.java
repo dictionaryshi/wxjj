@@ -1,5 +1,6 @@
 package com.wx.netty.client.console;
 
+import com.wx.netty.protocol.LogoutRequestPacket;
 import io.netty.channel.Channel;
 
 import java.util.Scanner;
