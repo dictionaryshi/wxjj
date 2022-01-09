@@ -2,6 +2,7 @@ package com.wx.netty.attribute;
 
 import com.wx.netty.session.Session;
 import io.netty.channel.Channel;
+import io.netty.channel.group.ChannelGroup;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionUtil {
 
     private static final Map<String, Channel> USER_ID_CHANNEL_MAP = new ConcurrentHashMap<>();
+
+    private static final Map<String, ChannelGroup> GROUP_ID_CHANNEL_GROUP_MAP = new ConcurrentHashMap<>();
 
     public static void bindSession(Session session, Channel channel) {
         USER_ID_CHANNEL_MAP.put(session.getUserId(), channel);
@@ -18,14 +21,16 @@ public class SessionUtil {
 
     public static void unBindSession(Channel channel) {
         if (hasLogin(channel)) {
-            USER_ID_CHANNEL_MAP.remove(getSession(channel).getUserId());
+            Session session = getSession(channel);
+            USER_ID_CHANNEL_MAP.remove(session.getUserId());
 
             channel.attr(Attributes.SESSION).set(null);
+            System.out.println(session + " 退出登录!");
         }
     }
 
     public static boolean hasLogin(Channel channel) {
-        return channel.hasAttr(Attributes.SESSION);
+        return getSession(channel) != null;
     }
 
     public static Session getSession(Channel channel) {
