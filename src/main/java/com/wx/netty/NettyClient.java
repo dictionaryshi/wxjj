@@ -1,10 +1,7 @@
 package com.wx.netty;
 
 import com.wx.netty.attribute.SessionUtil;
-import com.wx.netty.client.CreateGroupResponseHandler;
-import com.wx.netty.client.LoginResponseHandler;
-import com.wx.netty.client.LogoutResponseHandler;
-import com.wx.netty.client.MessageResponseHandler;
+import com.wx.netty.client.*;
 import com.wx.netty.client.console.ConsoleCommandManager;
 import com.wx.netty.client.console.LoginConsoleCommand;
 import com.wx.netty.codec.PacketDecoder;
@@ -60,10 +57,20 @@ public class NettyClient {
                     public void initChannel(SocketChannel socketChannel) {
                         socketChannel.pipeline().addLast(new Spliter());
                         socketChannel.pipeline().addLast(new PacketDecoder());
+                        // 登录响应处理器
                         socketChannel.pipeline().addLast(new LoginResponseHandler());
-                        socketChannel.pipeline().addLast(new LogoutResponseHandler());
+                        // 收消息处理器
                         socketChannel.pipeline().addLast(new MessageResponseHandler());
+                        // 创建群响应处理器
                         socketChannel.pipeline().addLast(new CreateGroupResponseHandler());
+                        // 加群响应处理器
+                        socketChannel.pipeline().addLast(new JoinGroupResponseHandler());
+                        // 退群响应处理器
+                        socketChannel.pipeline().addLast(new QuitGroupResponseHandler());
+                        // 获取群成员响应处理器
+                        socketChannel.pipeline().addLast(new ListGroupMembersResponseHandler());
+                        // 登出响应处理器
+                        socketChannel.pipeline().addLast(new LogoutResponseHandler());
                         socketChannel.pipeline().addLast(new PacketEncoder());
                     }
                 });
