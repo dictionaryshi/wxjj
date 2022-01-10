@@ -29,4 +29,8 @@ public interface Command {
     int QUIT_GROUP_REQUEST = 13;
 
     int QUIT_GROUP_RESPONSE = 14;
+
+    int GROUP_MESSAGE_REQUEST = 15;
+
+    int GROUP_MESSAGE_RESPONSE = 16;
 }
