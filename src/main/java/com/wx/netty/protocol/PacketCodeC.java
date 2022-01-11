@@ -54,6 +54,10 @@ public class PacketCodeC {
         });
         packetTypeMap.put(GROUP_MESSAGE_RESPONSE, new TypeReference<GroupMessageResponsePacket>() {
         });
+        packetTypeMap.put(HEARTBEAT_REQUEST, new TypeReference<HeartBeatRequestPacket>() {
+        });
+        packetTypeMap.put(HEARTBEAT_RESPONSE, new TypeReference<HeartBeatResponsePacket>() {
+        });
 
         serializerMap = new HashMap<>();
 
