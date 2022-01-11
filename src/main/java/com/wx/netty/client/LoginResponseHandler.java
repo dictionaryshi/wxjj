@@ -3,6 +3,7 @@ package com.wx.netty.client;
 import com.wx.netty.attribute.SessionUtil;
 import com.wx.netty.protocol.LoginResponsePacket;
 import com.wx.netty.session.Session;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -13,7 +14,13 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * ---------------------------------------
  * Desc    :
  */
+@ChannelHandler.Sharable
 public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginResponsePacket> {
+
+    public static final LoginResponseHandler INSTANCE = new LoginResponseHandler();
+
+    private LoginResponseHandler() {
+    }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, LoginResponsePacket loginResponsePacket) throws Exception {
