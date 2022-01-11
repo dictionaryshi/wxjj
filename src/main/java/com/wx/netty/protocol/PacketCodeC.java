@@ -38,6 +38,10 @@ public class PacketCodeC {
         });
         packetTypeMap.put(CREATE_GROUP_RESPONSE, new TypeReference<CreateGroupResponsePacket>() {
         });
+        packetTypeMap.put(LIST_GROUP_MEMBERS_REQUEST, new TypeReference<ListGroupMembersRequestPacket>() {
+        });
+        packetTypeMap.put(LIST_GROUP_MEMBERS_RESPONSE, new TypeReference<ListGroupMembersResponsePacket>() {
+        });
         packetTypeMap.put(JOIN_GROUP_REQUEST, new TypeReference<JoinGroupRequestPacket>() {
         });
         packetTypeMap.put(JOIN_GROUP_RESPONSE, new TypeReference<JoinGroupResponsePacket>() {
@@ -46,9 +50,9 @@ public class PacketCodeC {
         });
         packetTypeMap.put(QUIT_GROUP_RESPONSE, new TypeReference<QuitGroupResponsePacket>() {
         });
-        packetTypeMap.put(LIST_GROUP_MEMBERS_REQUEST, new TypeReference<ListGroupMembersRequestPacket>() {
+        packetTypeMap.put(GROUP_MESSAGE_REQUEST, new TypeReference<GroupMessageRequestPacket>() {
         });
-        packetTypeMap.put(LIST_GROUP_MEMBERS_RESPONSE, new TypeReference<ListGroupMembersResponsePacket>() {
+        packetTypeMap.put(GROUP_MESSAGE_RESPONSE, new TypeReference<GroupMessageResponsePacket>() {
         });
 
         serializerMap = new HashMap<>();
