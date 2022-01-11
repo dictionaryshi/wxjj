@@ -34,4 +34,10 @@ public class ClientHandlers extends SimpleChannelInboundHandler<Packet> {
     public void channelRead0(ChannelHandlerContext ctx, Packet packet) throws Exception {
         handlerMap.get(packet.getCommand()).channelRead(ctx, packet);
     }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("客户端连接关闭!");
+        super.channelInactive(ctx);
+    }
 }

@@ -18,6 +18,5 @@ public class IMIdleStateHandler extends IdleStateHandler {
     public void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) throws Exception {
         System.out.println(READER_IDLE_TIME + "秒内未读到数据，关闭连接");
         ctx.channel().close();
-        super.channelIdle(ctx, evt);
     }
 }
