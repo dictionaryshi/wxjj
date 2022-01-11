@@ -60,6 +60,8 @@ public class NettyClient {
                         socketChannel.pipeline().addLast(new Spliter());
                         socketChannel.pipeline().addLast(PacketCodecHandler.INSTANCE);
                         socketChannel.pipeline().addLast(ClientHandlers.INSTANCE);
+                        // 心跳定时器
+                        socketChannel.pipeline().addLast(new HeartBeatTimerHandler());
                     }
                 });
 
