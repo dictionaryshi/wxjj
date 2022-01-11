@@ -23,6 +23,7 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (!SessionUtil.hasLogin(ctx.channel())) {
+            System.out.println("用户登陆校验未通过，关闭连接");
             ctx.channel().close();
         } else {
             ctx.pipeline().remove(this);
