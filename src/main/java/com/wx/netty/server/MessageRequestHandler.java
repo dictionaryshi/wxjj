@@ -5,6 +5,7 @@ import com.wx.netty.protocol.MessageRequestPacket;
 import com.wx.netty.protocol.MessageResponsePacket;
 import com.wx.netty.session.Session;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -15,10 +16,18 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * ---------------------------------------
  * Desc    :
  */
+@ChannelHandler.Sharable
 public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRequestPacket> {
+
+    public static final MessageRequestHandler INSTANCE = new MessageRequestHandler();
+
+    private MessageRequestHandler() {
+    }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, MessageRequestPacket messageRequestPacket) throws Exception {
+        long begin = System.currentTimeMillis();
+
         // 消息发送方的session
         Session session = SessionUtil.getSession(ctx.channel());
 
@@ -32,7 +41,11 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
 
         // 将消息发送给消息接收方
         if (toUserChannel != null && SessionUtil.hasLogin(toUserChannel)) {
-            toUserChannel.writeAndFlush(messageResponsePacket);
+            toUserChannel.writeAndFlush(messageResponsePacket).addListener(future -> {
+                if (future.isDone()) {
+
+                }
+            });
         } else {
             System.err.println("[" + messageRequestPacket.getToUserId() + "] 不在线，发送失败!");
         }

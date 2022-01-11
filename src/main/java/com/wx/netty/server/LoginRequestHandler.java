@@ -5,6 +5,7 @@ import com.wx.netty.attribute.SessionUtil;
 import com.wx.netty.protocol.LoginRequestPacket;
 import com.wx.netty.protocol.LoginResponsePacket;
 import com.wx.netty.session.Session;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -15,7 +16,13 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * ---------------------------------------
  * Desc    :
  */
+@ChannelHandler.Sharable
 public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginRequestPacket> {
+
+    public static final LoginRequestHandler INSTANCE = new LoginRequestHandler();
+
+    private LoginRequestHandler() {
+    }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, LoginRequestPacket loginRequestPacket) throws Exception {
@@ -39,7 +46,7 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
         }
 
         // 登录响应
-        ctx.channel().writeAndFlush(loginResponsePacket);
+        ctx.writeAndFlush(loginResponsePacket);
     }
 
     private boolean valid(LoginRequestPacket loginRequestPacket) {

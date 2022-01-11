@@ -3,11 +3,18 @@ package com.wx.netty.server;
 import com.wx.netty.attribute.SessionUtil;
 import com.wx.netty.protocol.JoinGroupRequestPacket;
 import com.wx.netty.protocol.JoinGroupResponsePacket;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 
+@ChannelHandler.Sharable
 public class JoinGroupRequestHandler extends SimpleChannelInboundHandler<JoinGroupRequestPacket> {
+
+    public static final JoinGroupRequestHandler INSTANCE = new JoinGroupRequestHandler();
+
+    private JoinGroupRequestHandler() {
+    }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, JoinGroupRequestPacket requestPacket) {
@@ -22,6 +29,6 @@ public class JoinGroupRequestHandler extends SimpleChannelInboundHandler<JoinGro
         responsePacket.setSuccess(Boolean.TRUE);
         responsePacket.setGroupId(groupId);
 
-        ctx.channel().writeAndFlush(responsePacket);
+        ctx.writeAndFlush(responsePacket);
     }
 }

@@ -3,11 +3,18 @@ package com.wx.netty.server;
 import com.wx.netty.attribute.SessionUtil;
 import com.wx.netty.protocol.QuitGroupRequestPacket;
 import com.wx.netty.protocol.QuitGroupResponsePacket;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 
+@ChannelHandler.Sharable
 public class QuitGroupRequestHandler extends SimpleChannelInboundHandler<QuitGroupRequestPacket> {
+
+    public static final QuitGroupRequestHandler INSTANCE = new QuitGroupRequestHandler();
+
+    private QuitGroupRequestHandler() {
+    }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, QuitGroupRequestPacket requestPacket) {
@@ -22,6 +29,6 @@ public class QuitGroupRequestHandler extends SimpleChannelInboundHandler<QuitGro
         responsePacket.setGroupId(requestPacket.getGroupId());
         responsePacket.setSuccess(Boolean.TRUE);
 
-        ctx.channel().writeAndFlush(responsePacket);
+        ctx.writeAndFlush(responsePacket);
     }
 }
