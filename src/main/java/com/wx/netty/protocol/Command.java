@@ -33,4 +33,8 @@ public interface Command {
     int GROUP_MESSAGE_REQUEST = 15;
 
     int GROUP_MESSAGE_RESPONSE = 16;
+
+    int HEARTBEAT_REQUEST = 17;
+
+    int HEARTBEAT_RESPONSE = 18;
 }
