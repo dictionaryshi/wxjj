@@ -4,8 +4,7 @@ import com.wx.netty.attribute.SessionUtil;
 import com.wx.netty.client.*;
 import com.wx.netty.client.console.ConsoleCommandManager;
 import com.wx.netty.client.console.LoginConsoleCommand;
-import com.wx.netty.codec.PacketDecoder;
-import com.wx.netty.codec.PacketEncoder;
+import com.wx.netty.codec.PacketCodecHandler;
 import com.wx.netty.codec.Spliter;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -56,24 +55,8 @@ public class NettyClient {
                     @Override
                     public void initChannel(SocketChannel socketChannel) {
                         socketChannel.pipeline().addLast(new Spliter());
-                        socketChannel.pipeline().addLast(new PacketDecoder());
-                        // 登录响应处理器
-                        socketChannel.pipeline().addLast(new LoginResponseHandler());
-                        // 收消息处理器
-                        socketChannel.pipeline().addLast(new MessageResponseHandler());
-                        // 创建群响应处理器
-                        socketChannel.pipeline().addLast(new CreateGroupResponseHandler());
-                        // 加群响应处理器
-                        socketChannel.pipeline().addLast(new JoinGroupResponseHandler());
-                        // 退群响应处理器
-                        socketChannel.pipeline().addLast(new QuitGroupResponseHandler());
-                        // 获取群成员响应处理器
-                        socketChannel.pipeline().addLast(new ListGroupMembersResponseHandler());
-                        // 群消息响应
-                        socketChannel.pipeline().addLast(new GroupMessageResponseHandler());
-                        // 登出响应处理器
-                        socketChannel.pipeline().addLast(new LogoutResponseHandler());
-                        socketChannel.pipeline().addLast(new PacketEncoder());
+                        socketChannel.pipeline().addLast(PacketCodecHandler.INSTANCE);
+                        socketChannel.pipeline().addLast(ClientHandlers.INSTANCE);
                     }
                 });
 
