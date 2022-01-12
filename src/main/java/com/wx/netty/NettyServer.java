@@ -1,5 +1,6 @@
 package com.wx.netty;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.wx.netty.codec.PacketCodecHandler;
 import com.wx.netty.codec.Spliter;
 import com.wx.netty.handler.IMIdleStateHandler;
@@ -26,8 +27,8 @@ public class NettyServer {
     public static void main(String[] args) throws InterruptedException {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
 
-        NioEventLoopGroup boosGroup = new NioEventLoopGroup();
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+        NioEventLoopGroup boosGroup = new NioEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("boosGroup-thread-pool-%d").build());
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("workerGroup-thread-pool-%d").build());
 
         serverBootstrap
 
