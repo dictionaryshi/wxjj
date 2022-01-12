@@ -5,6 +5,7 @@ import com.wx.netty.codec.Spliter;
 import com.wx.netty.handler.IMIdleStateHandler;
 import com.wx.netty.server.*;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -22,7 +23,7 @@ public class NettyServer {
 
     private static final int BEGIN_PORT = 8000;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
 
         NioEventLoopGroup boosGroup = new NioEventLoopGroup();
@@ -68,14 +69,13 @@ public class NettyServer {
         bind(serverBootstrap, BEGIN_PORT);
     }
 
-    private static void bind(final ServerBootstrap serverBootstrap, final int port) {
-        serverBootstrap.bind(port).addListener(future -> {
-            if (future.isSuccess()) {
-                System.out.println("netty服务器端口[" + port + "]绑定成功，服务启动成功!");
-            } else {
-                System.err.println("netty服务器端口[" + port + "]绑定失败，尝试绑定新端口...");
-                bind(serverBootstrap, port + 1);
-            }
-        });
+    private static void bind(ServerBootstrap serverBootstrap, int port) throws InterruptedException {
+        ChannelFuture future = serverBootstrap.bind(port).sync();
+        if (future.isSuccess()) {
+            System.out.println("netty服务器端口[" + port + "]绑定成功，服务启动成功!");
+        } else {
+            System.err.println("netty服务器端口[" + port + "]绑定失败，服务器启动失败！");
+            System.exit(0);
+        }
     }
 }
