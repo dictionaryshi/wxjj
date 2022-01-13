@@ -4,7 +4,6 @@ import com.scy.core.format.MessageUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -18,15 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 public class NettyUtil {
 
     private NettyUtil() {
-    }
-
-    public static void pushMessage(NioSocketChannel nioSocketChannel, Object msg) {
-        ChannelFuture channelFuture = nioSocketChannel.writeAndFlush(msg);
-        channelFuture.addListener(future -> {
-            if (future.isDone()) {
-                log.info(MessageUtil.format("server push", "msg", msg));
-            }
-        });
     }
 
     public static void pushMessage(ChannelHandlerContext ctx, Object msg) {
