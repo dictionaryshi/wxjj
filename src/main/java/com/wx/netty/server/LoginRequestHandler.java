@@ -54,8 +54,9 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("服务端连接关闭：" + ctx.channel().toString());
-        SessionUtil.unBindSession(ctx.channel());
-        super.channelInactive(ctx);
+        boolean flag = SessionUtil.unBindSession(ctx.channel());
+        if (flag) {
+            ctx.channel().close();
+        }
     }
 }
