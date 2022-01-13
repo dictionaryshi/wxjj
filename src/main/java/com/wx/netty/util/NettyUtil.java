@@ -7,6 +7,8 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 /**
  * @author : shichunyang
  * Date    : 2022/1/13
@@ -29,7 +31,14 @@ public class NettyUtil {
         });
     }
 
-    public static void sendMsg(Channel fromChannel, Channel toChannel, Object msg) {
+    public static void sendMsg(String fromUserId, String toUserId, Object msg) {
+        Channel fromChannel = SessionUtil.getChannel(fromUserId);
+        Channel toChannel = SessionUtil.getChannel(toUserId);
+        if (Objects.isNull(fromChannel) || Objects.isNull(toChannel)) {
+            log.info(MessageUtil.format("sendMsg fail", "fromUserId", fromUserId, "toUserId", toUserId));
+            return;
+        }
+
         ChannelFuture channelFuture = toChannel.writeAndFlush(msg);
         channelFuture.addListener(future -> {
             if (future.isDone()) {

@@ -43,7 +43,7 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
 
         // 将消息发送给消息接收方
         if (toUserChannel != null && SessionUtil.hasLogin(toUserChannel)) {
-            NettyUtil.sendMsg(ctx.channel(), toUserChannel, messageResponsePacket);
+            NettyUtil.sendMsg(messageResponsePacket.getFromUserId(), messageRequestPacket.getToUserId(), messageResponsePacket);
         } else {
             System.err.println("[" + messageRequestPacket.getToUserId() + "] 不在线，发送失败!");
         }
