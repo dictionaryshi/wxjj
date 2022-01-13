@@ -32,8 +32,6 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
         loginResponsePacket.setUserName(loginRequestPacket.getUserName());
 
         if (valid(loginRequestPacket)) {
-            System.out.println("[" + loginRequestPacket.getUserName() + "]登录成功");
-
             String userId = UUIDUtil.uuid();
 
             loginResponsePacket.setUserId(userId);
