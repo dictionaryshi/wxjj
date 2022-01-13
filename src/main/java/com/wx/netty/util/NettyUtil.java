@@ -1,6 +1,7 @@
 package com.wx.netty.util;
 
 import com.scy.core.format.MessageUtil;
+import com.wx.netty.attribute.SessionUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,7 +20,7 @@ public class NettyUtil {
     private NettyUtil() {
     }
 
-    public static void pushMessage(ChannelHandlerContext ctx, Object msg) {
+    public static void pushMsg(ChannelHandlerContext ctx, Object msg) {
         ChannelFuture channelFuture = ctx.writeAndFlush(msg);
         channelFuture.addListener(future -> {
             if (future.isDone()) {
@@ -28,11 +29,12 @@ public class NettyUtil {
         });
     }
 
-    public static void sendMessage(Channel channel, Object msg) {
-        ChannelFuture channelFuture = channel.writeAndFlush(msg);
+    public static void sendMsg(Channel fromChannel, Channel toChannel, Object msg) {
+        ChannelFuture channelFuture = toChannel.writeAndFlush(msg);
         channelFuture.addListener(future -> {
             if (future.isDone()) {
-                log.info(MessageUtil.format("client send", "msg", msg));
+                log.info(MessageUtil.format("send msg",
+                        "from", SessionUtil.getSession(fromChannel), "to", SessionUtil.getSession(toChannel), "msg", msg));
             }
         });
     }
