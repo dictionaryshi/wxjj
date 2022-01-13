@@ -5,6 +5,7 @@ import com.wx.netty.attribute.SessionUtil;
 import com.wx.netty.protocol.LoginRequestPacket;
 import com.wx.netty.protocol.LoginResponsePacket;
 import com.wx.netty.session.Session;
+import com.wx.netty.util.NettyUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -46,7 +47,7 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
         }
 
         // 登录响应
-        ctx.writeAndFlush(loginResponsePacket);
+        NettyUtil.pushMsg(ctx, loginResponsePacket);
     }
 
     private boolean valid(LoginRequestPacket loginRequestPacket) {
