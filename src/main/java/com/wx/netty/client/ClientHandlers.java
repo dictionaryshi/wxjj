@@ -1,5 +1,6 @@
 package com.wx.netty.client;
 
+import com.wx.netty.attribute.SessionUtil;
 import com.wx.netty.protocol.Packet;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -38,7 +39,9 @@ public class ClientHandlers extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("客户端连接关闭!");
-        super.channelInactive(ctx);
+        boolean flag = SessionUtil.unBindSession(ctx.channel());
+        if (flag) {
+            ctx.channel().close();
+        }
     }
 }
