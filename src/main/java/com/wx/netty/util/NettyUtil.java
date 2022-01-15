@@ -5,8 +5,10 @@ import com.wx.netty.attribute.SessionUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -46,5 +48,14 @@ public class NettyUtil {
                         "from", SessionUtil.getSession(fromChannel), "to", SessionUtil.getSession(toChannel), "msg", msg));
             }
         });
+    }
+
+    public static <T> void setAttr(Channel channel, AttributeKey<T> attributeKey, T value) {
+        channel.attr(attributeKey).set(value);
+    }
+
+    @Nullable
+    public static <T> T getAttr(Channel channel, AttributeKey<T> attributeKey) {
+        return channel.attr(attributeKey).get();
     }
 }

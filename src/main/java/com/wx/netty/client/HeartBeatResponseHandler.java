@@ -1,6 +1,8 @@
 package com.wx.netty.client;
 
+import com.wx.netty.attribute.Attributes;
 import com.wx.netty.protocol.HeartBeatResponsePacket;
+import com.wx.netty.util.NettyUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -16,5 +18,6 @@ public class HeartBeatResponseHandler extends SimpleChannelInboundHandler<HeartB
     @Override
     public void channelRead0(ChannelHandlerContext ctx, HeartBeatResponsePacket heartBeatResponsePacket) {
         //System.out.println("收到服务端心跳响应");
+        NettyUtil.setAttr(ctx.channel(), Attributes.LAST_READ_TIME, System.currentTimeMillis());
     }
 }
