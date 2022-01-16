@@ -3,6 +3,7 @@ package com.wx.netty;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.wx.netty.codec.PacketCodecHandler;
 import com.wx.netty.codec.Spliter;
+import com.wx.netty.handler.ExceptionHandler;
 import com.wx.netty.handler.IMIdleStateHandler;
 import com.wx.netty.server.*;
 import io.netty.bootstrap.ServerBootstrap;
@@ -63,6 +64,7 @@ public class NettyServer {
                         nioSocketChannel.pipeline().addLast(LoginRequestHandler.INSTANCE);
                         nioSocketChannel.pipeline().addLast(AuthHandler.INSTANCE);
                         nioSocketChannel.pipeline().addLast(IMHandler.INSTANCE);
+                        nioSocketChannel.pipeline().addLast(ExceptionHandler.INSTANCE);
                     }
                 });
 
