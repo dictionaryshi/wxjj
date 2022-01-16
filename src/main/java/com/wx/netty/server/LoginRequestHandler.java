@@ -9,6 +9,9 @@ import com.wx.netty.util.NettyUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.nio.NioSocketChannel;
+
+import java.net.InetSocketAddress;
 
 /**
  * @author : shichunyang
@@ -30,6 +33,10 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
         LoginResponsePacket loginResponsePacket = new LoginResponsePacket();
         loginResponsePacket.setVersion(loginRequestPacket.getVersion());
         loginResponsePacket.setUserName(loginRequestPacket.getUserName());
+
+        NioSocketChannel channel = (NioSocketChannel) ctx.channel();
+        InetSocketAddress localAddress = channel.localAddress();
+        InetSocketAddress remoteAddress = channel.remoteAddress();
 
         if (valid(loginRequestPacket)) {
             String userId = UUIDUtil.uuid();

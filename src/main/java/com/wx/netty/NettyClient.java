@@ -17,6 +17,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
+import java.net.InetSocketAddress;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -74,7 +75,9 @@ public class NettyClient {
         bootstrap.connect(host, port).addListener(future -> {
             if (future.isSuccess()) {
                 System.out.println("连接服务器成功!");
-                Channel channel = ((ChannelFuture) future).channel();
+                NioSocketChannel channel = (NioSocketChannel) ((ChannelFuture) future).channel();
+                InetSocketAddress localAddress = channel.localAddress();
+                InetSocketAddress remoteAddress = channel.remoteAddress();
                 startConsoleThread(channel);
                 return;
             }
