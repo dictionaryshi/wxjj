@@ -1,5 +1,6 @@
 package com.wx.netty;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.wx.netty.attribute.SessionUtil;
 import com.wx.netty.client.*;
 import com.wx.netty.client.console.ConsoleCommandManager;
@@ -35,7 +36,7 @@ public class NettyClient {
     public static void main(String[] args) {
         Bootstrap bootstrap = new Bootstrap();
 
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("client-thread-pool-%d").build());
 
         bootstrap
                 // 指定线程模型
