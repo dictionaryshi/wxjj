@@ -20,7 +20,6 @@ public class PacketCodeC {
 
         // 实际编码过程
         byteBuf.writeInt(MAGIC_NUMBER);
-        byteBuf.writeByte(packet.getVersion());
         byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());
         byteBuf.writeInt(bytes.length);
         byteBuf.writeBytes(bytes);
@@ -29,9 +28,6 @@ public class PacketCodeC {
     public Packet decode(ByteBuf byteBuf) {
         // 跳过 magic number
         byteBuf.skipBytes(4);
-
-        // 跳过版本号
-        byteBuf.skipBytes(1);
 
         // 序列化算法
         byte serializeAlgorithm = byteBuf.readByte();
