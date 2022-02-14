@@ -24,11 +24,6 @@ public class ClientHandlers extends SimpleChannelInboundHandler<Packet> {
         handlerMap.put(LOGIN_RESPONSE, LoginResponseHandler.INSTANCE);
         handlerMap.put(MESSAGE_RESPONSE, MessageResponseHandler.INSTANCE);
         handlerMap.put(LOGOUT_RESPONSE, LogoutResponseHandler.INSTANCE);
-        handlerMap.put(CREATE_GROUP_RESPONSE, CreateGroupResponseHandler.INSTANCE);
-        handlerMap.put(LIST_GROUP_MEMBERS_RESPONSE, ListGroupMembersResponseHandler.INSTANCE);
-        handlerMap.put(JOIN_GROUP_RESPONSE, JoinGroupResponseHandler.INSTANCE);
-        handlerMap.put(QUIT_GROUP_RESPONSE, QuitGroupResponseHandler.INSTANCE);
-        handlerMap.put(GROUP_MESSAGE_RESPONSE, GroupMessageResponseHandler.INSTANCE);
         handlerMap.put(HEARTBEAT_RESPONSE, HeartBeatResponseHandler.INSTANCE);
     }
 
