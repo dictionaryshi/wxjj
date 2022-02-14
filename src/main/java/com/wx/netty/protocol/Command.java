@@ -13,8 +13,4 @@ public interface Command {
     int LOGOUT_REQUEST = 5;
 
     int LOGOUT_RESPONSE = 6;
-
-    int HEARTBEAT_REQUEST = 17;
-
-    int HEARTBEAT_RESPONSE = 18;
 }
