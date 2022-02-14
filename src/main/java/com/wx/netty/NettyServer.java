@@ -1,10 +1,10 @@
 package com.wx.netty;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.scy.netty.handler.CodeHandler;
 import com.wx.netty.codec.PacketCodecHandler;
 import com.wx.netty.codec.Spliter;
 import com.wx.netty.handler.ExceptionHandler;
-import com.wx.netty.handler.IMIdleStateHandler;
 import com.wx.netty.server.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -57,7 +57,7 @@ public class NettyServer {
                     @Override
                     public void initChannel(NioSocketChannel nioSocketChannel) {
                         // 空闲检测
-                        nioSocketChannel.pipeline().addLast(new IMIdleStateHandler());
+                        nioSocketChannel.pipeline().addLast(new CodeHandler());
                         nioSocketChannel.pipeline().addLast(new Spliter());
                         nioSocketChannel.pipeline().addLast(PacketCodecHandler.INSTANCE);
                         nioSocketChannel.pipeline().addLast(HeartBeatRequestHandler.INSTANCE);

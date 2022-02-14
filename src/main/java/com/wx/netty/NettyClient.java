@@ -1,13 +1,13 @@
 package com.wx.netty;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.scy.netty.handler.CodeHandler;
 import com.scy.netty.util.SessionUtil;
 import com.wx.netty.client.*;
 import com.wx.netty.client.console.ConsoleCommandManager;
 import com.wx.netty.client.console.LoginConsoleCommand;
 import com.wx.netty.codec.PacketCodecHandler;
 import com.wx.netty.codec.Spliter;
-import com.wx.netty.handler.IMIdleStateHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -58,7 +58,7 @@ public class NettyClient {
                     @Override
                     public void initChannel(SocketChannel socketChannel) {
                         // 空闲检测
-                        socketChannel.pipeline().addLast(new IMIdleStateHandler());
+                        socketChannel.pipeline().addLast(new CodeHandler());
                         socketChannel.pipeline().addLast(new Spliter());
                         socketChannel.pipeline().addLast(PacketCodecHandler.INSTANCE);
                         socketChannel.pipeline().addLast(ClientHandlers.INSTANCE);
