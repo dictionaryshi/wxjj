@@ -1,5 +1,7 @@
 package com.wx.netty.client;
 
+import com.scy.netty.client.handler.HeartBeatResponseHandler;
+import com.scy.netty.constant.NettyConstant;
 import com.scy.netty.protocol.AbstractPacket;
 import com.scy.netty.util.SessionUtil;
 import io.netty.channel.ChannelHandler;
@@ -24,7 +26,7 @@ public class ClientHandlers extends SimpleChannelInboundHandler<AbstractPacket> 
         handlerMap.put(LOGIN_RESPONSE, LoginResponseHandler.INSTANCE);
         handlerMap.put(MESSAGE_RESPONSE, MessageResponseHandler.INSTANCE);
         handlerMap.put(LOGOUT_RESPONSE, LogoutResponseHandler.INSTANCE);
-        handlerMap.put(HEARTBEAT_RESPONSE, HeartBeatResponseHandler.INSTANCE);
+        handlerMap.put(NettyConstant.HEARTBEAT_RESPONSE, HeartBeatResponseHandler.INSTANCE);
     }
 
     @Override

@@ -2,9 +2,9 @@ package com.wx.netty.protocol;
 
 public interface Command {
 
-    int LOGIN_REQUEST = 1;
+    int LOGIN_REQUEST = 7;
 
-    int LOGIN_RESPONSE = 2;
+    int LOGIN_RESPONSE = 8;
 
     int MESSAGE_REQUEST = 3;
 
