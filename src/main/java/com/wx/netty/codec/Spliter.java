@@ -1,6 +1,6 @@
 package com.wx.netty.codec;
 
-import com.wx.netty.protocol.PacketCodeC;
+import com.scy.netty.protocol.PacketCodeUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -24,7 +24,7 @@ public class Spliter extends LengthFieldBasedFrameDecoder {
 
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
-        if (in.getInt(in.readerIndex()) != PacketCodeC.MAGIC_NUMBER) {
+        if (in.getInt(in.readerIndex()) != PacketCodeUtil.MAGIC_NUMBER) {
             System.out.println("非法请求，关闭连接");
             ctx.channel().close();
             return null;

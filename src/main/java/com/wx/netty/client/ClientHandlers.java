@@ -1,7 +1,7 @@
 package com.wx.netty.client;
 
+import com.scy.netty.protocol.AbstractPacket;
 import com.scy.netty.util.SessionUtil;
-import com.wx.netty.protocol.Packet;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -12,11 +12,11 @@ import java.util.Map;
 import static com.wx.netty.protocol.Command.*;
 
 @ChannelHandler.Sharable
-public class ClientHandlers extends SimpleChannelInboundHandler<Packet> {
+public class ClientHandlers extends SimpleChannelInboundHandler<AbstractPacket> {
 
     public static final ClientHandlers INSTANCE = new ClientHandlers();
 
-    private final Map<Integer, SimpleChannelInboundHandler<? extends Packet>> handlerMap;
+    private final Map<Integer, SimpleChannelInboundHandler<? extends AbstractPacket>> handlerMap;
 
     private ClientHandlers() {
         handlerMap = new HashMap<>();
@@ -28,7 +28,7 @@ public class ClientHandlers extends SimpleChannelInboundHandler<Packet> {
     }
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, Packet packet) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, AbstractPacket packet) throws Exception {
         handlerMap.get(packet.getCommand()).channelRead(ctx, packet);
     }
 

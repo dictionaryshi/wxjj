@@ -31,7 +31,6 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
     @Override
     public void channelRead0(ChannelHandlerContext ctx, LoginRequestPacket loginRequestPacket) throws Exception {
         LoginResponsePacket loginResponsePacket = new LoginResponsePacket();
-        loginResponsePacket.setVersion(loginRequestPacket.getVersion());
         loginResponsePacket.setUserName(loginRequestPacket.getUserName());
 
         NioSocketChannel channel = (NioSocketChannel) ctx.channel();

@@ -1,7 +1,7 @@
 package com.wx.netty.codec;
 
-import com.wx.netty.protocol.Packet;
-import com.wx.netty.protocol.PacketCodeC;
+import com.scy.netty.protocol.AbstractPacket;
+import com.scy.netty.protocol.PacketCodeUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,7 +10,7 @@ import io.netty.handler.codec.MessageToMessageCodec;
 import java.util.List;
 
 @ChannelHandler.Sharable
-public class PacketCodecHandler extends MessageToMessageCodec<ByteBuf, Packet> {
+public class PacketCodecHandler extends MessageToMessageCodec<ByteBuf, AbstractPacket> {
 
     private PacketCodecHandler() {
     }
@@ -19,14 +19,14 @@ public class PacketCodecHandler extends MessageToMessageCodec<ByteBuf, Packet> {
 
     @Override
     public void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) {
-        out.add(PacketCodeC.INSTANCE.decode(byteBuf));
+        out.add(PacketCodeUtil.decode(byteBuf));
     }
 
     @Override
-    public void encode(ChannelHandlerContext ctx, Packet packet, List<Object> out) {
+    public void encode(ChannelHandlerContext ctx, AbstractPacket packet, List<Object> out) {
         ByteBuf byteBuf = ctx.channel().alloc().ioBuffer();
 
-        PacketCodeC.INSTANCE.encode(byteBuf, packet);
+        PacketCodeUtil.encode(byteBuf, packet);
 
         out.add(byteBuf);
     }

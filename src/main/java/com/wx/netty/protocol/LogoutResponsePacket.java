@@ -1,5 +1,6 @@
 package com.wx.netty.protocol;
 
+import com.scy.netty.protocol.AbstractPacket;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,7 +10,7 @@ import static com.wx.netty.protocol.Command.LOGOUT_RESPONSE;
 @Getter
 @Setter
 @ToString
-public class LogoutResponsePacket extends Packet {
+public class LogoutResponsePacket extends AbstractPacket {
 
     private boolean success;
 
