@@ -1,13 +1,13 @@
 package com.wx.netty;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.scy.netty.handler.CodeHandler;
 import com.scy.netty.handler.NettyIdleStateHandler;
 import com.scy.netty.protocol.DecodeSpliter;
 import com.scy.netty.util.SessionUtil;
 import com.wx.netty.client.*;
 import com.wx.netty.client.console.ConsoleCommandManager;
 import com.wx.netty.client.console.LoginConsoleCommand;
-import com.wx.netty.codec.PacketCodecHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -60,7 +60,7 @@ public class NettyClient {
                         // 空闲检测
                         socketChannel.pipeline().addLast(new NettyIdleStateHandler());
                         socketChannel.pipeline().addLast(new DecodeSpliter());
-                        socketChannel.pipeline().addLast(PacketCodecHandler.INSTANCE);
+                        socketChannel.pipeline().addLast(CodeHandler.INSTANCE);
                         socketChannel.pipeline().addLast(ClientHandlers.INSTANCE);
                         // 心跳定时器
                         socketChannel.pipeline().addLast(new HeartBeatTimerHandler());
