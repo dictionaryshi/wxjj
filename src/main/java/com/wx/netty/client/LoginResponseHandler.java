@@ -1,8 +1,8 @@
 package com.wx.netty.client;
 
-import com.wx.netty.attribute.SessionUtil;
+import com.scy.netty.model.Session;
+import com.scy.netty.util.SessionUtil;
 import com.wx.netty.protocol.LoginResponsePacket;
-import com.wx.netty.session.Session;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -28,7 +28,9 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
         String userName = loginResponsePacket.getUserName();
 
         if (loginResponsePacket.isSuccess()) {
-            SessionUtil.bindSession(new Session(userId, userName), ctx.channel());
+            Session session = new Session();
+            session.setUserId(userId);
+            SessionUtil.bindSession(ctx.channel(), session);
         } else {
             System.out.println("[" + userName + "]登录失败，原因：" + loginResponsePacket.getReason());
         }

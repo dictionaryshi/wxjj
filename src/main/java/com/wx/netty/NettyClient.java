@@ -1,7 +1,7 @@
 package com.wx.netty;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.wx.netty.attribute.SessionUtil;
+import com.scy.netty.util.SessionUtil;
 import com.wx.netty.client.*;
 import com.wx.netty.client.console.ConsoleCommandManager;
 import com.wx.netty.client.console.LoginConsoleCommand;

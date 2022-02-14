@@ -1,11 +1,11 @@
 package com.wx.netty.server;
 
 import com.scy.core.UUIDUtil;
-import com.wx.netty.attribute.SessionUtil;
+import com.scy.netty.model.Session;
+import com.scy.netty.util.NettyUtil;
+import com.scy.netty.util.SessionUtil;
 import com.wx.netty.protocol.LoginRequestPacket;
 import com.wx.netty.protocol.LoginResponsePacket;
-import com.wx.netty.session.Session;
-import com.wx.netty.util.NettyUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -44,7 +44,9 @@ public class LoginRequestHandler extends SimpleChannelInboundHandler<LoginReques
             loginResponsePacket.setUserId(userId);
             loginResponsePacket.setSuccess(Boolean.TRUE);
 
-            SessionUtil.bindSession(new Session(userId, loginRequestPacket.getUserName()), ctx.channel());
+            Session session = new Session();
+            session.setUserId(userId);
+            SessionUtil.bindSession(ctx.channel(), session);
         } else {
             loginResponsePacket.setReason("账号密码校验失败");
             loginResponsePacket.setSuccess(Boolean.FALSE);

@@ -4,8 +4,8 @@ import com.scy.core.ObjectUtil;
 import com.scy.core.format.DateUtil;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.format.NumberUtil;
-import com.wx.netty.attribute.Attributes;
-import com.wx.netty.util.NettyUtil;
+import com.scy.netty.constant.NettyConstant;
+import com.scy.netty.util.NettyUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -24,7 +24,7 @@ public class IMIdleStateHandler extends IdleStateHandler {
 
     @Override
     public void channelIdle(ChannelHandlerContext ctx, IdleStateEvent evt) throws Exception {
-        long lastReadTime = ObjectUtil.obj2Long(NettyUtil.getAttr(ctx.channel(), Attributes.LAST_READ_TIME), 0L);
+        long lastReadTime = ObjectUtil.obj2Long(NettyUtil.getAttr(ctx.channel(), NettyConstant.LAST_READ_TIME), 0L);
         if (ObjectUtil.equals(lastReadTime, NumberUtil.ZERO.longValue())) {
             log.info(MessageUtil.format("心跳channelIdle", "spacing", READER_IDLE_TIME));
         } else {

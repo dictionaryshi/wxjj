@@ -1,11 +1,11 @@
 package com.wx.netty.server;
 
 import com.scy.core.StringUtil;
-import com.wx.netty.attribute.SessionUtil;
+import com.scy.netty.model.Session;
+import com.scy.netty.util.NettyUtil;
+import com.scy.netty.util.SessionUtil;
 import com.wx.netty.protocol.MessageRequestPacket;
 import com.wx.netty.protocol.MessageResponsePacket;
-import com.wx.netty.session.Session;
-import com.wx.netty.util.NettyUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -35,7 +35,6 @@ public class MessageRequestHandler extends SimpleChannelInboundHandler<MessageRe
 
         MessageResponsePacket messageResponsePacket = new MessageResponsePacket();
         messageResponsePacket.setFromUserId(Objects.isNull(session) ? StringUtil.EMPTY : session.getUserId());
-        messageResponsePacket.setFromUserName(Objects.isNull(session) ? StringUtil.EMPTY : session.getUserName());
         messageResponsePacket.setMessage(messageRequestPacket.getMessage());
 
         // 消息接收方的 channel

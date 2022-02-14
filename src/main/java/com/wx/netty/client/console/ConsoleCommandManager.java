@@ -1,6 +1,6 @@
 package com.wx.netty.client.console;
 
-import com.wx.netty.attribute.SessionUtil;
+import com.scy.netty.util.SessionUtil;
 import io.netty.channel.Channel;
 
 import java.util.HashMap;

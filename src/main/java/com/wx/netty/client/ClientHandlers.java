@@ -1,6 +1,6 @@
 package com.wx.netty.client;
 
-import com.wx.netty.attribute.SessionUtil;
+import com.scy.netty.util.SessionUtil;
 import com.wx.netty.protocol.Packet;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
