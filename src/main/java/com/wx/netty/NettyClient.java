@@ -1,6 +1,8 @@
 package com.wx.netty;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.scy.core.format.MessageUtil;
+import com.scy.core.format.NumberUtil;
 import com.scy.netty.client.handler.ClientHandlers;
 import com.scy.netty.client.handler.HeartBeatTimerHandler;
 import com.scy.netty.handler.CodeHandler;
@@ -17,9 +19,9 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import lombok.extern.slf4j.Slf4j;
 
-import java.net.InetSocketAddress;
-import java.util.Date;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  * ---------------------------------------
  * Desc    :
  */
+@Slf4j
 public class NettyClient {
 
     private static final int MAX_RETRY = 3;
@@ -38,23 +41,14 @@ public class NettyClient {
     public static void main(String[] args) {
         Bootstrap bootstrap = new Bootstrap();
 
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("client-thread-pool-%d").build());
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("netty-client-thread-pool-%d").build());
 
         bootstrap
-                // 指定线程模型
                 .group(workerGroup)
-
-                // 指定 IO 类型为 NIO
                 .channel(NioSocketChannel.class)
-
-                // 设置TCP底层属性
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 500)
-
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .option(ChannelOption.SO_KEEPALIVE, true)
-
                 .option(ChannelOption.TCP_NODELAY, true)
-
-                // IO 处理逻辑
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel socketChannel) {
@@ -72,30 +66,33 @@ public class NettyClient {
         connect(bootstrap, "127.0.0.1", 8000, MAX_RETRY);
     }
 
-    private static void connect(Bootstrap bootstrap, String host, int port, int retry) {
-        bootstrap.connect(host, port).addListener(future -> {
+    public static void connect(Bootstrap bootstrap, String host, int port, int retry) {
+        try {
+            ChannelFuture future = bootstrap.connect(host, port).sync();
             if (future.isSuccess()) {
                 System.out.println("连接服务器成功!");
-                NioSocketChannel channel = (NioSocketChannel) ((ChannelFuture) future).channel();
-                InetSocketAddress localAddress = channel.localAddress();
-                InetSocketAddress remoteAddress = channel.remoteAddress();
+                Channel channel = future.channel();
                 startConsoleThread(channel);
                 return;
+            } else {
+                log.error(MessageUtil.format("netty client connect fail", "host", host, "port", port));
             }
+        } catch (Exception e) {
+            log.error(MessageUtil.format("netty client connect fail", e, "host", host, "port", port));
+        }
 
-            if (retry == 0) {
-                System.err.println("重试次数已用完，放弃连接！");
-                return;
-            }
+        if (Objects.equals(retry, NumberUtil.ZERO.intValue())) {
+            log.info(MessageUtil.format("netty client reconnect fail", "host", host, "port", port));
+            bootstrap.config().group().shutdownGracefully();
+            return;
+        }
 
-            // 第几次重连
-            int order = (MAX_RETRY - retry) + 1;
-            System.err.println(new Date() + ": 连接失败，第" + order + "次重连……");
+        int order = (MAX_RETRY - retry) + 1;
+        log.info(MessageUtil.format("netty client reconnect", "host", host, "port", port, "order", order));
 
-            // 本次重连的间隔
-            int delay = 1 << order;
-            bootstrap.config().group().schedule(() -> connect(bootstrap, host, port, retry - 1), delay, TimeUnit.SECONDS);
-        });
+        // 重连间隔
+        int delay = 1 << order;
+        bootstrap.config().group().schedule(() -> connect(bootstrap, host, port, retry - 1), delay, TimeUnit.SECONDS);
     }
 
     private static void startConsoleThread(Channel channel) {
