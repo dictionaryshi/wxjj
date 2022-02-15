@@ -1,6 +1,6 @@
 package com.wx.netty.client.console;
 
-import com.wx.netty.protocol.MessageRequestPacket;
+import com.scy.netty.model.MessageRequestPacket;
 import io.netty.channel.Channel;
 
 import java.util.Scanner;
@@ -13,6 +13,10 @@ public class SendToUserConsoleCommand implements ConsoleCommand {
 
         String toUserId = scanner.next();
         String message = scanner.next();
-        channel.writeAndFlush(new MessageRequestPacket(toUserId, message));
+        MessageRequestPacket messageRequestPacket = new MessageRequestPacket();
+        messageRequestPacket.setToUserId(toUserId);
+        messageRequestPacket.setMessage(message);
+
+        channel.writeAndFlush(messageRequestPacket);
     }
 }

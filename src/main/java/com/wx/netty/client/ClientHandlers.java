@@ -3,6 +3,7 @@ package com.wx.netty.client;
 import com.scy.netty.client.handler.HeartBeatResponseHandler;
 import com.scy.netty.client.handler.LoginResponseHandler;
 import com.scy.netty.client.handler.LogoutResponseHandler;
+import com.scy.netty.client.handler.MessageResponseHandler;
 import com.scy.netty.constant.NettyConstant;
 import com.scy.netty.protocol.AbstractPacket;
 import com.scy.netty.util.SessionUtil;
@@ -12,8 +13,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.wx.netty.protocol.Command.*;
 
 @ChannelHandler.Sharable
 public class ClientHandlers extends SimpleChannelInboundHandler<AbstractPacket> {
@@ -26,7 +25,7 @@ public class ClientHandlers extends SimpleChannelInboundHandler<AbstractPacket> 
         handlerMap = new HashMap<>();
 
         handlerMap.put(NettyConstant.LOGIN_RESPONSE, LoginResponseHandler.INSTANCE);
-        handlerMap.put(MESSAGE_RESPONSE, MessageResponseHandler.INSTANCE);
+        handlerMap.put(NettyConstant.MESSAGE_RESPONSE, MessageResponseHandler.INSTANCE);
         handlerMap.put(NettyConstant.LOGOUT_RESPONSE, LogoutResponseHandler.INSTANCE);
         handlerMap.put(NettyConstant.HEARTBEAT_RESPONSE, HeartBeatResponseHandler.INSTANCE);
     }
