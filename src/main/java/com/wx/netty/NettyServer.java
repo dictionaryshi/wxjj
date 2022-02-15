@@ -6,6 +6,7 @@ import com.scy.netty.handler.ExceptionHandler;
 import com.scy.netty.handler.NettyIdleStateHandler;
 import com.scy.netty.protocol.DecodeSpliter;
 import com.scy.netty.server.handler.HeartBeatRequestHandler;
+import com.scy.netty.server.handler.LoginRequestHandler;
 import com.scy.netty.server.handler.PermissionAuditHandler;
 import com.wx.netty.server.*;
 import io.netty.bootstrap.ServerBootstrap;

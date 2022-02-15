@@ -1,6 +1,6 @@
 package com.wx.netty.client.console;
 
-import com.wx.netty.protocol.LoginRequestPacket;
+import com.scy.netty.model.LoginRequestPacket;
 import io.netty.channel.Channel;
 
 import java.util.Scanner;
@@ -12,8 +12,10 @@ public class LoginConsoleCommand implements ConsoleCommand {
         System.out.print("输入用户名登录: ");
 
         LoginRequestPacket loginRequestPacket = new LoginRequestPacket();
-        loginRequestPacket.setUserName(scanner.next());
-        loginRequestPacket.setPassword("pwd");
+        loginRequestPacket.setClientIp(scanner.next());
+        loginRequestPacket.setTimestamp(System.currentTimeMillis());
+        loginRequestPacket.setToken(null);
+
 
         // 发送登录数据包
         channel.writeAndFlush(loginRequestPacket);
