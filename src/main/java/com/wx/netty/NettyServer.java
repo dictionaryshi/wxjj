@@ -6,6 +6,7 @@ import com.scy.netty.handler.ExceptionHandler;
 import com.scy.netty.handler.NettyIdleStateHandler;
 import com.scy.netty.protocol.DecodeSpliter;
 import com.scy.netty.server.handler.HeartBeatRequestHandler;
+import com.scy.netty.server.handler.PermissionAuditHandler;
 import com.wx.netty.server.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -63,7 +64,7 @@ public class NettyServer {
                         nioSocketChannel.pipeline().addLast(CodeHandler.INSTANCE);
                         nioSocketChannel.pipeline().addLast(HeartBeatRequestHandler.INSTANCE);
                         nioSocketChannel.pipeline().addLast(LoginRequestHandler.INSTANCE);
-                        nioSocketChannel.pipeline().addLast(AuthHandler.INSTANCE);
+                        nioSocketChannel.pipeline().addLast(PermissionAuditHandler.INSTANCE);
                         nioSocketChannel.pipeline().addLast(IMHandler.INSTANCE);
                         nioSocketChannel.pipeline().addLast(ExceptionHandler.INSTANCE);
                     }
