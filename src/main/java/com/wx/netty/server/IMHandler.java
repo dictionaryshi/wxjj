@@ -1,6 +1,8 @@
 package com.wx.netty.server;
 
+import com.scy.netty.constant.NettyConstant;
 import com.scy.netty.protocol.AbstractPacket;
+import com.scy.netty.server.handler.LogoutRequestHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -21,7 +23,7 @@ public class IMHandler extends SimpleChannelInboundHandler<AbstractPacket> {
         handlerMap = new HashMap<>();
 
         handlerMap.put(MESSAGE_REQUEST, MessageRequestHandler.INSTANCE);
-        handlerMap.put(LOGOUT_REQUEST, LogoutRequestHandler.INSTANCE);
+        handlerMap.put(NettyConstant.LOGOUT_REQUEST, LogoutRequestHandler.INSTANCE);
     }
 
     @Override
