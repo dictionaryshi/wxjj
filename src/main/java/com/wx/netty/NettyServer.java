@@ -16,6 +16,9 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.GenericFutureListener;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author : shichunyang
@@ -29,33 +32,17 @@ public class NettyServer {
     private static final int BEGIN_PORT = 8000;
 
     public static void main(String[] args) throws InterruptedException {
-        ServerBootstrap serverBootstrap = new ServerBootstrap();
-
         NioEventLoopGroup boosGroup = new NioEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("boosGroup-thread-pool-%d").build());
         NioEventLoopGroup workerGroup = new NioEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("workerGroup-thread-pool-%d").build());
 
+        ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap
-
                 .group(boosGroup, workerGroup)
-
                 .channel(NioServerSocketChannel.class)
-
-                //如果连接建立频繁，服务器处理创建新连接较慢，可以适当调大这个参数
-                .option(ChannelOption.SO_BACKLOG, 1024)
-
-                // 是否开启TCP底层心跳机制，true为开启
+                .option(ChannelOption.SO_BACKLOG, 511)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
-
-                // 实时发送数据
                 .childOption(ChannelOption.TCP_NODELAY, true)
-
-                .handler(new ChannelInitializer<NioServerSocketChannel>() {
-                    @Override
-                    public void initChannel(NioServerSocketChannel nioServerSocketChannel) {
-                        System.out.println("netty服务器开始启动...");
-                    }
-                })
-
+                .childOption(ChannelOption.SO_REUSEADDR, true)
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     public void initChannel(NioSocketChannel nioSocketChannel) {
@@ -71,17 +58,17 @@ public class NettyServer {
                     }
                 });
 
-
         bind(serverBootstrap, BEGIN_PORT);
     }
 
-    private static void bind(ServerBootstrap serverBootstrap, int port) throws InterruptedException {
-        ChannelFuture future = serverBootstrap.bind(port).sync();
-        if (future.isSuccess()) {
-            System.out.println("netty服务器端口[" + port + "]绑定成功，服务启动成功!");
-        } else {
-            System.err.println("netty服务器端口[" + port + "]绑定失败，服务器启动失败！");
-            System.exit(0);
-        }
+    public static void bind(ServerBootstrap serverBootstrap, int port) {
+        serverBootstrap.bind(port).addListener((GenericFutureListener<ChannelFuture>) future -> {
+            if (future.isSuccess()) {
+                System.out.println("success");
+            } else {
+                System.out.println("fail");
+                future.channel().eventLoop().schedule(() -> bind(serverBootstrap, port), 5, TimeUnit.SECONDS);
+            }
+        });
     }
 }
