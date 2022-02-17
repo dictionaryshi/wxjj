@@ -28,17 +28,16 @@ public class ConsoleCommandManager implements ConsoleCommand {
             return;
         }
 
+        if (!channel.isActive()) {
+            return;
+        }
+
         ConsoleCommand consoleCommand = consoleCommandMap.get(command);
 
         if (consoleCommand != null) {
             consoleCommand.exec(scanner, channel);
         } else {
             System.err.println("无法识别[" + command + "]指令，请重新输入!");
-        }
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
         }
     }
 }

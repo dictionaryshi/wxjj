@@ -38,6 +38,7 @@ public class NettyClient {
                     consoleCommandManager.exec(scanner, nettyClient.getChannel());
                 }
             }
+            scanner.close();
         }).start();
     }
 }

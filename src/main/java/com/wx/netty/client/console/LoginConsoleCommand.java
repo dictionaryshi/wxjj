@@ -16,8 +16,10 @@ public class LoginConsoleCommand implements ConsoleCommand {
         loginRequestPacket.setTimestamp(System.currentTimeMillis());
         loginRequestPacket.setToken(null);
 
+        if (!channel.isActive()) {
+            return;
+        }
 
-        // 发送登录数据包
         channel.writeAndFlush(loginRequestPacket);
 
         try {

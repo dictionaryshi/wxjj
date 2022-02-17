@@ -12,5 +12,10 @@ public class LogoutConsoleCommand implements ConsoleCommand {
         LogoutRequestPacket logoutRequestPacket = new LogoutRequestPacket();
 
         channel.writeAndFlush(logoutRequestPacket);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+        }
     }
 }
