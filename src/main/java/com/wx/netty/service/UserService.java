@@ -1,5 +1,6 @@
 package com.wx.netty.service;
 
+import com.wx.dao.warehouse.model.UserPassportDO;
 import com.wx.domain.passport.entity.UserPassportEntity;
 
 /**
@@ -11,5 +12,5 @@ import com.wx.domain.passport.entity.UserPassportEntity;
  */
 public interface UserService {
 
-    UserPassportEntity getUserPassport(String passport);
+    UserPassportEntity getUserPassport(UserPassportDO userPassportDO);
 }
