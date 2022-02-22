@@ -20,7 +20,7 @@ public class NettyClient {
 
     public static void main(String[] args) throws Exception {
         com.scy.netty.client.NettyClient nettyClient = new com.scy.netty.client.NettyClient();
-        nettyClient.init("127.0.0.1:8000", new ClientConfig());
+        nettyClient.init("127.0.0.1:7080", new ClientConfig());
 
         startConsoleThread(nettyClient);
     }
