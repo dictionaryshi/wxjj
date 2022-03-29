@@ -1,7 +1,6 @@
 package com.wx.socketio;
 
 import com.corundumstudio.socketio.*;
-import com.corundumstudio.socketio.handler.SuccessAuthorizationListener;
 import com.corundumstudio.socketio.listener.*;
 import io.netty.handler.codec.http.HttpHeaders;
 
@@ -10,13 +9,14 @@ import java.net.SocketAddress;
 public class ChatLauncher {
 
     public static void main(String[] args) throws InterruptedException {
-
         Configuration config = new Configuration();
         config.setExceptionListener(new DefaultExceptionListener());
         config.setPingInterval(60000);
         config.setHostname("127.0.0.1");
         config.setPort(9092);
-        config.setAuthorizationListener(new SuccessAuthorizationListener());
+        config.setAuthorizationListener(data -> {
+            return Boolean.TRUE;
+        });
         config.setAckMode(AckMode.AUTO_SUCCESS_ONLY);
         config.setMaxHttpContentLength(5 * 1024 * 1024);
         config.setMaxFramePayloadLength(5 * 1024 * 1024);
@@ -28,85 +28,53 @@ public class ChatLauncher {
 
         final SocketIOServer server = new SocketIOServer(config);
 
-        server.addConnectListener(new ConnectListener() {
-
-            @Override
-            public void onConnect(SocketIOClient client) {
-                System.out.println("onConnect_" + client.toString());
-            }
+        server.addConnectListener(client -> {
+            System.out.println("onConnect_" + client.toString());
         });
 
-        server.addDisconnectListener(new DisconnectListener() {
-
-            @Override
-            public void onDisconnect(SocketIOClient client) {
-                System.out.println("onDisconnect_" + client.toString());
-            }
+        server.addDisconnectListener(client -> {
+            System.out.println("onDisconnect_" + client.toString());
         });
 
-        server.addEventListener("chatRequest", ChatObject.class, new DataListener<ChatObject>() {
-
-            @Override
-            public void onData(SocketIOClient client, ChatObject data, AckRequest ackRequest) {
-                HandshakeData handshakeData = client.getHandshakeData();
-                HttpHeaders httpHeaders = handshakeData.getHttpHeaders();
-                SocketAddress remoteAddress = client.getRemoteAddress();
-                boolean channelOpen = client.isChannelOpen();
-                client.sendEvent("chatResponse", data);
-            }
+        server.addEventListener("chatRequest", ChatObject.class, (client, data, ackRequest) -> {
+            HandshakeData handshakeData = client.getHandshakeData();
+            HttpHeaders httpHeaders = handshakeData.getHttpHeaders();
+            SocketAddress remoteAddress = client.getRemoteAddress();
+            boolean channelOpen = client.isChannelOpen();
+            client.sendEvent("chatResponse", data);
         });
 
         final SocketIONamespace chat1namespace = server.addNamespace("/chat1");
-        chat1namespace.addEventListener("messageRequest", ChatObject.class, new DataListener<ChatObject>() {
-            @Override
-            public void onData(SocketIOClient client, ChatObject data, AckRequest ackRequest) {
-                client.sendEvent("messageResponse", data);
-            }
-        });
+        chat1namespace.addEventListener("messageRequest", ChatObject.class, (client, data, ackRequest) -> client.sendEvent("messageResponse", data));
 
         final SocketIONamespace chat2namespace = server.addNamespace("/chat2");
-        chat2namespace.addEventListener("messageRequest", ChatObject.class, new DataListener<ChatObject>() {
-            @Override
-            public void onData(SocketIOClient client, ChatObject data, AckRequest ackRequest) {
-                client.sendEvent("messageResponse", data);
+        chat2namespace.addEventListener("messageRequest", ChatObject.class, (client, data, ackRequest) -> client.sendEvent("messageResponse", data));
+
+        server.addEventListener("imgRequest", byte[].class, (client, data, ackRequest) -> client.sendEvent("imgResponse", data));
+
+        server.addEventListener("ackevent1", ChatObject.class, (client, data, ackRequest) -> {
+            if (ackRequest.isAckRequested()) {
+                ackRequest.sendAckData("server ack1", "server ack2");
             }
-        });
 
-        server.addEventListener("imgRequest", byte[].class, new DataListener<byte[]>() {
+            ChatObject ackChatObjectData = new ChatObject(data.getUserName(), "server ack data");
+            client.sendEvent("ackevent2", new AckCallback<String>(String.class) {
 
-            @Override
-            public void onData(SocketIOClient client, byte[] data, AckRequest ackRequest) {
-                client.sendEvent("imgResponse", data);
-            }
-        });
+                @Override
+                public void onSuccess(String result) {
+                    System.out.println("ack from client: " + client.getSessionId() + " data: " + result);
+                }
+            }, ackChatObjectData);
 
-        server.addEventListener("ackevent1", ChatObject.class, new DataListener<ChatObject>() {
+            ChatObject ackChatObjectData1 = new ChatObject(data.getUserName(), "server ack void");
+            client.sendEvent("ackevent3", new VoidAckCallback() {
 
-            @Override
-            public void onData(final SocketIOClient client, ChatObject data, final AckRequest ackRequest) {
-                if (ackRequest.isAckRequested()) {
-                    ackRequest.sendAckData("server ack1", "server ack2");
+                @Override
+                protected void onSuccess() {
+                    System.out.println("ack from client: " + client.getSessionId());
                 }
 
-                ChatObject ackChatObjectData = new ChatObject(data.getUserName(), "server ack data");
-                client.sendEvent("ackevent2", new AckCallback<String>(String.class) {
-
-                    @Override
-                    public void onSuccess(String result) {
-                        System.out.println("ack from client: " + client.getSessionId() + " data: " + result);
-                    }
-                }, ackChatObjectData);
-
-                ChatObject ackChatObjectData1 = new ChatObject(data.getUserName(), "server ack void");
-                client.sendEvent("ackevent3", new VoidAckCallback() {
-
-                    @Override
-                    protected void onSuccess() {
-                        System.out.println("ack from client: " + client.getSessionId());
-                    }
-
-                }, ackChatObjectData1);
-            }
+            }, ackChatObjectData1);
         });
 
         server.start();
