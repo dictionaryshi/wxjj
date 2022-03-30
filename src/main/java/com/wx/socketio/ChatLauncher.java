@@ -2,7 +2,9 @@ package com.wx.socketio;
 
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.*;
+import com.scy.core.StringUtil;
 import com.scy.core.format.MessageUtil;
+import com.scy.netty.socketio.SocketCookieUtil;
 import io.netty.handler.codec.http.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,9 +18,6 @@ public class ChatLauncher {
         config.setExceptionListener(new DefaultExceptionListener());
         config.setPingInterval(60000);
         config.setPort(9092);
-        config.setAuthorizationListener(data -> {
-            return Boolean.TRUE;
-        });
         config.setAckMode(AckMode.AUTO_SUCCESS_ONLY);
         config.setMaxHttpContentLength(5 * 1024 * 1024);
         config.setMaxFramePayloadLength(5 * 1024 * 1024);
@@ -31,6 +30,11 @@ public class ChatLauncher {
         final SocketIOServer server = new SocketIOServer(config);
 
         server.addConnectListener(client -> {
+            String token = SocketCookieUtil.getCookieValue(client.getHandshakeData(), "SCY_SSO");
+            if (StringUtil.isEmpty(token)) {
+                client.disconnect();
+                return;
+            }
             System.out.println("onConnect_" + client.toString());
         });
 
