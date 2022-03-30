@@ -2,13 +2,16 @@ package com.wx.socketio;
 
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.*;
+import com.scy.core.format.MessageUtil;
 import io.netty.handler.codec.http.HttpHeaders;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.SocketAddress;
 
+@Slf4j
 public class ChatLauncher {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] argss) throws InterruptedException {
         Configuration config = new Configuration();
         config.setExceptionListener(new DefaultExceptionListener());
         config.setPingInterval(60000);
@@ -75,6 +78,10 @@ public class ChatLauncher {
                 }
 
             }, ackChatObjectData1);
+        });
+
+        server.addEventInterceptor((client, eventName, args, ackRequest) -> {
+            log.info(MessageUtil.format("eventInterceptor", "eventName", eventName, "args", args));
         });
 
         server.start();
