@@ -15,7 +15,6 @@ public class ChatLauncher {
         Configuration config = new Configuration();
         config.setExceptionListener(new DefaultExceptionListener());
         config.setPingInterval(60000);
-        config.setHostname("127.0.0.1");
         config.setPort(9092);
         config.setAuthorizationListener(data -> {
             return Boolean.TRUE;
