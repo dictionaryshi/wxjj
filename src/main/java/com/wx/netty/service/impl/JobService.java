@@ -2,6 +2,7 @@ package com.wx.netty.service.impl;
 
 import com.scy.netty.job.annotation.Job;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 /**
  * @author : shichunyang
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * Desc    : JobService
  */
 @Slf4j
+@Service
 public class JobService {
 
     @Job(value = "JobService-helloWord", init = "init", destroy = "destroy")
