@@ -13,5 +13,5 @@ import com.wx.domain.passport.entity.UserPassportEntity;
  */
 public interface UserService {
 
-    ResponseResult<UserPassportEntity> getUserPassport(UserPassportDO userPassportDO);
+    ResponseResult<RpcModel> getRpcModel(RpcModel rpcModel);
 }

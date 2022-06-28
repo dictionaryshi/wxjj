@@ -8,6 +8,7 @@ import com.wx.dao.warehouse.mapper.extend.SkuStockDOMapperExtend;
 import com.wx.dao.warehouse.model.SkuStockDetailDO;
 import com.wx.dao.warehouse.model.UserPassportDO;
 import com.wx.domain.passport.entity.UserPassportEntity;
+import com.wx.netty.service.RpcModel;
 import com.wx.netty.service.UserService;
 import io.netty.util.internal.PlatformDependent;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
@@ -55,23 +56,20 @@ public class WxjjApplication {
     }
 
     @GetMapping("/hello")
-    public ResponseResult<UserPassportEntity> hello() throws InterruptedException, ExecutionException, TimeoutException {
-        UserPassportDO userPassportDO = new UserPassportDO();
-        userPassportDO.setId(1L);
-        userPassportDO.setPassport("dictionaryshi");
-        userPassportDO.setPassword("naodian12300");
-        userPassportDO.setName("chunyang02");
-        userPassportDO.setCreatedAt(new Date());
-        userPassportDO.setUpdatedAt(new Date());
+    public ResponseResult<RpcModel> hello() throws InterruptedException, ExecutionException, TimeoutException {
+        RpcModel rpcModel = new RpcModel();
+        rpcModel.setUserId(1L);
+        rpcModel.setPassport("chunyang");
+        rpcModel.setPassword("naodian123");
+        rpcModel.setCreatedAt(new Date());
 
         System.out.println(NettyUtil.usedDirectMemory());
         System.out.println(NettyUtil.maxDirectMemory());
 
-
-        Future<ResponseResult<UserPassportEntity>> responseResultFuture = userService.getUserPassport(userPassportDO).getResponseResultFuture();
-        ResponseResult<UserPassportEntity> responseResult = responseResultFuture.get(500, TimeUnit.MILLISECONDS);
-        UserPassportEntity userPassportEntity = responseResult.getData();
-        return ResponseResult.success(userPassportEntity);
+        Future<ResponseResult<RpcModel>> responseResultFuture = userService.getRpcModel(rpcModel).getResponseResultFuture();
+        ResponseResult<RpcModel> responseResult = responseResultFuture.get(500, TimeUnit.MILLISECONDS);
+        rpcModel = responseResult.getData();
+        return ResponseResult.success(rpcModel);
     }
 
     @GetMapping("/batch")
