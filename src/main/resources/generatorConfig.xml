@@ -50,6 +50,10 @@
             tableName="sku_stock_detail" domainObjectName="SkuStockDetailDO"
             tableName="sku_order" domainObjectName="SkuOrderDO"
             tableName="order_item" domainObjectName="OrderItemDO"
+            tableName="job_group" domainObjectName="JobGroupDO"
+            tableName="job_info" domainObjectName="JobInfoDO"
+            tableName="job_log" domainObjectName="JobLogDO"
+            tableName="job_registry" domainObjectName="JobRegistryDO"
         -->
         <table schema="warehouse"
                tableName="" domainObjectName=""
