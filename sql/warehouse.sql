@@ -100,3 +100,36 @@ CREATE TABLE `order_item` (
   UNIQUE KEY `uniq_order_id_sku_id` (`order_id`,`sku_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单条目';
 
+CREATE TABLE `job_lock` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `lock_name` varchar(32) NOT NULL DEFAULT '' COMMENT '锁名称',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_lock_name` (`lock_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='job锁';
+INSERT INTO `job_lock` ( `lock_name`) VALUES ( 'schedule_lock');
+
+CREATE TABLE `job_group` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `app_name` varchar(64) NOT NULL DEFAULT '' COMMENT 'app标识',
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '执行器名称',
+  `address_type` tinyint(4) NOT NULL DEFAULT '-1' COMMENT '0:自动注册, 1:手动录入',
+  `address_list` longtext NOT NULL COMMENT '地址列表',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_app_name_name` (`app_name`,`name`),
+  KEY `idx_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='执行器';
+
+CREATE TABLE `job_registry` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `app_name` varchar(255) NOT NULL DEFAULT '' COMMENT 'app标识',
+  `address` varchar(255) NOT NULL DEFAULT '' COMMENT '地址',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_app_name_address` (`app_name`,`address`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='app注册';
+
+commit;
+
