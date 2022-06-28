@@ -113,7 +113,7 @@ CREATE TABLE `job_group` (
   `app_name` varchar(64) NOT NULL DEFAULT '' COMMENT 'app标识',
   `name` varchar(32) NOT NULL DEFAULT '' COMMENT '执行器名称',
   `address_type` tinyint(4) NOT NULL DEFAULT '-1' COMMENT '0:自动注册, 1:手动录入',
-  `address_list` longtext NOT NULL COMMENT '地址列表',
+  `address_list` longtext COMMENT '地址列表',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`),
@@ -130,6 +130,31 @@ CREATE TABLE `job_registry` (
   PRIMARY KEY (`id`),
   KEY `idx_app_name_address` (`app_name`,`address`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='app注册';
+
+CREATE TABLE `job_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `job_group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '执行器id',
+  `job_id` bigint(20) NOT NULL DEFAULT '0' COMMENT 'job id',
+  `executor_address` varchar(255) NOT NULL DEFAULT '' COMMENT '执行器地址',
+  `executor_app` varchar(255) NOT NULL DEFAULT '' COMMENT '执行器app',
+  `executor_handler` varchar(255) NOT NULL DEFAULT '' COMMENT '执行器名称',
+  `executor_param` varchar(512) NOT NULL DEFAULT '' COMMENT '执行器参数',
+  `executor_sharding_param` varchar(32) NOT NULL DEFAULT '' COMMENT '执行器任务分片参数',
+  `executor_fail_retry_count` int(11) NOT NULL DEFAULT '0' COMMENT '失败重试次数',
+  `trigger_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '调度时间',
+  `trigger_code` int(11) NOT NULL DEFAULT '-1' COMMENT '调度结果',
+  `trigger_msg` longtext COMMENT '调度日志',
+  `handle_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '执行时间',
+  `handle_code` int(11) NOT NULL DEFAULT '-1' COMMENT '执行状态',
+  `handle_msg` longtext COMMENT '执行日志',
+  `alarm_status` tinyint(4) NOT NULL DEFAULT '-1' COMMENT '告警状态',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_job_group_id` (`job_group_id`),
+  KEY `idx_job_id` (`job_id`),
+  KEY `idx_trigger_time` (`trigger_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='job log';
 
 commit;
 
