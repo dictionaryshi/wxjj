@@ -1,6 +1,5 @@
 package com.wx.dao.warehouse.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Getter;
@@ -8,7 +7,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class UserPassportDO implements Serializable {
+public class UserPassportDO {
     /**
      * 主键
      */
