@@ -100,3 +100,13 @@ CREATE TABLE `order_item` (
   UNIQUE KEY `uniq_order_id_sku_id` (`order_id`,`sku_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单条目';
 
+CREATE TABLE `job_lock` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `lock_name` varchar(32) NOT NULL DEFAULT '' COMMENT '锁名称',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_lock_name` (`lock_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='job锁';
+INSERT INTO `job_lock` ( `lock_name`) VALUES ( 'schedule_lock');
+
+commit;
+
