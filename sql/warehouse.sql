@@ -121,5 +121,15 @@ CREATE TABLE `job_group` (
   KEY `idx_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='执行器';
 
+CREATE TABLE `job_registry` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `app_name` varchar(255) NOT NULL DEFAULT '' COMMENT 'app标识',
+  `address` varchar(255) NOT NULL DEFAULT '' COMMENT '地址',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_app_name_address` (`app_name`,`address`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='app注册';
+
 commit;
 
