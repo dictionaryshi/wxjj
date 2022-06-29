@@ -80,9 +80,10 @@ public class JobRegistryDomainService {
         JobRegistryDOExample jobRegistryExample = new JobRegistryDOExample();
         JobRegistryDOExample.Criteria criteria = jobRegistryExample.createCriteria();
         criteria.andAppNameEqualTo(appName);
+        criteria.andUpdatedAtGreaterThan(DateUtil.getSecondOffset(DateUtil.getCurrentDate(), -90));
 
         List<JobRegistryDO> jobRegistries = jobRegistryMapper.selectByExample(jobRegistryExample);
-        List<String> address = jobRegistries.stream().map(JobRegistryDO::getAddress).collect(Collectors.toList());
+        List<String> addresses = jobRegistries.stream().map(JobRegistryDO::getAddress).collect(Collectors.toList());
 
         JobGroupDOExample jobGroupExample = new JobGroupDOExample();
         JobGroupDOExample.Criteria groupCriteria = jobGroupExample.createCriteria();
@@ -90,7 +91,7 @@ public class JobRegistryDomainService {
         groupCriteria.andAddressTypeEqualTo(0);
 
         JobGroupDO jobGroupDO = new JobGroupDO();
-        jobGroupDO.setAddressList(JsonUtil.object2Json(address));
+        jobGroupDO.setAddressList(JsonUtil.object2Json(addresses));
         jobGroupMapper.updateByExampleSelective(jobGroupDO, jobGroupExample);
     }
 }
