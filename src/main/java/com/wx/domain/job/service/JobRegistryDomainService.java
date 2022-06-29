@@ -3,6 +3,7 @@ package com.wx.domain.job.service;
 import com.scy.core.thread.ThreadPoolUtil;
 import com.wx.dao.warehouse.mapper.JobRegistryDOMapper;
 import com.wx.domain.job.entity.JobRegistryEntity;
+import com.wx.domain.job.factory.JobRegistryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,9 @@ public class JobRegistryDomainService {
 
     @Autowired
     private JobRegistryDOMapper jobRegistryMapper;
+
+    @Autowired
+    private JobRegistryFactory jobRegistryFactory;
 
     public void registry(JobRegistryEntity jobRegistryEntity) {
     }
