@@ -1,7 +1,6 @@
 package com.wx.controller.api;
 
 import com.scy.core.rest.ResponseResult;
-import com.scy.web.annotation.SignCheck;
 import com.wx.controller.assembler.JobAssembler;
 import com.wx.controller.request.job.RegistryRequest;
 import com.wx.service.JobFacade;
@@ -35,7 +34,6 @@ public class JobController {
     private JobAssembler jobAssembler;
 
     @ApiOperation("注册应用")
-    @SignCheck
     @PostMapping(value = "/registry")
     public ResponseResult<?> registry(@Valid RegistryRequest registryRequest) {
         jobFacade.registry(jobAssembler.toJobRegistryEntity(registryRequest));
