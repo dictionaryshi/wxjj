@@ -48,4 +48,15 @@ public class JobRegistryDomainService {
             jobRegistryMapper.insertSelective(jobRegistryDO);
         });
     }
+
+    public void registryRemove(JobRegistryEntity jobRegistryEntity) {
+        THREAD_POOL_EXECUTOR.execute(() -> {
+            JobRegistryDOExample jobRegistryDOExample = new JobRegistryDOExample();
+            JobRegistryDOExample.Criteria criteria = jobRegistryDOExample.createCriteria();
+            criteria.andAppNameEqualTo(jobRegistryEntity.getAppName());
+            criteria.andAddressEqualTo(jobRegistryEntity.getAddress());
+
+            jobRegistryMapper.deleteByExample(jobRegistryDOExample);
+        });
+    }
 }

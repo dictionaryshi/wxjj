@@ -1,6 +1,7 @@
 package com.wx.controller.assembler;
 
 import com.scy.core.spring.ApplicationContextUtil;
+import com.wx.controller.request.job.RegistryRemoveRequest;
 import com.wx.controller.request.job.RegistryRequest;
 import com.wx.domain.job.entity.JobRegistryEntity;
 import org.mapstruct.Mapper;
@@ -16,4 +17,6 @@ import org.mapstruct.Mapper;
 public interface JobAssembler {
 
     JobRegistryEntity toJobRegistryEntity(RegistryRequest registryRequest);
+
+    JobRegistryEntity toJobRegistryEntity(RegistryRemoveRequest registryRemoveRequest);
 }

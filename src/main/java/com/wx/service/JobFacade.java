@@ -23,4 +23,8 @@ public class JobFacade {
     public void registry(JobRegistryEntity jobRegistryEntity) {
         jobRegistryDomainService.registry(jobRegistryEntity);
     }
+
+    public void registryRemove(JobRegistryEntity jobRegistryEntity) {
+        jobRegistryDomainService.registryRemove(jobRegistryEntity);
+    }
 }

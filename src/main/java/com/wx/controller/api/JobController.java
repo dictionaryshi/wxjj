@@ -2,6 +2,7 @@ package com.wx.controller.api;
 
 import com.scy.core.rest.ResponseResult;
 import com.wx.controller.assembler.JobAssembler;
+import com.wx.controller.request.job.RegistryRemoveRequest;
 import com.wx.controller.request.job.RegistryRequest;
 import com.wx.service.JobFacade;
 import io.swagger.annotations.Api;
@@ -37,6 +38,13 @@ public class JobController {
     @PostMapping(value = "/registry")
     public ResponseResult<?> registry(@Valid RegistryRequest registryRequest) {
         jobFacade.registry(jobAssembler.toJobRegistryEntity(registryRequest));
+        return ResponseResult.success(null);
+    }
+
+    @ApiOperation("删除注册")
+    @PostMapping(value = "/registryRemove")
+    public ResponseResult<?> registryRemove(@Valid RegistryRemoveRequest registryRemoveRequest) {
+        jobFacade.registryRemove(jobAssembler.toJobRegistryEntity(registryRemoveRequest));
         return ResponseResult.success(null);
     }
 }
