@@ -1,5 +1,6 @@
 package com.wx.domain.job.service;
 
+import com.scy.core.format.DateUtil;
 import com.scy.core.thread.ThreadPoolUtil;
 import com.wx.dao.warehouse.mapper.JobRegistryDOMapper;
 import com.wx.dao.warehouse.model.JobRegistryDO;
@@ -32,6 +33,7 @@ public class JobRegistryDomainService {
     public void registry(JobRegistryEntity jobRegistryEntity) {
         THREAD_POOL_EXECUTOR.execute(() -> {
             JobRegistryDO jobRegistryDO = jobRegistryFactory.toJobRegistryDO(jobRegistryEntity);
+            jobRegistryDO.setUpdatedAt(DateUtil.getCurrentDate());
 
             JobRegistryDOExample jobRegistryDOExample = new JobRegistryDOExample();
             JobRegistryDOExample.Criteria criteria = jobRegistryDOExample.createCriteria();
