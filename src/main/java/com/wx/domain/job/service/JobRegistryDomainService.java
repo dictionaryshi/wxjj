@@ -2,6 +2,8 @@ package com.wx.domain.job.service;
 
 import com.scy.core.thread.ThreadPoolUtil;
 import com.wx.dao.warehouse.mapper.JobRegistryDOMapper;
+import com.wx.dao.warehouse.model.JobRegistryDO;
+import com.wx.dao.warehouse.model.JobRegistryDOExample;
 import com.wx.domain.job.entity.JobRegistryEntity;
 import com.wx.domain.job.factory.JobRegistryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +30,20 @@ public class JobRegistryDomainService {
     private JobRegistryFactory jobRegistryFactory;
 
     public void registry(JobRegistryEntity jobRegistryEntity) {
+        THREAD_POOL_EXECUTOR.execute(() -> {
+            JobRegistryDO jobRegistryDO = jobRegistryFactory.toJobRegistryDO(jobRegistryEntity);
+
+            JobRegistryDOExample jobRegistryDOExample = new JobRegistryDOExample();
+            JobRegistryDOExample.Criteria criteria = jobRegistryDOExample.createCriteria();
+            criteria.andAppNameEqualTo(jobRegistryEntity.getAppName());
+            criteria.andAddressEqualTo(jobRegistryEntity.getAddress());
+
+            int count = jobRegistryMapper.updateByExampleSelective(jobRegistryDO, jobRegistryDOExample);
+            if (count > 0) {
+                return;
+            }
+
+            jobRegistryMapper.insertSelective(jobRegistryDO);
+        });
     }
 }
