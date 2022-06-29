@@ -117,7 +117,7 @@ CREATE TABLE `job_group` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  KEY `idx_app_name_name` (`app_name`,`name`),
+  UNIQUE KEY `uniq_app_name_name` (`app_name`,`name`),
   KEY `idx_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='执行器';
 
@@ -128,7 +128,7 @@ CREATE TABLE `job_registry` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  KEY `idx_app_name_address` (`app_name`,`address`)
+  UNIQUE KEY `uniq_app_name_address` (`app_name`,`address`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='app注册';
 
 CREATE TABLE `job_log` (
