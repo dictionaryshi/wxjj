@@ -1,8 +1,12 @@
 package com.wx.domain.job.service;
 
 import com.scy.core.format.DateUtil;
+import com.scy.core.json.JsonUtil;
 import com.scy.core.thread.ThreadPoolUtil;
+import com.wx.dao.warehouse.mapper.JobGroupDOMapper;
 import com.wx.dao.warehouse.mapper.JobRegistryDOMapper;
+import com.wx.dao.warehouse.model.JobGroupDO;
+import com.wx.dao.warehouse.model.JobGroupDOExample;
 import com.wx.dao.warehouse.model.JobRegistryDO;
 import com.wx.dao.warehouse.model.JobRegistryDOExample;
 import com.wx.domain.job.entity.JobRegistryEntity;
@@ -10,7 +14,9 @@ import com.wx.domain.job.factory.JobRegistryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 /**
  * @author : shichunyang
@@ -26,6 +32,9 @@ public class JobRegistryDomainService {
 
     @Autowired
     private JobRegistryDOMapper jobRegistryMapper;
+
+    @Autowired
+    private JobGroupDOMapper jobGroupMapper;
 
     @Autowired
     private JobRegistryFactory jobRegistryFactory;
@@ -46,6 +55,8 @@ public class JobRegistryDomainService {
             }
 
             jobRegistryMapper.insertSelective(jobRegistryDO);
+
+            fresh(jobRegistryEntity.getAppName());
         });
     }
 
@@ -56,7 +67,30 @@ public class JobRegistryDomainService {
             criteria.andAppNameEqualTo(jobRegistryEntity.getAppName());
             criteria.andAddressEqualTo(jobRegistryEntity.getAddress());
 
-            jobRegistryMapper.deleteByExample(jobRegistryDOExample);
+            int count = jobRegistryMapper.deleteByExample(jobRegistryDOExample);
+            if (count <= 0) {
+                return;
+            }
+
+            fresh(jobRegistryEntity.getAppName());
         });
+    }
+
+    private void fresh(String appName) {
+        JobRegistryDOExample jobRegistryExample = new JobRegistryDOExample();
+        JobRegistryDOExample.Criteria criteria = jobRegistryExample.createCriteria();
+        criteria.andAppNameEqualTo(appName);
+
+        List<JobRegistryDO> jobRegistries = jobRegistryMapper.selectByExample(jobRegistryExample);
+        List<String> address = jobRegistries.stream().map(JobRegistryDO::getAddress).collect(Collectors.toList());
+
+        JobGroupDOExample jobGroupExample = new JobGroupDOExample();
+        JobGroupDOExample.Criteria groupCriteria = jobGroupExample.createCriteria();
+        groupCriteria.andAppNameEqualTo(appName);
+        groupCriteria.andAddressTypeEqualTo(0);
+
+        JobGroupDO jobGroupDO = new JobGroupDO();
+        jobGroupDO.setAddressList(JsonUtil.object2Json(address));
+        jobGroupMapper.updateByExampleSelective(jobGroupDO, jobGroupExample);
     }
 }
