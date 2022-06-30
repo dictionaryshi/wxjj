@@ -1,5 +1,6 @@
 package com.wx.service;
 
+import com.scy.netty.job.annotation.Job;
 import com.wx.domain.job.entity.JobRegistryEntity;
 import com.wx.domain.job.service.JobRegistryDomainService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,5 +27,18 @@ public class JobFacade {
 
     public void registryRemove(JobRegistryEntity jobRegistryEntity) {
         jobRegistryDomainService.registryRemove(jobRegistryEntity);
+    }
+
+    @Job(value = "JobService-helloWord", init = "init", destroy = "destroy")
+    public void helloWord() {
+        log.info("helloWord");
+    }
+
+    public void init() {
+        log.info("init");
+    }
+
+    public void destroy() {
+        log.info("destroy");
     }
 }
