@@ -3,6 +3,7 @@ package com.wx.domain.job.service;
 import com.scy.core.format.DateUtil;
 import com.scy.core.json.JsonUtil;
 import com.scy.core.thread.ThreadPoolUtil;
+import com.scy.redis.lock.RedisLock;
 import com.wx.dao.warehouse.mapper.JobGroupDOMapper;
 import com.wx.dao.warehouse.mapper.JobRegistryDOMapper;
 import com.wx.dao.warehouse.model.JobGroupDO;
@@ -39,6 +40,9 @@ public class JobRegistryDomainService {
     @Autowired
     private JobRegistryFactory jobRegistryFactory;
 
+    @Autowired
+    private RedisLock redisLock;
+
     public void registry(JobRegistryEntity jobRegistryEntity) {
         THREAD_POOL_EXECUTOR.execute(() -> {
             JobRegistryDO jobRegistryDO = jobRegistryFactory.toJobRegistryDO(jobRegistryEntity);
@@ -56,7 +60,13 @@ public class JobRegistryDomainService {
 
             jobRegistryMapper.insertSelective(jobRegistryDO);
 
-            fresh(jobRegistryEntity.getAppName());
+            String lockKey = jobRegistryEntity.getLockKey();
+            try {
+                redisLock.lock(lockKey);
+                fresh(jobRegistryEntity.getAppName());
+            } finally {
+                redisLock.unlock(lockKey);
+            }
         });
     }
 
@@ -72,7 +82,13 @@ public class JobRegistryDomainService {
                 return;
             }
 
-            fresh(jobRegistryEntity.getAppName());
+            String lockKey = jobRegistryEntity.getLockKey();
+            try {
+                redisLock.lock(lockKey);
+                fresh(jobRegistryEntity.getAppName());
+            } finally {
+                redisLock.unlock(lockKey);
+            }
         });
     }
 

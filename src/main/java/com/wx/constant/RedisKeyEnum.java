@@ -22,6 +22,7 @@ public enum RedisKeyEnum {
     LOGIN_TOKEN("login_token", "登陆token"),
     SKU_STOCK_LOCK("sku_stock_lock", "库存分布式锁"),
     SKU_ORDER_LOCK("sku_order_lock", "商品订单分布式锁"),
+    JOB_REGISTRY_LOCK("job_registry_lock", "job 注册更新"),
     ;
 
     private final String redisKeyPrefix;

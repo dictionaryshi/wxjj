@@ -1,5 +1,7 @@
 package com.wx.domain.job.entity;
 
+import com.scy.redis.util.RedisUtil;
+import com.wx.constant.RedisKeyEnum;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -42,4 +44,8 @@ public class JobRegistryEntity {
      * 修改时间
      */
     private Date updatedAt;
+
+    public String getLockKey() {
+        return RedisUtil.getRedisKey(RedisKeyEnum.JOB_REGISTRY_LOCK.getRedisKeyPrefix(), String.valueOf(appName));
+    }
 }
