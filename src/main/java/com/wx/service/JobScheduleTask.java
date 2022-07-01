@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -27,13 +28,9 @@ public class JobScheduleTask implements InitializingBean {
 
     private Thread scheduleThread;
 
-    private volatile boolean scheduleThreadToStop = Boolean.FALSE;
-
     @Override
     public void afterPropertiesSet() throws Exception {
         THREAD_POOL_EXECUTOR.execute(() -> {
-            scheduleThread = Thread.currentThread();
-
             ThreadUtil.quietSleep(PRE_READ_TIME - System.currentTimeMillis() % DateUtil.SECOND);
 
             log.info("JobScheduleTask success");
@@ -43,17 +40,18 @@ public class JobScheduleTask implements InitializingBean {
                 long start = System.currentTimeMillis();
                 long cost = System.currentTimeMillis() - start;
                 if (cost < 1000) {
-                    ThreadUtil.quietSleep((readSuccess ? DateUtil.SECOND : PRE_READ_TIME) - System.currentTimeMillis() % 1000);
+                    ThreadUtil.quietSleep((readSuccess ? DateUtil.SECOND : PRE_READ_TIME) - System.currentTimeMillis() % DateUtil.SECOND);
                 }
             }
 
             log.info("JobScheduleTask stop");
 
-            scheduleThreadToStop = Boolean.TRUE;
+            Optional.ofNullable(scheduleThread).ifPresent(Thread::interrupt);
         });
 
         THREAD_POOL_EXECUTOR.execute(() -> {
-            while (!scheduleThreadToStop) {
+            scheduleThread = Thread.currentThread();
+            while (!JvmStatus.JVM_CLOSE_FLAG) {
             }
         });
     }
