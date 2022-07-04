@@ -52,4 +52,13 @@ public class JobFacade {
     public void destroy() {
         log.info("destroy");
     }
+
+    public void updateNextTime(JobInfoEntity jobInfoEntity) {
+        JobInfoEntity updateJobInfoEntity = new JobInfoEntity();
+        updateJobInfoEntity.setId(jobInfoEntity.getId());
+        updateJobInfoEntity.setTriggerStatus(jobInfoEntity.getTriggerStatus());
+        updateJobInfoEntity.setTriggerLastTime(jobInfoEntity.getTriggerLastTime());
+        updateJobInfoEntity.setTriggerNextTime(jobInfoEntity.getTriggerNextTime());
+        jobInfoDomainService.update(updateJobInfoEntity);
+    }
 }
