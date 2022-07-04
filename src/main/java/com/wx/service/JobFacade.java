@@ -1,11 +1,15 @@
 package com.wx.service;
 
 import com.scy.netty.job.annotation.Job;
+import com.wx.domain.job.entity.JobInfoEntity;
 import com.wx.domain.job.entity.JobRegistryEntity;
+import com.wx.domain.job.service.JobInfoDomainService;
 import com.wx.domain.job.service.JobRegistryDomainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author : shichunyang
@@ -20,6 +24,13 @@ public class JobFacade {
 
     @Autowired
     private JobRegistryDomainService jobRegistryDomainService;
+
+    @Autowired
+    private JobInfoDomainService jobInfoDomainService;
+
+    public List<JobInfoEntity> queryscheduleJobs(long maxNextTime, int limit) {
+        return jobInfoDomainService.queryscheduleJobs(maxNextTime, limit);
+    }
 
     public void registry(JobRegistryEntity jobRegistryEntity) {
         jobRegistryDomainService.registry(jobRegistryEntity);

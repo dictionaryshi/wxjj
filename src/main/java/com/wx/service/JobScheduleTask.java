@@ -1,22 +1,30 @@
 package com.wx.service;
 
+import com.scy.core.CronUtil;
 import com.scy.core.enums.JvmStatus;
 import com.scy.core.format.DateUtil;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.spring.ApplicationContextUtil;
+import com.scy.core.thread.Delay;
 import com.scy.core.thread.ThreadPoolUtil;
 import com.scy.core.thread.ThreadUtil;
 import com.scy.db.constant.DbConstant;
+import com.wx.domain.job.entity.JobInfoEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.DelayQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -35,6 +43,11 @@ public class JobScheduleTask implements InitializingBean {
     public static final long PRE_READ_TIME = 5000;
 
     private Thread scheduleThread;
+
+    private final DelayQueue<Delay<JobInfoEntity>> delayQueue = new DelayQueue<>();
+
+    @Autowired
+    private JobFacade jobFacade;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -58,7 +71,10 @@ public class JobScheduleTask implements InitializingBean {
                     preparedStatement = connection.prepareStatement("select * from job_lock where lock_name = 'schedule_lock' for update");
                     preparedStatement.execute();
 
-                    long nowTime = System.currentTimeMillis();
+                    long maxNextTime = System.currentTimeMillis() + PRE_READ_TIME;
+
+                    List<JobInfoEntity> jobInfoEntities = jobFacade.queryscheduleJobs(maxNextTime, 4000);
+                    jobInfoEntities.forEach(this::addQueue);
                 } catch (Exception e) {
                     log.error(MessageUtil.format("JobScheduleTask error", e));
                 } finally {
@@ -109,5 +125,35 @@ public class JobScheduleTask implements InitializingBean {
             while (!JvmStatus.JVM_CLOSE_FLAG) {
             }
         });
+    }
+
+    private void addQueue(JobInfoEntity jobInfoEntity) {
+        delayQueue.add(new Delay<>(jobInfoEntity.getTriggerNextTime(), jobInfoEntity));
+
+        freshNextTime(jobInfoEntity, new Date(jobInfoEntity.getTriggerNextTime()));
+
+        if (Objects.equals(jobInfoEntity.getTriggerStatus(), 1) && jobInfoEntity.getTriggerNextTime() <= (System.currentTimeMillis() + PRE_READ_TIME)) {
+            addQueue(jobInfoEntity);
+        }
+    }
+
+    private void freshNextTime(JobInfoEntity jobInfoEntity, Date fromTime) {
+        jobInfoEntity.setTriggerLastTime(jobInfoEntity.getTriggerNextTime());
+
+        String scheduleType = jobInfoEntity.getScheduleType();
+        if (Objects.equals(scheduleType, "cron")) {
+            LocalDateTime localDateTime = CronUtil.nextExecuteTime(jobInfoEntity.getScheduleConfig(), DateUtil.date2LocalDateTime(fromTime));
+            if (Objects.isNull(localDateTime)) {
+                jobInfoEntity.setTriggerStatus(0);
+                jobInfoEntity.setTriggerNextTime(0L);
+                return;
+            }
+
+            long nextTime = DateUtil.toEpochMilli(localDateTime);
+            jobInfoEntity.setTriggerNextTime(nextTime);
+            return;
+        }
+
+        jobInfoEntity.setTriggerNextTime(new Date(fromTime.getTime() + (Integer.parseInt(jobInfoEntity.getScheduleConfig()) * DateUtil.SECOND)).getTime());
     }
 }
