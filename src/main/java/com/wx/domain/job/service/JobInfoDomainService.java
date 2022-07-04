@@ -38,4 +38,9 @@ public class JobInfoDomainService {
         List<JobInfoDO> jobInfos = jobInfoMapper.selectByExample(jobInfoDOExample);
         return jobInfoFactory.toJobInfoEntity(jobInfos);
     }
+
+    public void update(JobInfoEntity updateJobInfoEntity) {
+        JobInfoDO jobInfoDO = jobInfoFactory.toJobInfoDO(updateJobInfoEntity);
+        jobInfoMapper.updateByPrimaryKeySelective(jobInfoDO);
+    }
 }

@@ -20,4 +20,6 @@ public interface JobInfoFactory {
     List<JobInfoEntity> toJobInfoEntity(List<JobInfoDO> jobInfos);
 
     JobInfoEntity toJobInfoEntity(JobInfoDO jobInfoDO);
+
+    JobInfoDO toJobInfoDO(JobInfoEntity jobInfoEntity);
 }
