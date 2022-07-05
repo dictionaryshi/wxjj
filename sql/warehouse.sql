@@ -100,3 +100,88 @@ CREATE TABLE `order_item` (
   UNIQUE KEY `uniq_order_id_sku_id` (`order_id`,`sku_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单条目';
 
+CREATE TABLE `job_lock` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `lock_name` varchar(32) NOT NULL DEFAULT '' COMMENT '锁名称',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_lock_name` (`lock_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='job锁';
+INSERT INTO `job_lock` ( `lock_name`) VALUES ( 'schedule_lock');
+
+CREATE TABLE `job_group` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `app_name` varchar(64) NOT NULL DEFAULT '' COMMENT 'app标识',
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '执行器名称',
+  `address_type` tinyint(4) NOT NULL DEFAULT '-1' COMMENT '0:自动注册, 1:手动录入',
+  `address_list` longtext COMMENT '地址列表',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_app_name_name` (`app_name`,`name`),
+  KEY `idx_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='执行器';
+
+CREATE TABLE `job_registry` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `app_name` varchar(255) NOT NULL DEFAULT '' COMMENT 'app标识',
+  `address` varchar(255) NOT NULL DEFAULT '' COMMENT '地址',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_app_name_address` (`app_name`,`address`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='app注册';
+
+CREATE TABLE `job_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `job_group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '执行器id',
+  `job_id` bigint(20) NOT NULL DEFAULT '0' COMMENT 'job id',
+  `executor_address` varchar(255) NOT NULL DEFAULT '' COMMENT '执行器地址',
+  `executor_app` varchar(255) NOT NULL DEFAULT '' COMMENT '执行器app',
+  `executor_handler` varchar(255) NOT NULL DEFAULT '' COMMENT '执行器名称',
+  `executor_param` varchar(512) NOT NULL DEFAULT '' COMMENT '执行器参数',
+  `executor_sharding_param` varchar(32) NOT NULL DEFAULT '' COMMENT '执行器任务分片参数',
+  `executor_fail_retry_count` int(11) NOT NULL DEFAULT '0' COMMENT '失败重试次数',
+  `trigger_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '调度时间',
+  `trigger_code` int(11) NOT NULL DEFAULT '-1' COMMENT '调度结果',
+  `trigger_msg` longtext COMMENT '调度日志',
+  `handle_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '执行时间',
+  `handle_code` int(11) NOT NULL DEFAULT '-1' COMMENT '执行状态',
+  `handle_msg` longtext COMMENT '执行日志',
+  `alarm_status` tinyint(4) NOT NULL DEFAULT '-1' COMMENT '告警状态',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_job_group_id` (`job_group_id`),
+  KEY `idx_job_id` (`job_id`),
+  KEY `idx_trigger_time` (`trigger_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='job log';
+
+CREATE TABLE `job_info` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `job_group_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '执行器id',
+  `job_desc` varchar(255) NOT NULL DEFAULT '' COMMENT '任务描述',
+  `alarm_email` varchar(255) NOT NULL DEFAULT '' COMMENT '告警邮件',
+  `schedule_type` varchar(32) NOT NULL DEFAULT '' COMMENT '调度类型',
+  `schedule_config` varchar(255) NOT NULL DEFAULT '' COMMENT '调度配置',
+  `executor_route_strategy` varchar(32) NOT NULL DEFAULT '' COMMENT '路由策略',
+  `executor_app` varchar(255) NOT NULL DEFAULT '' COMMENT '执行器app',
+  `executor_handler` varchar(255) NOT NULL DEFAULT '' COMMENT '执行器名称',
+  `executor_param` varchar(512) NOT NULL DEFAULT '' COMMENT '执行器任务参数',
+  `executor_block_strategy` varchar(32) NOT NULL DEFAULT '' COMMENT '阻塞处理策略',
+  `executor_timeout` int(11) NOT NULL DEFAULT '0' COMMENT '任务超时',
+  `executor_fail_retry_count` int(11) NOT NULL DEFAULT '0' COMMENT '失败重试次数',
+  `child_job_id` varchar(512) NOT NULL DEFAULT '' COMMENT '子任务id',
+  `trigger_status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '调度状态',
+  `trigger_last_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '任务最后一次执行时间',
+  `trigger_next_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '任务下次调度时间',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_job_group_id` (`job_group_id`),
+  KEY `idx_job_desc` (`job_desc`),
+  KEY `idx_executor_handler` (`executor_handler`),
+  KEY `idx_trigger_next_time` (`trigger_next_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='job信息';
+
+commit;
+
