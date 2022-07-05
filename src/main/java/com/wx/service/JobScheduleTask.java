@@ -152,17 +152,18 @@ public class JobScheduleTask implements InitializingBean {
     }
 
     private void addQueue(JobInfoEntity jobInfoEntity) {
-        if (jobInfoEntity.getTriggerNextTime() <= 0) {
-            jobInfoEntity.setTriggerNextTime(System.currentTimeMillis());
+        long nowTime = System.currentTimeMillis();
+        if (jobInfoEntity.getTriggerNextTime() < (nowTime - PRE_READ_TIME)) {
+            jobInfoEntity.setTriggerNextTime(nowTime);
         }
 
-        if (jobInfoEntity.getTriggerNextTime() >= System.currentTimeMillis()) {
+        if (jobInfoEntity.getTriggerNextTime() >= nowTime) {
             delayQueue.add(new Delay<>(jobInfoEntity.getTriggerNextTime(), jobInfoEntity.getId()));
         }
 
         freshNextTime(jobInfoEntity, new Date(jobInfoEntity.getTriggerNextTime()));
 
-        if (Objects.equals(jobInfoEntity.getTriggerStatus(), 1) && jobInfoEntity.getTriggerNextTime() <= (System.currentTimeMillis() + PRE_READ_TIME)) {
+        if (Objects.equals(jobInfoEntity.getTriggerStatus(), 1) && jobInfoEntity.getTriggerNextTime() <= (nowTime + PRE_READ_TIME)) {
             addQueue(jobInfoEntity);
         }
     }
