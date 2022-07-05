@@ -134,7 +134,7 @@ public class JobScheduleTask implements InitializingBean {
 
         THREAD_POOL_EXECUTOR.execute(() -> {
             scheduleThread = Thread.currentThread();
-            while (!JvmStatus.JVM_CLOSE_FLAG) {
+            while (true) {
                 try {
                     TraceUtil.setTraceId(null);
 
@@ -144,6 +144,7 @@ public class JobScheduleTask implements InitializingBean {
                     delayList.add(delay);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    break;
                 } finally {
                     TraceUtil.clearTrace();
                 }
