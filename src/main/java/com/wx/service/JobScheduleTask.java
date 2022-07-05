@@ -143,7 +143,6 @@ public class JobScheduleTask implements InitializingBean {
                     int count = delayQueue.drainTo(delayList, 3999);
                     delayList.add(delay);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                     break;
                 } finally {
                     TraceUtil.clearTrace();
