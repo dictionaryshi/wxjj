@@ -2,7 +2,6 @@ package com.wx.domain.job.service;
 
 import com.scy.core.format.DateUtil;
 import com.scy.core.json.JsonUtil;
-import com.scy.core.thread.ThreadPoolUtil;
 import com.scy.redis.lock.RedisLock;
 import com.wx.dao.warehouse.mapper.JobGroupDOMapper;
 import com.wx.dao.warehouse.mapper.JobRegistryDOMapper;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 /**
@@ -28,8 +26,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class JobRegistryDomainService {
-
-    private static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = ThreadPoolUtil.getThreadPool("job-registry", 1, 5, 5);
 
     @Autowired
     private JobRegistryDOMapper jobRegistryMapper;
@@ -44,52 +40,48 @@ public class JobRegistryDomainService {
     private RedisLock redisLock;
 
     public void registry(JobRegistryEntity jobRegistryEntity) {
-        THREAD_POOL_EXECUTOR.execute(() -> {
-            JobRegistryDO jobRegistryDO = jobRegistryFactory.toJobRegistryDO(jobRegistryEntity);
-            jobRegistryDO.setUpdatedAt(DateUtil.getCurrentDate());
+        JobRegistryDO jobRegistryDO = jobRegistryFactory.toJobRegistryDO(jobRegistryEntity);
+        jobRegistryDO.setUpdatedAt(DateUtil.getCurrentDate());
 
-            JobRegistryDOExample jobRegistryDOExample = new JobRegistryDOExample();
-            JobRegistryDOExample.Criteria criteria = jobRegistryDOExample.createCriteria();
-            criteria.andAppNameEqualTo(jobRegistryEntity.getAppName());
-            criteria.andAddressEqualTo(jobRegistryEntity.getAddress());
+        JobRegistryDOExample jobRegistryDOExample = new JobRegistryDOExample();
+        JobRegistryDOExample.Criteria criteria = jobRegistryDOExample.createCriteria();
+        criteria.andAppNameEqualTo(jobRegistryEntity.getAppName());
+        criteria.andAddressEqualTo(jobRegistryEntity.getAddress());
 
-            int count = jobRegistryMapper.updateByExampleSelective(jobRegistryDO, jobRegistryDOExample);
-            if (count > 0) {
-                return;
-            }
+        int count = jobRegistryMapper.updateByExampleSelective(jobRegistryDO, jobRegistryDOExample);
+        if (count > 0) {
+            return;
+        }
 
-            jobRegistryMapper.insertSelective(jobRegistryDO);
+        jobRegistryMapper.insertSelective(jobRegistryDO);
 
-            String lockKey = jobRegistryEntity.getLockKey();
-            try {
-                redisLock.lock(lockKey);
-                fresh(jobRegistryEntity.getAppName());
-            } finally {
-                redisLock.unlock(lockKey);
-            }
-        });
+        String lockKey = jobRegistryEntity.getLockKey();
+        try {
+            redisLock.lock(lockKey);
+            fresh(jobRegistryEntity.getAppName());
+        } finally {
+            redisLock.unlock(lockKey);
+        }
     }
 
     public void registryRemove(JobRegistryEntity jobRegistryEntity) {
-        THREAD_POOL_EXECUTOR.execute(() -> {
-            JobRegistryDOExample jobRegistryDOExample = new JobRegistryDOExample();
-            JobRegistryDOExample.Criteria criteria = jobRegistryDOExample.createCriteria();
-            criteria.andAppNameEqualTo(jobRegistryEntity.getAppName());
-            criteria.andAddressEqualTo(jobRegistryEntity.getAddress());
+        JobRegistryDOExample jobRegistryDOExample = new JobRegistryDOExample();
+        JobRegistryDOExample.Criteria criteria = jobRegistryDOExample.createCriteria();
+        criteria.andAppNameEqualTo(jobRegistryEntity.getAppName());
+        criteria.andAddressEqualTo(jobRegistryEntity.getAddress());
 
-            int count = jobRegistryMapper.deleteByExample(jobRegistryDOExample);
-            if (count <= 0) {
-                return;
-            }
+        int count = jobRegistryMapper.deleteByExample(jobRegistryDOExample);
+        if (count <= 0) {
+            return;
+        }
 
-            String lockKey = jobRegistryEntity.getLockKey();
-            try {
-                redisLock.lock(lockKey);
-                fresh(jobRegistryEntity.getAppName());
-            } finally {
-                redisLock.unlock(lockKey);
-            }
-        });
+        String lockKey = jobRegistryEntity.getLockKey();
+        try {
+            redisLock.lock(lockKey);
+            fresh(jobRegistryEntity.getAppName());
+        } finally {
+            redisLock.unlock(lockKey);
+        }
     }
 
     private void fresh(String appName) {
