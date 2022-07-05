@@ -42,7 +42,7 @@ public class JobScheduleTask implements InitializingBean {
 
     private Thread scheduleThread;
 
-    private final DelayQueue<Delay<JobInfoEntity>> delayQueue = new DelayQueue<>();
+    private final DelayQueue<Delay<Long>> delayQueue = new DelayQueue<>();
 
     @Autowired
     private JobFacade jobFacade;
@@ -125,6 +125,10 @@ public class JobScheduleTask implements InitializingBean {
 
             log.info("JobScheduleTask stop");
 
+            while (delayQueue.size() > 0) {
+                ThreadUtil.quietSleep(PRE_READ_TIME);
+            }
+
             Optional.ofNullable(scheduleThread).ifPresent(Thread::interrupt);
         });
 
@@ -134,10 +138,10 @@ public class JobScheduleTask implements InitializingBean {
                 try {
                     TraceUtil.setTraceId(null);
 
-                    Delay<JobInfoEntity> jobInfoEntityDelay = delayQueue.take();
-                    List<Delay<JobInfoEntity>> jobInfoEntityDelayList = new ArrayList<>();
-                    int count = delayQueue.drainTo(jobInfoEntityDelayList, 3999);
-                    jobInfoEntityDelayList.add(jobInfoEntityDelay);
+                    Delay<Long> delay = delayQueue.take();
+                    List<Delay<Long>> delayList = new ArrayList<>();
+                    int count = delayQueue.drainTo(delayList, 3999);
+                    delayList.add(delay);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
@@ -153,7 +157,7 @@ public class JobScheduleTask implements InitializingBean {
         }
 
         if (jobInfoEntity.getTriggerNextTime() >= System.currentTimeMillis()) {
-            delayQueue.add(new Delay<>(jobInfoEntity.getTriggerNextTime(), jobInfoEntity));
+            delayQueue.add(new Delay<>(jobInfoEntity.getTriggerNextTime(), jobInfoEntity.getId()));
         }
 
         freshNextTime(jobInfoEntity, new Date(jobInfoEntity.getTriggerNextTime()));
