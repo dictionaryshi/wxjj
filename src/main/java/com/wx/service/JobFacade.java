@@ -1,8 +1,13 @@
 package com.wx.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.scy.core.CollectionUtil;
+import com.scy.core.StringUtil;
 import com.scy.core.format.MessageUtil;
+import com.scy.core.json.JsonUtil;
 import com.scy.core.thread.ThreadPoolUtil;
 import com.scy.netty.job.annotation.Job;
+import com.wx.dao.warehouse.model.JobGroupDO;
 import com.wx.domain.job.entity.JobInfoEntity;
 import com.wx.domain.job.entity.JobRegistryEntity;
 import com.wx.domain.job.service.JobInfoDomainService;
@@ -115,5 +120,51 @@ public class JobFacade {
     }
 
     private void triggerRun(int jobId, String triggerType, int failRetryCount, String executorShardingParam, String executorParam, String addressList) {
+        JobInfoEntity jobInfoEntity = jobInfoDomainService.getJobInfoEntityById(jobId);
+        if (Objects.isNull(jobInfoEntity)) {
+            return;
+        }
+
+        if (Objects.nonNull(executorParam)) {
+            jobInfoEntity.setExecutorParam(executorParam);
+        }
+
+        JobGroupDO jobGroupDO = jobInfoDomainService.getJobGroupById(jobInfoEntity.getJobGroupId());
+        if (Objects.isNull(jobGroupDO)) {
+            return;
+        }
+
+        if (!StringUtil.isEmpty(addressList)) {
+            jobGroupDO.setAddressType(1);
+            jobGroupDO.setAddressList(addressList.trim());
+        }
+
+        int[] shardingParam = null;
+        if (Objects.nonNull(executorShardingParam)) {
+            String[] shardingArr = executorShardingParam.split("/");
+            if (shardingArr.length == 2 && StringUtil.isNumber(shardingArr[0]) && StringUtil.isNumber(shardingArr[1])) {
+                shardingParam = new int[2];
+                shardingParam[0] = Integer.parseInt(shardingArr[0]);
+                shardingParam[1] = Integer.parseInt(shardingArr[1]);
+            }
+        }
+
+        int finalFailRetryCount = failRetryCount >= 0 ? failRetryCount : jobInfoEntity.getExecutorFailRetryCount();
+
+        List<String> addresses = JsonUtil.json2Object(jobGroupDO.getAddressList(), new TypeReference<List<String>>() {
+        });
+        if (Objects.equals("broadcast", jobInfoEntity.getExecutorRouteStrategy()) && !CollectionUtil.isEmpty(addresses) && Objects.isNull(shardingParam)) {
+            for (int i = 0; i < addresses.size(); i++) {
+                processTrigger(jobGroupDO, jobInfoEntity, finalFailRetryCount, triggerType, i, addresses.size());
+            }
+        } else {
+            if (Objects.isNull(shardingParam)) {
+                shardingParam = new int[]{0, 1};
+            }
+            processTrigger(jobGroupDO, jobInfoEntity, finalFailRetryCount, triggerType, shardingParam[0], shardingParam[1]);
+        }
+    }
+
+    private void processTrigger(JobGroupDO jobGroupDO, JobInfoEntity jobInfoEntity, int finalFailRetryCount, String triggerType, int i, int size) {
     }
 }
