@@ -1,6 +1,8 @@
 package com.wx.domain.job.service;
 
+import com.wx.dao.warehouse.mapper.JobGroupDOMapper;
 import com.wx.dao.warehouse.mapper.JobInfoDOMapper;
+import com.wx.dao.warehouse.model.JobGroupDO;
 import com.wx.dao.warehouse.model.JobInfoDO;
 import com.wx.dao.warehouse.model.JobInfoDOExample;
 import com.wx.domain.job.entity.JobInfoEntity;
@@ -24,6 +26,9 @@ public class JobInfoDomainService {
     private JobInfoDOMapper jobInfoMapper;
 
     @Autowired
+    private JobGroupDOMapper jobGroupMapper;
+
+    @Autowired
     private JobInfoFactory jobInfoFactory;
 
     public List<JobInfoEntity> queryscheduleJobs(long maxNextTime, int limit) {
@@ -42,5 +47,14 @@ public class JobInfoDomainService {
     public void update(JobInfoEntity updateJobInfoEntity) {
         JobInfoDO jobInfoDO = jobInfoFactory.toJobInfoDO(updateJobInfoEntity);
         jobInfoMapper.updateByPrimaryKeySelective(jobInfoDO);
+    }
+
+    public JobInfoEntity getJobInfoEntityById(long id) {
+        JobInfoDO jobInfoDO = jobInfoMapper.selectByPrimaryKey(id);
+        return jobInfoFactory.toJobInfoEntity(jobInfoDO);
+    }
+
+    public JobGroupDO getJobGroupById(long id) {
+        return jobGroupMapper.selectByPrimaryKey(id);
     }
 }
