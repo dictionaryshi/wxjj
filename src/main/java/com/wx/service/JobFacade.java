@@ -91,7 +91,7 @@ public class JobFacade {
             try {
                 triggerRun(jobId, triggerType, failRetryCount, executorShardingParam, executorParam, addressList);
             } catch (Exception e) {
-                log.error(MessageUtil.format("trigger error", "jobId", jobId));
+                log.error(MessageUtil.format("trigger error", e, "jobId", jobId));
             } finally {
                 long timeWindowNow = System.currentTimeMillis() / 60_000;
                 if (!Objects.equals(timeWindowNow, timeWindow)) {
