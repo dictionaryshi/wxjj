@@ -3,11 +3,16 @@ package com.wx.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.scy.core.CollectionUtil;
 import com.scy.core.StringUtil;
+import com.scy.core.format.DateUtil;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.json.JsonUtil;
 import com.scy.core.thread.ThreadPoolUtil;
+import com.scy.netty.job.ExecutorBlockStrategyEnum;
+import com.scy.netty.job.JobParam;
+import com.scy.netty.job.JobTypeEnum;
 import com.scy.netty.job.annotation.Job;
 import com.wx.dao.warehouse.model.JobGroupDO;
+import com.wx.dao.warehouse.model.JobLogDO;
 import com.wx.domain.job.entity.JobInfoEntity;
 import com.wx.domain.job.entity.JobRegistryEntity;
 import com.wx.domain.job.service.JobInfoDomainService;
@@ -165,6 +170,32 @@ public class JobFacade {
         }
     }
 
-    private void processTrigger(JobGroupDO jobGroupDO, JobInfoEntity jobInfoEntity, int finalFailRetryCount, String triggerType, int i, int size) {
+    private void processTrigger(JobGroupDO jobGroupDO, JobInfoEntity jobInfoEntity, int finalFailRetryCount, String triggerType, int index, int total) {
+        JobLogDO jobLogDO = new JobLogDO();
+        jobLogDO.setJobGroupId(jobGroupDO.getId());
+        jobLogDO.setJobId(jobInfoEntity.getId());
+        jobLogDO.setExecutorApp(jobGroupDO.getAppName());
+        jobLogDO.setExecutorHandler(jobGroupDO.getName());
+        jobLogDO.setExecutorParam(jobInfoEntity.getExecutorParam());
+        jobLogDO.setExecutorShardingParam(Objects.equals("broadcast", jobInfoEntity.getExecutorRouteStrategy())
+                ? String.valueOf(index).concat("/").concat(String.valueOf(total)) : null);
+        jobLogDO.setExecutorFailRetryCount(finalFailRetryCount);
+        jobLogDO.setTriggerTime(DateUtil.getCurrentDate().getTime());
+        jobLogDO.setAlarmStatus(-1);
+
+        jobInfoDomainService.insertJobLog(jobLogDO);
+
+        JobParam jobParam = new JobParam();
+        jobParam.setJobId(jobInfoEntity.getId().intValue());
+        jobParam.setJobType(JobTypeEnum.BEAN.getType());
+        jobParam.setExecutorHandler(jobGroupDO.getName());
+        jobParam.setExecutorParams(jobInfoEntity.getExecutorParam());
+        jobParam.setExecutorBlockStrategy(ExecutorBlockStrategyEnum.SERIAL_EXECUTION.getType());
+        jobParam.setExecutorTimeout(jobInfoEntity.getExecutorTimeout());
+        jobParam.setLogId(jobLogDO.getId());
+        jobParam.setLogDateTime(jobLogDO.getTriggerTime());
+        jobParam.setBroadcastIndex(index);
+        jobParam.setBroadcastTotal(total);
+
     }
 }
