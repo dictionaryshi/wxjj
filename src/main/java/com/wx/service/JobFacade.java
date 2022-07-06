@@ -7,6 +7,9 @@ import com.scy.core.format.DateUtil;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.json.JsonUtil;
 import com.scy.core.thread.ThreadPoolUtil;
+import com.scy.netty.job.ExecutorBlockStrategyEnum;
+import com.scy.netty.job.JobParam;
+import com.scy.netty.job.JobTypeEnum;
 import com.scy.netty.job.annotation.Job;
 import com.wx.dao.warehouse.model.JobGroupDO;
 import com.wx.dao.warehouse.model.JobLogDO;
@@ -181,5 +184,18 @@ public class JobFacade {
         jobLogDO.setAlarmStatus(-1);
 
         jobInfoDomainService.insertJobLog(jobLogDO);
+
+        JobParam jobParam = new JobParam();
+        jobParam.setJobId(jobInfoEntity.getId().intValue());
+        jobParam.setJobType(JobTypeEnum.BEAN.getType());
+        jobParam.setExecutorHandler(jobGroupDO.getName());
+        jobParam.setExecutorParams(jobInfoEntity.getExecutorParam());
+        jobParam.setExecutorBlockStrategy(ExecutorBlockStrategyEnum.SERIAL_EXECUTION.getType());
+        jobParam.setExecutorTimeout(jobInfoEntity.getExecutorTimeout());
+        jobParam.setLogId(jobLogDO.getId());
+        jobParam.setLogDateTime(jobLogDO.getTriggerTime());
+        jobParam.setBroadcastIndex(index);
+        jobParam.setBroadcastTotal(total);
+
     }
 }
