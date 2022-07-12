@@ -2,10 +2,14 @@ package com.wx.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.scy.core.CollectionUtil;
+import com.scy.core.Route;
 import com.scy.core.StringUtil;
 import com.scy.core.format.DateUtil;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.json.JsonUtil;
+import com.scy.core.net.HttpOptions;
+import com.scy.core.net.HttpUtil;
+import com.scy.core.rest.ResponseResult;
 import com.scy.core.thread.ThreadPoolUtil;
 import com.scy.netty.job.ExecutorBlockStrategyEnum;
 import com.scy.netty.job.JobParam;
@@ -21,8 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -197,5 +200,24 @@ public class JobFacade {
         jobParam.setBroadcastIndex(index);
         jobParam.setBroadcastTotal(total);
 
+        String address = null;
+        List<String> addresses = JsonUtil.json2Object(jobGroupDO.getAddressList(), new TypeReference<List<String>>() {
+        });
+        if (!CollectionUtil.isEmpty(addresses)) {
+            if (Objects.equals("broadcast", jobInfoEntity.getExecutorRouteStrategy())) {
+                if (index < addresses.size()) {
+                    address = addresses.get(index);
+                } else {
+                    address = addresses.get(0);
+                }
+            } else {
+                address = Route.busyOrFailSkip(new TreeSet<>(addresses), addr -> {
+                    ResponseResult<Boolean> responseResult = HttpUtil.post(addr + "/beat", JsonUtil.convertValue(jobParam, new TypeReference<Map<String, Object>>() {
+                    }), new TypeReference<ResponseResult<Boolean>>() {
+                    }, HttpOptions.build().contentType(HttpUtil.APPLICATION_JSON_VALUE));
+                    return Optional.ofNullable(responseResult).map(ResponseResult::getData).orElse(Boolean.FALSE);
+                });
+            }
+        }
     }
 }
