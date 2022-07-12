@@ -66,4 +66,8 @@ public class JobInfoDomainService {
     public void insertJobLog(JobLogDO jobLogDO) {
         jobLogMapper.insertSelective(jobLogDO);
     }
+
+    public void updateJobLog(JobLogDO jobLogDO) {
+        jobLogMapper.updateByPrimaryKeySelective(jobLogDO);
+    }
 }
