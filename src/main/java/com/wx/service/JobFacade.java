@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.scy.core.CollectionUtil;
 import com.scy.core.Route;
 import com.scy.core.StringUtil;
+import com.scy.core.enums.ResponseCodeEnum;
 import com.scy.core.format.DateUtil;
 import com.scy.core.format.MessageUtil;
 import com.scy.core.json.JsonUtil;
 import com.scy.core.net.HttpOptions;
 import com.scy.core.net.HttpUtil;
+import com.scy.core.net.NetworkInterfaceUtil;
 import com.scy.core.rest.ResponseResult;
 import com.scy.core.thread.ThreadPoolUtil;
 import com.scy.netty.job.ExecutorBlockStrategyEnum;
@@ -219,5 +221,34 @@ public class JobFacade {
                 });
             }
         }
+
+        ResponseResult<Boolean> triggerResult;
+        if (StringUtil.isEmpty(address)) {
+            triggerResult = ResponseResult.error(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), "address为null", Boolean.FALSE);
+        } else {
+            triggerResult = HttpUtil.post(address + "/run", JsonUtil.convertValue(jobParam, new TypeReference<Map<String, Object>>() {
+            }), new TypeReference<ResponseResult<Boolean>>() {
+            }, HttpOptions.build().contentType(HttpUtil.APPLICATION_JSON_VALUE));
+            triggerResult = Optional.ofNullable(triggerResult).orElse(ResponseResult.error(ResponseCodeEnum.SYSTEM_EXCEPTION.getCode(), "run null", Boolean.FALSE));
+        }
+
+        StringBuilder triggerMsg = new StringBuilder();
+        triggerMsg.append("triggerType: ").append(triggerType).append(StringUtil.BR);
+        triggerMsg.append("adminAddress: ").append(NetworkInterfaceUtil.getIp()).append(StringUtil.BR);
+        triggerMsg.append("addressType: ").append(jobGroupDO.getAddressType()).append(StringUtil.BR);
+        triggerMsg.append("addresses: ").append(addresses).append(StringUtil.BR);
+        triggerMsg.append("route: ").append("busyOrFailSkip").append(StringUtil.BR);
+        triggerMsg.append("executorShardingParam: ").append(jobLogDO.getExecutorShardingParam()).append(StringUtil.BR);
+        triggerMsg.append("blockStrategy: ").append(jobParam.getExecutorBlockStrategy()).append(StringUtil.BR);
+        triggerMsg.append("timeout: ").append(jobInfoEntity.getExecutorTimeout()).append(StringUtil.BR);
+        triggerMsg.append("executorFailRetryCount: ").append(finalFailRetryCount).append(StringUtil.BR);
+        triggerMsg.append("triggerRun: ").append(triggerResult.getCode()).append("(").append(triggerResult.getMessage()).append(")").append(StringUtil.BR);
+
+        JobLogDO updateJobLogDO = new JobLogDO();
+        updateJobLogDO.setId(jobLogDO.getId());
+        updateJobLogDO.setExecutorAddress(address);
+        updateJobLogDO.setTriggerCode(triggerResult.getCode());
+        updateJobLogDO.setTriggerMsg(triggerMsg.toString());
+        jobInfoDomainService.updateJobLog(updateJobLogDO);
     }
 }
