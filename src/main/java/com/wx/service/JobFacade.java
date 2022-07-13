@@ -17,6 +17,7 @@ import com.scy.netty.job.ExecutorBlockStrategyEnum;
 import com.scy.netty.job.JobParam;
 import com.scy.netty.job.JobTypeEnum;
 import com.scy.netty.job.annotation.Job;
+import com.scy.netty.job.callback.CallbackParam;
 import com.wx.dao.warehouse.model.JobGroupDO;
 import com.wx.dao.warehouse.model.JobLogDO;
 import com.wx.domain.job.entity.JobInfoEntity;
@@ -250,5 +251,25 @@ public class JobFacade {
         updateJobLogDO.setTriggerCode(triggerResult.getCode());
         updateJobLogDO.setTriggerMsg(triggerMsg.toString());
         jobInfoDomainService.updateJobLog(updateJobLogDO);
+    }
+
+    public void callback(List<CallbackParam> callbackParamList) {
+        if (CollectionUtil.isEmpty(callbackParamList)) {
+            return;
+        }
+
+        callbackParamList.forEach(callbackParam -> {
+            JobLogDO jobLog = jobInfoDomainService.getJobLogById(callbackParam.getLogId());
+            if (Objects.isNull(jobLog)) {
+                return;
+            }
+
+            JobLogDO updateJobLogDO = new JobLogDO();
+            updateJobLogDO.setId(callbackParam.getLogId());
+            updateJobLogDO.setHandleTime(callbackParam.getLogDateTime());
+            updateJobLogDO.setHandleCode(callbackParam.getCode());
+            updateJobLogDO.setHandleMsg(callbackParam.getMsg());
+            jobInfoDomainService.updateJobLog(updateJobLogDO);
+        });
     }
 }
