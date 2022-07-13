@@ -2,6 +2,7 @@ package com.wx.controller.api;
 
 import com.scy.core.rest.ResponseResult;
 import com.scy.netty.job.callback.CallbackParam;
+import com.scy.netty.job.callback.CallbackRequest;
 import com.wx.controller.assembler.JobAssembler;
 import com.wx.controller.request.job.RegistryRemoveRequest;
 import com.wx.controller.request.job.RegistryRequest;
@@ -53,8 +54,8 @@ public class JobController {
 
     @ApiOperation("回调")
     @PostMapping(value = "/callback")
-    public ResponseResult<Boolean> callback(@RequestBody List<CallbackParam> callbackParamList) {
-        jobFacade.callback(callbackParamList);
+    public ResponseResult<Boolean> callback(@RequestBody CallbackRequest callbackRequest) {
+        jobFacade.callback(callbackRequest.getCallbackParamList());
         return ResponseResult.success(Boolean.TRUE);
     }
 }
