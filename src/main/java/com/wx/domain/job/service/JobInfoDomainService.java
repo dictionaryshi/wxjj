@@ -70,4 +70,8 @@ public class JobInfoDomainService {
     public void updateJobLog(JobLogDO jobLogDO) {
         jobLogMapper.updateByPrimaryKeySelective(jobLogDO);
     }
+
+    public JobLogDO getJobLogById(long id) {
+        return jobLogMapper.selectByPrimaryKey(id);
+    }
 }
