@@ -142,8 +142,12 @@ public class JobScheduleTask implements InitializingBean {
                     List<Delay<Long>> delayList = new ArrayList<>();
                     int count = delayQueue.drainTo(delayList, 3999);
                     delayList.add(delay);
+
+                    delayList.forEach(delayData -> {
+                        Long jobId = delayData.getData();
+                        jobFacade.trigger(jobId.intValue(), "cron", -1, null, null, null);
+                    });
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                     break;
                 } finally {
                     TraceUtil.clearTrace();

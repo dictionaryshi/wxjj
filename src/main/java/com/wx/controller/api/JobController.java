@@ -1,6 +1,8 @@
 package com.wx.controller.api;
 
 import com.scy.core.rest.ResponseResult;
+import com.scy.netty.job.callback.CallbackParam;
+import com.scy.netty.job.callback.CallbackRequest;
 import com.wx.controller.assembler.JobAssembler;
 import com.wx.controller.request.job.RegistryRemoveRequest;
 import com.wx.controller.request.job.RegistryRequest;
@@ -10,10 +12,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author : shichunyang
@@ -46,5 +50,12 @@ public class JobController {
     public ResponseResult<?> registryRemove(@Valid RegistryRemoveRequest registryRemoveRequest) {
         jobFacade.registryRemove(jobAssembler.toJobRegistryEntity(registryRemoveRequest));
         return ResponseResult.success(null);
+    }
+
+    @ApiOperation("回调")
+    @PostMapping(value = "/callback")
+    public ResponseResult<Boolean> callback(@RequestBody CallbackRequest callbackRequest) {
+        jobFacade.callback(callbackRequest.getCallbackParamList());
+        return ResponseResult.success(Boolean.TRUE);
     }
 }
