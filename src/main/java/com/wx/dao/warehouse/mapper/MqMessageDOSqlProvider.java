@@ -33,8 +33,8 @@ public class MqMessageDOSqlProvider {
             sql.VALUES("topic", "#{topic,jdbcType=VARCHAR}");
         }
 
-        if (row.getGroup() != null) {
-            sql.VALUES("group", "#{group,jdbcType=VARCHAR}");
+        if (row.getMqGroup() != null) {
+            sql.VALUES("mq_group", "#{mqGroup,jdbcType=VARCHAR}");
         }
 
         if (row.getStatus() != null) {
@@ -84,7 +84,7 @@ public class MqMessageDOSqlProvider {
             sql.SELECT("id");
         }
         sql.SELECT("topic");
-        sql.SELECT("group");
+        sql.SELECT("mq_group");
         sql.SELECT("status");
         sql.SELECT("retry_count");
         sql.SELECT("sharding_id");
@@ -120,7 +120,7 @@ public class MqMessageDOSqlProvider {
             sql.SELECT("id");
         }
         sql.SELECT("topic");
-        sql.SELECT("group");
+        sql.SELECT("mq_group");
         sql.SELECT("status");
         sql.SELECT("retry_count");
         sql.SELECT("sharding_id");
@@ -161,8 +161,8 @@ public class MqMessageDOSqlProvider {
             sql.SET("topic = #{row.topic,jdbcType=VARCHAR}");
         }
 
-        if (row.getGroup() != null) {
-            sql.SET("group = #{row.group,jdbcType=VARCHAR}");
+        if (row.getMqGroup() != null) {
+            sql.SET("mq_group = #{row.mqGroup,jdbcType=VARCHAR}");
         }
 
         if (row.getStatus() != null) {
@@ -213,8 +213,8 @@ public class MqMessageDOSqlProvider {
             sql.SET("topic = #{topic,jdbcType=VARCHAR}");
         }
 
-        if (row.getGroup() != null) {
-            sql.SET("group = #{group,jdbcType=VARCHAR}");
+        if (row.getMqGroup() != null) {
+            sql.SET("mq_group = #{mqGroup,jdbcType=VARCHAR}");
         }
 
         if (row.getStatus() != null) {
