@@ -30,7 +30,7 @@ public class MqMessageServiceImpl implements MqMessageService {
     public ResponseResult<Long> push(MqMessage mqMessage) {
         MqMessageDO mqMessageDO = new MqMessageDO();
         mqMessageDO.setTopic(mqMessage.getTopic());
-        mqMessageDO.setGroup(mqMessage.getGroup());
+        mqMessageDO.setMqGroup(mqMessage.getGroup());
         mqMessageDO.setStatus(0);
         mqMessageDO.setRetryCount(mqMessage.getRetryCount());
         mqMessageDO.setShardingId(mqMessage.getShardingId());

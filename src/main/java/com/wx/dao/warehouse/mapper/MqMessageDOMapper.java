@@ -32,8 +32,8 @@ public interface MqMessageDOMapper {
 
     @Select({
             "select",
-            "id, topic, group, status, retry_count, sharding_id, timeout, effect_time, created_at, ",
-            "updated_at, data, log",
+            "id, topic, mq_group, status, retry_count, sharding_id, timeout, effect_time, ",
+            "created_at, updated_at, data, log",
             "from mq_message",
             "where id = #{id,jdbcType=BIGINT}"
     })

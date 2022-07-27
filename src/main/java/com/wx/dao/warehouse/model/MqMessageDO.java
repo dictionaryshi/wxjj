@@ -21,7 +21,7 @@ public class MqMessageDO {
     /**
      * 分组
      */
-    private String group;
+    private String mqGroup;
 
     /**
      * 状态
@@ -76,8 +76,8 @@ public class MqMessageDO {
         this.topic = topic == null ? null : topic.trim();
     }
 
-    public void setGroup(String group) {
-        this.group = group == null ? null : group.trim();
+    public void setMqGroup(String mqGroup) {
+        this.mqGroup = mqGroup == null ? null : mqGroup.trim();
     }
 
     public void setStatus(Integer status) {

@@ -255,73 +255,73 @@ public class MqMessageDOExample {
             return (Criteria) this;
         }
 
-        public Criteria andGroupIsNull() {
-            addCriterion("group is null");
+        public Criteria andMqGroupIsNull() {
+            addCriterion("mq_group is null");
             return (Criteria) this;
         }
 
-        public Criteria andGroupIsNotNull() {
-            addCriterion("group is not null");
+        public Criteria andMqGroupIsNotNull() {
+            addCriterion("mq_group is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGroupEqualTo(String value) {
-            addCriterion("group =", value, "group");
+        public Criteria andMqGroupEqualTo(String value) {
+            addCriterion("mq_group =", value, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupNotEqualTo(String value) {
-            addCriterion("group <>", value, "group");
+        public Criteria andMqGroupNotEqualTo(String value) {
+            addCriterion("mq_group <>", value, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupGreaterThan(String value) {
-            addCriterion("group >", value, "group");
+        public Criteria andMqGroupGreaterThan(String value) {
+            addCriterion("mq_group >", value, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupGreaterThanOrEqualTo(String value) {
-            addCriterion("group >=", value, "group");
+        public Criteria andMqGroupGreaterThanOrEqualTo(String value) {
+            addCriterion("mq_group >=", value, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLessThan(String value) {
-            addCriterion("group <", value, "group");
+        public Criteria andMqGroupLessThan(String value) {
+            addCriterion("mq_group <", value, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLessThanOrEqualTo(String value) {
-            addCriterion("group <=", value, "group");
+        public Criteria andMqGroupLessThanOrEqualTo(String value) {
+            addCriterion("mq_group <=", value, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupLike(String value) {
-            addCriterion("group like", value, "group");
+        public Criteria andMqGroupLike(String value) {
+            addCriterion("mq_group like", value, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupNotLike(String value) {
-            addCriterion("group not like", value, "group");
+        public Criteria andMqGroupNotLike(String value) {
+            addCriterion("mq_group not like", value, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupIn(List<String> values) {
-            addCriterion("group in", values, "group");
+        public Criteria andMqGroupIn(List<String> values) {
+            addCriterion("mq_group in", values, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupNotIn(List<String> values) {
-            addCriterion("group not in", values, "group");
+        public Criteria andMqGroupNotIn(List<String> values) {
+            addCriterion("mq_group not in", values, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupBetween(String value1, String value2) {
-            addCriterion("group between", value1, value2, "group");
+        public Criteria andMqGroupBetween(String value1, String value2) {
+            addCriterion("mq_group between", value1, value2, "mqGroup");
             return (Criteria) this;
         }
 
-        public Criteria andGroupNotBetween(String value1, String value2) {
-            addCriterion("group not between", value1, value2, "group");
+        public Criteria andMqGroupNotBetween(String value1, String value2) {
+            addCriterion("mq_group not between", value1, value2, "mqGroup");
             return (Criteria) this;
         }
 
