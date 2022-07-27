@@ -197,7 +197,7 @@ CREATE TABLE `mq_message` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  KEY `idx_topic_group_status_effect_time` (`topic`,`group`,`status`,`effect_time`)
+  KEY `idx_topic_group_status_effect_time` (`topic`,`mq_group`,`status`,`effect_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息';
 
 commit;
