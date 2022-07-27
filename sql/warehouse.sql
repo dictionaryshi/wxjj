@@ -186,7 +186,7 @@ CREATE TABLE `job_info` (
 CREATE TABLE `mq_message` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
   `topic` varchar(255) NOT NULL DEFAULT '' COMMENT '主题',
-  `group` varchar(255) NOT NULL DEFAULT '' COMMENT '分组',
+  `mq_group` varchar(255) NOT NULL DEFAULT '' COMMENT '分组',
   `data` longtext NOT NULL COMMENT '数据',
   `status` tinyint(4) NOT NULL DEFAULT '-1' COMMENT '状态',
   `retry_count` int(11) NOT NULL DEFAULT '0' COMMENT '重试次数',
