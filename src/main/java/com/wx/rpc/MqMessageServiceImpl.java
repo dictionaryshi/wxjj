@@ -37,7 +37,7 @@ public class MqMessageServiceImpl implements MqMessageService {
         mqMessageDO.setTimeout(mqMessage.getTimeout());
         mqMessageDO.setEffectTime(mqMessage.getEffectTime());
         mqMessageDO.setData(mqMessage.getData());
-        mqMessageDO.setLog(StringUtil.EMPTY);
+        mqMessageDO.setLog(mqMessage.getLog());
         mqMessageMapper.insertSelective(mqMessageDO);
         return ResponseResult.success(mqMessageDO.getId());
     }
