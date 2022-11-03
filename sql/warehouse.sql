@@ -183,5 +183,22 @@ CREATE TABLE `job_info` (
   KEY `idx_trigger_next_time` (`trigger_next_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='job信息';
 
+CREATE TABLE `mq_message` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `topic` varchar(255) NOT NULL DEFAULT '' COMMENT '主题',
+  `mq_group` varchar(255) NOT NULL DEFAULT '' COMMENT '分组',
+  `data` longtext NOT NULL COMMENT '数据',
+  `status` tinyint(4) NOT NULL DEFAULT '-1' COMMENT '状态',
+  `retry_count` int(11) NOT NULL DEFAULT '0' COMMENT '重试次数',
+  `sharding_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '分片id',
+  `timeout` int(11) NOT NULL DEFAULT '0' COMMENT '超时',
+  `effect_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '生效时间',
+  `log` longtext NOT NULL COMMENT '日志',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_topic_group_status_effect_time` (`topic`,`mq_group`,`status`,`effect_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息';
+
 commit;
 

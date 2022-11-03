@@ -54,6 +54,7 @@
             tableName="job_info" domainObjectName="JobInfoDO"
             tableName="job_log" domainObjectName="JobLogDO"
             tableName="job_registry" domainObjectName="JobRegistryDO"
+            tableName="mq_message" domainObjectName="MqMessageDO"
         -->
         <table schema="warehouse"
                tableName="" domainObjectName=""
