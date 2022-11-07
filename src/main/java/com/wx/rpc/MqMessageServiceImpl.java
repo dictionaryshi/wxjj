@@ -2,19 +2,23 @@ package com.wx.rpc;
 
 import com.scy.core.CollectionUtil;
 import com.scy.core.StringUtil;
+import com.scy.core.format.NumberUtil;
 import com.scy.core.rest.ResponseResult;
 import com.scy.netty.mq.MessageStatusEnum;
 import com.scy.netty.mq.MqMessage;
 import com.scy.netty.mq.MqMessageService;
 import com.scy.netty.rpc.provider.annotation.RpcService;
 import com.scy.zookeeper.ZkClient;
+import com.wx.dao.warehouse.mapper.MqMessageDOMapper;
 import com.wx.dao.warehouse.mapper.extend.MqMessageDOMapperExt;
 import com.wx.dao.warehouse.model.MqMessageDO;
+import com.wx.dao.warehouse.model.MqMessageDOExample;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +38,9 @@ public class MqMessageServiceImpl implements MqMessageService {
 
     @Autowired
     private MqMessageDOMapperExt mqMessageDOMapperExt;
+
+    @Autowired
+    private MqMessageDOMapper mqMessageDOMapper;
 
     @Override
     public ResponseResult<Long> push(MqMessage mqMessage) {
@@ -65,5 +72,53 @@ public class MqMessageServiceImpl implements MqMessageService {
 
         int i = mqMessageDOMapperExt.batchInsert(mqMessages);
         return ResponseResult.success(Long.parseLong(String.valueOf(i)));
+    }
+
+    @Override
+    public ResponseResult<List<MqMessage>> pull(String topic, String group, int consumerRank, int consumerTotal) {
+        MqMessageDOExample mqMessageExample = new MqMessageDOExample();
+        mqMessageExample.setOrderByClause("id asc");
+        mqMessageExample.setOffset(0);
+        mqMessageExample.setLimit(200);
+
+        MqMessageDOExample.Criteria criteria = mqMessageExample.createCriteria();
+        criteria.andTopicEqualTo(topic);
+        criteria.andMqGroupEqualTo(group);
+        criteria.andStatusEqualTo(MessageStatusEnum.NEW.getStatus());
+        criteria.andEffectTimeLessThanOrEqualTo(System.currentTimeMillis());
+
+        List<MqMessageDO> mqMessages = mqMessageDOMapper.selectByExample(mqMessageExample);
+        if (consumerTotal <= 1) {
+            List<MqMessage> messages = mqMessages.stream().map(this::toMqMessage).collect(Collectors.toList());
+            return ResponseResult.success(messages);
+        }
+
+        List<MqMessage> messages = mqMessages.stream()
+                .filter(mqMessageDO -> {
+                    if (mqMessageDO.getShardingId() > 0) {
+                        return Objects.equals(NumberUtil.modulo(mqMessageDO.getShardingId(), consumerTotal), consumerRank);
+                    }
+
+                    return Objects.equals(NumberUtil.modulo(mqMessageDO.getId(), consumerTotal), consumerRank);
+                })
+                .map(this::toMqMessage).collect(Collectors.toList());
+        return ResponseResult.success(messages);
+    }
+
+    private MqMessage toMqMessage(MqMessageDO mqMessageDO) {
+        MqMessage mqMessage = new MqMessage();
+        mqMessage.setId(mqMessageDO.getId());
+        mqMessage.setTopic(mqMessageDO.getTopic());
+        mqMessage.setGroup(mqMessageDO.getMqGroup());
+        mqMessage.setStatus(mqMessageDO.getStatus());
+        mqMessage.setRetryCount(mqMessageDO.getRetryCount());
+        mqMessage.setShardingId(mqMessageDO.getShardingId());
+        mqMessage.setTimeout(mqMessageDO.getTimeout());
+        mqMessage.setEffectTime(mqMessageDO.getEffectTime());
+        mqMessage.setCreatedAt(mqMessageDO.getCreatedAt());
+        mqMessage.setUpdatedAt(mqMessageDO.getUpdatedAt());
+        mqMessage.setData(mqMessageDO.getData());
+        mqMessage.setLog(mqMessageDO.getLog());
+        return mqMessage;
     }
 }
