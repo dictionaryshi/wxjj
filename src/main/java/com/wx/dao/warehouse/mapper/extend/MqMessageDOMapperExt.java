@@ -29,6 +29,14 @@ public interface MqMessageDOMapperExt {
     })
     int lockMessage(@Param("id") long id, @Param("appendLog") String appendLog, @Param("oldStatus") int oldStatus, @Param("newStatus") int newStatus);
 
+    @Update({
+            "UPDATE mq_message",
+            "SET `status` = #{status},",
+            "`log` = CONCAT(`log`, #{appendLog})",
+            "WHERE `id` = #{id}",
+    })
+    int callbackMessage(@Param("id") long id, @Param("appendLog") String appendLog, @Param("status") int status);
+
     class MqMessageDOMapperExtSqlProvider {
 
         public String batchInsert(List<MqMessageDO> rows) {
