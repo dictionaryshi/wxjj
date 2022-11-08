@@ -105,6 +105,11 @@ public class MqMessageServiceImpl implements MqMessageService {
         return ResponseResult.success(messages);
     }
 
+    @Override
+    public ResponseResult<Integer> lockMessage(long id, String appendLog) {
+        return ResponseResult.success(mqMessageDOMapperExt.lockMessage(id, StringUtil.BR + appendLog, MessageStatusEnum.NEW.getStatus(), MessageStatusEnum.RUNNING.getStatus()));
+    }
+
     private MqMessage toMqMessage(MqMessageDO mqMessageDO) {
         MqMessage mqMessage = new MqMessage();
         mqMessage.setId(mqMessageDO.getId());
