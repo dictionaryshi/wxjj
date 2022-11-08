@@ -87,7 +87,7 @@ public class MqMessageServiceImpl implements MqMessageService {
         criteria.andStatusEqualTo(MessageStatusEnum.NEW.getStatus());
         criteria.andEffectTimeLessThanOrEqualTo(System.currentTimeMillis());
 
-        List<MqMessageDO> mqMessages = mqMessageDOMapper.selectByExample(mqMessageExample);
+        List<MqMessageDO> mqMessages = mqMessageDOMapper.selectByExampleWithBLOBs(mqMessageExample);
         if (consumerTotal <= 1) {
             List<MqMessage> messages = mqMessages.stream().map(this::toMqMessage).collect(Collectors.toList());
             return ResponseResult.success(messages);
