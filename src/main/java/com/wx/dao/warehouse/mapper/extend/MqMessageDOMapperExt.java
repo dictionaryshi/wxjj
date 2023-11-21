@@ -40,7 +40,7 @@ public interface MqMessageDOMapperExt {
     class MqMessageDOMapperExtSqlProvider {
 
         public String batchInsert(List<MqMessageDO> rows) {
-            return SqlUtil.batchInsert(MqMessageDO.class, "mq_message", Lists.newArrayList("id", "created_at", "updated_at"));
+            return SqlUtil.batchInsert(MqMessageDO.class, "mq_message");
         }
     }
 }
