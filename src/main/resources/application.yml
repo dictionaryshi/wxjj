@@ -34,6 +34,9 @@ spring:
     name: com.wxjj
   lifecycle:
     timeout-per-shutdown-phase: 50s
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 redis-config:
   host: 127.0.0.1
