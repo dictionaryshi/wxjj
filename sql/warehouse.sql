@@ -200,5 +200,25 @@ CREATE TABLE `mq_message` (
   KEY `idx_topic_group_status_effect_time` (`topic`,`mq_group`,`status`,`effect_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='消息';
 
+CREATE TABLE `mole_task` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `next_exe_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '下一次执行时间',
+  `exe_interval_sec` int(11) NOT NULL DEFAULT '0' COMMENT '执行间隔',
+  `exe_count` int(11) NOT NULL DEFAULT '0' COMMENT '执行次数',
+  `max_exe_count` int(11) NOT NULL DEFAULT '0' COMMENT '最大执行次数',
+  `exe_status` int(11) NOT NULL DEFAULT '0' COMMENT '任务状态',
+  `error_message` longtext COMMENT '错误信息',
+  `shared_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '分库id',
+  `param_type_json` varchar(1024) NOT NULL DEFAULT '' COMMENT '参数类型',
+  `params_json` longtext COMMENT '参数',
+  `target_class_name` varchar(512) NOT NULL DEFAULT '' COMMENT '类名',
+  `method_name` varchar(512) NOT NULL DEFAULT '' COMMENT '方法名',
+  `bean_name` varchar(512) NOT NULL DEFAULT '' COMMENT 'spring bean名',
+  `env` varchar(32) NOT NULL COMMENT '环境',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='分布式事务表';
+
 commit;
 
