@@ -55,7 +55,7 @@ spring:
 
 db-config:
   - name: warehouse
-    basePackages: com.wx.dao.warehouse.mapper
+    basePackages: com.wx.dao.warehouse.mapper,com.scy.db.mapper
     useGeneratedKeys: true
     defaultStatementTimeout: 10
     master:
