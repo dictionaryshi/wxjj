@@ -10,10 +10,10 @@ database C #yellow
 autonumber 1
 
 A -> B: 发起请求
-B --> A: 请求响应
+return 请求响应
 
 B -> C: 存储数据
-B <-- C: 存储结果
+return 存储结果
 
 autonumber stop
 
