@@ -1,0 +1,16 @@
+@startuml
+'uml学习'
+
+autonumber
+
+actor A #red
+participant B as "名字非常\n长的服务" #99FF99
+database C #yellow
+
+A -> B: 发起请求
+B --> A: 请求响应
+
+B -> C: 存储数据
+B <-- C: 存储结果
+
+@enduml
