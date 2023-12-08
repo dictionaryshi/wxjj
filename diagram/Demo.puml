@@ -17,6 +17,6 @@ B <-- C: 存储结果
 
 autonumber stop
 
-A-[#red]>A: 阅读结果\n反思流程
+A -[#red]> A: 阅读结果\n反思流程
 
 @enduml
