@@ -1,16 +1,22 @@
 @startuml
 'uml学习'
 
-autonumber
+title uml学习
 
 actor A #red
 participant B as "名字非常\n长的服务" #99FF99
 database C #yellow
 
+autonumber 1
+
 A -> B: 发起请求
-B --> A: 请求响应
+return 请求响应
 
 B -> C: 存储数据
-B <-- C: 存储结果
+return 存储结果
+
+autonumber stop
+
+A -[#red]> A: 阅读结果\n反思流程
 
 @enduml
