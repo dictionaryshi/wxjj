@@ -35,12 +35,18 @@ end
 end
 end
 
-B -> C: 存储数据
+critical 事务内操作
+B -> C: 存储退单数据
 return 存储结果
+B -> C: 更新额度数据
+return 更新结果
+end
 
 B --> A: 请求响应
 autonumber stop
 
+group 自定义 [自定义2]
 A -[#red]> A: 阅读结果\n反思流程
+end
 
 @enduml
