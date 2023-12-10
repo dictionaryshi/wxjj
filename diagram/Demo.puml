@@ -22,6 +22,7 @@ opt 申请退款额度 > 可退款总额度
 B --> A: 申请失败\n申请退款额度 > 可退款总额度
 end
 
+== 计算退款额度开始 ==
 loop 遍历可退订单list计算每单退款额
 break 申请退款额度 <= 0
 end
@@ -34,6 +35,7 @@ break 结束退款额度计算流程
 end
 end
 end
+== 计算退款额度结束 ==
 
 critical 事务内操作
 B -> C: 存储退单数据
@@ -47,6 +49,7 @@ autonumber stop
 
 group 自定义 [自定义2]
 A -[#red]> A: 阅读结果\n反思流程
+note right #aqua : 注释1\n注释2
 end
 
 @enduml
