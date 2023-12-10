@@ -8,28 +8,24 @@ participant B as "名字非常\n长的服务" #99FF99
 database C #yellow
 
 autonumber 1
-
 A -> B: 发起请求
-
-B -> B: 参数校验
-
-opt 参数校验失败
-B --> A: 参数校验未通过
-end
 
 par 并行
 B -> C: 查询可退订单list
 return: 反回可退订单list
-
 B -> C: 查询订单历史退单记录
 return: 反回订单历史退单记录
+end
+
+B -> B: 计算可退款总额度
+opt 申请退款额度 > 可退款总额度
+B --> A: 申请失败\n申请退款额度 > 可退款总额度
 end
 
 B -> C: 存储数据
 return 存储结果
 
 B --> A: 请求响应
-
 autonumber stop
 
 A -[#red]> A: 阅读结果\n反思流程
