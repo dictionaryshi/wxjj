@@ -8,15 +8,45 @@ participant B as "名字非常\n长的服务" #99FF99
 database C #yellow
 
 autonumber 1
-
 A -> B: 发起请求
-return 请求响应
 
-B -> C: 存储数据
+par 并行
+B -> C: 查询可退订单list
+return: 反回可退订单list
+B -> C: 查询订单历史退单记录
+return: 反回订单历史退单记录
+end
+
+B -> B: 计算可退款总额度
+opt 申请退款额度 > 可退款总额度
+B --> A: 申请失败\n申请退款额度 > 可退款总额度
+end
+
+loop 遍历可退订单list计算每单退款额
+break 申请退款额度 <= 0
+end
+
+alt 如果本单交易额度 <= 申请退款额度
+B -> B: 本单进行全部退款\n申请退款额度 = 申请退款额度 - 本单交易额度
+else 如果本单交易额度 > 申请退款额度
+B -> B: 本单剩余退款额度 = 本单交易额度 - 申请退款额度\n本单退款额度 = 申请退款额度
+break 结束退款额度计算流程
+end
+end
+end
+
+critical 事务内操作
+B -> C: 存储退单数据
 return 存储结果
+B -> C: 更新额度数据
+return 更新结果
+end
 
+B --> A: 请求响应
 autonumber stop
 
+group 自定义 [自定义2]
 A -[#red]> A: 阅读结果\n反思流程
+end
 
 @enduml
