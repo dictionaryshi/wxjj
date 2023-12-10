@@ -10,10 +10,17 @@ database C #yellow
 autonumber 1
 
 A -> B: 发起请求
-return 请求响应
+
+B -> B: 参数校验
+
+opt 参数校验失败
+B -> A: 参数校验未通过
+end
 
 B -> C: 存储数据
 return 存储结果
+
+B -> A: 请求响应
 
 autonumber stop
 
