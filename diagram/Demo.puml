@@ -4,8 +4,11 @@
 title uml学习
 
 actor A #red
+entity User
+collections userList
 participant B as "名字非常\n长的服务" #99FF99
 database C #yellow
+queue MQ
 
 autonumber 1
 A -> B: 发起请求
@@ -51,5 +54,22 @@ group 自定义 [自定义2]
 A -[#red]> A: 阅读结果\n反思流程
 note right #aqua : 注释1\n注释2
 end
+
+||50||
+A -> User **: 创建user对象
+activate User
+User -> User: 属性赋值
+User --> A : 返回user对象
+destroy User
+
+||50||
+A -> userList ** : new userList
+activate userList
+userList -> userList: 装填user
+userList --> A -- : 返回userList
+
+||50||
+A -> MQ: 发送mq
+MQ --> A: 发送结果
 
 @enduml
