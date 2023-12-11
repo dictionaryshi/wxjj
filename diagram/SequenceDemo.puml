@@ -1,7 +1,7 @@
 @startuml
-'uml学习'
 
-title uml学习
+title "时序图Demo"
+
 '实线粗细'
 skinparam sequenceArrowThickness 2
 
