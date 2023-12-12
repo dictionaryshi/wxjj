@@ -29,7 +29,30 @@ entity "batch_refund_info" {
 *refund_status:退款状态 100初始化, 200退款中, 300退款成功, 400退款失败, 500不参与退款
 }
 
+entity "refund_record" {
+*id:主键ID
+--
+*refund_record_id:受理唯一ID
+*user_type:用户类型
+*user_id:用户id
+*refund_type:退款类型 1:单笔 2:批量
+*trade_type:原支付单交易类型 1:代扣 2:用户支付
+*biz_serial_no:发起退款的业务流水号
+*trade_no:支付平台交易号
+*paid_amount:原单已支付金额（元）
+*refund_amount:退款金额（元）
+*refund_after_amount:退后余额（元）
+*refund_status:退款状态 100初始化, 200退款中, 300退款成功, 400退款失败
+*refund_time:退款时间
+*refund_trade_no:支付退款唯一流水号
+*pay_merchant_no:支付商户号
+*error_code:错误code
+*error_message:错误信息
+}
+
 '一对多'
 batch_refund ||--|{ batch_refund_info
+'一对多'
+batch_refund_info ||--|{ refund_record
 
 @enduml
