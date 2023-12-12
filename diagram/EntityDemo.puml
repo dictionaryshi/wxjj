@@ -7,6 +7,8 @@ hide circle
 
 '使用直线'
 skinparam linetype ortho
+'设置实体背景颜色为白色'
+skinparam classBackgroundColor white
 
 entity "batch_refund" {
 *id:主键ID
