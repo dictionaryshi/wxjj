@@ -1,0 +1,35 @@
+@startuml
+
+title 退款模型
+
+'隐藏类标'
+hide circle
+
+'使用直线'
+skinparam linetype ortho
+
+entity "batch_refund" {
+*id:主键ID
+--
+*batch_id:业务唯一ID
+*batch_refund_amount:退款金额（元）
+*batch_status:退款状态：100初始化, 200退款中, 300退款成功
+*batch_success_time:批量退款成功时间
+}
+
+entity "batch_refund_info" {
+*id:主键ID
+--
+*batch_id:业务唯一ID
+*trade_no:原支付单交易单号
+*trade_type:原支付单交易类型 1:代扣 2:用户支付
+*refundable_amount:可退总金额（元）
+*refund_amount:退款金额（元）
+*refund_after_amount:退后余额（元）
+*refund_status:退款状态 100初始化, 200退款中, 300退款成功, 400退款失败, 500不参与退款
+}
+
+'一对多'
+batch_refund ||--|{ batch_refund_info
+
+@enduml
