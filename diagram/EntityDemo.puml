@@ -87,11 +87,15 @@ entity "pay_record" {
 
 '一对多'
 batch_refund ||--|{ batch_refund_info
-'一对多'
-batch_refund_info ||--|{ refund_record
+'一对0或1'
+batch_refund_info ||--o| refund_record
+'一对0或1'
+withhold_record ||--o| refund_record
+'一对0或1'
+pay_record ||--o| refund_record
 '一对0或多'
-withhold_record ||--o{ refund_record
+withhold_record ||--o{ batch_refund
 '一对0或多'
-pay_record ||--o{ refund_record
+pay_record ||--o{ batch_refund
 
 @enduml
