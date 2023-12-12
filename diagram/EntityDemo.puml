@@ -50,9 +50,30 @@ entity "refund_record" {
 *error_message:错误信息
 }
 
+entity "withhold_record" {
+*id:主键ID
+--
+*biz_order_id:业务单号（全局唯一）
+*user_type:用户类型
+*user_id:用户身份id
+*pay_merchant_no:支付业务识别码
+*earliest_time:允许代扣的最早时间
+*latest_time:代扣截止时间
+*next_schedule_time:下一次调度时间
+*withhold_amount:代扣支付金额
+*withhold_status:代扣状态(100待缴费，200缴费中，300缴费成功，400缴费失败，410代扣取消)
+*withhold_success_time:代扣成功时间
+*biz_serial_no:发起支付的业务流水号, 代扣明确失败需要换单重发, 代扣卡在中间态需要原单重试
+*trade_no:支付平台支付通知的交易流水号
+*env:环境
+*remark:备注
+}
+
 '一对多'
 batch_refund ||--|{ batch_refund_info
 '一对多'
 batch_refund_info ||--|{ refund_record
+'一对0或多'
+withhold_record ||--o{ refund_record
 
 @enduml
