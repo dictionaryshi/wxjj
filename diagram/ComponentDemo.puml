@@ -5,21 +5,26 @@ skinparam component {
     BackgroundColor white
 }
 
-component #gold R
-component A
-component B
-component C
-component D
-component E
-component F
+component "C端" as A
+component "B端" as B
+component "M端" as M
 
-R --> A : 1
-R --> B : 2
+component "平台业务" as P #gold
 
-A --> C : 3
-A --> D : 4
+component "基础服务" as J
 
-B --> E : 5
-B --> F : 6
+database mysql
+database TiDB
+
+A --> P
+B --> P
+M --> P
+
+P --> J
+
+J -down-> mysql : 热数据
+J -down-> TiDB : 冷数据
+
+mysql -.right-> TiDB: canal同步
 
 @enduml
