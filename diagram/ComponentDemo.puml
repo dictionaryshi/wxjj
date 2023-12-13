@@ -5,16 +5,24 @@ skinparam component {
     BackgroundColor white
 }
 
-component "C端" as A
-component "B端" as B
-component "M端" as M
+skinparam package {
+    Style rectangle
+}
+
+package "客户端" {
+    component "C端" as A
+    component "B端" as B
+    component "M端" as M
+}
 
 component "平台业务" as P #gold
 
 component "基础服务" as J
 
-database mysql
-database TiDB
+package "存储介质" {
+    database mysql
+    database TiDB
+}
 
 A --> P
 B --> P
