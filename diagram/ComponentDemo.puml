@@ -1,0 +1,25 @@
+@startuml
+
+skinparam component {
+    Style rectangle
+    BackgroundColor white
+}
+
+component #gold R
+component A
+component B
+component C
+component D
+component E
+component F
+
+R --> A : 1
+R --> B : 2
+
+A --> C : 3
+A --> D : 4
+
+B --> E : 5
+B --> F : 6
+
+@enduml
