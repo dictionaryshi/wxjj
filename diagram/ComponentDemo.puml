@@ -33,6 +33,6 @@ P --> J
 J -down-> mysql : 热数据
 J -down-> TiDB : 冷数据
 
-mysql -.right-> TiDB: canal同步
+mysql -.right-> TiDB #red : <color:red>canal同步</color>
 
 @enduml
