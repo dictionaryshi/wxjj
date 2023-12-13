@@ -1,0 +1,38 @@
+@startuml
+
+skinparam component {
+    Style rectangle
+    BackgroundColor white
+}
+
+skinparam package {
+    Style rectangle
+}
+
+package "客户端" {
+    component "C端" as A
+    component "B端" as B
+    component "M端" as M
+}
+
+component "平台业务" as P #gold
+
+component "基础服务" as J
+
+package "存储介质" {
+    database mysql
+    database TiDB
+}
+
+A --> P
+B --> P
+M --> P
+
+P --> J
+
+J -down-> mysql : 热数据
+J -down-> TiDB : 冷数据
+
+mysql -.right-> TiDB: canal同步
+
+@enduml
