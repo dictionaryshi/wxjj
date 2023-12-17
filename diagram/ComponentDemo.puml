@@ -1,0 +1,63 @@
+@startuml
+
+'简约主题'
+!theme plain
+
+skinparam component {
+    Style rectangle
+    BackgroundColor white
+}
+
+skinparam rectangle {
+    BorderStyle dashed
+}
+
+rectangle "客户端" {
+    component "C端" as A
+    component "B端" as B
+    component "M端" as M
+}
+
+component "平台业务" as P #gold
+
+component "基础服务" as J
+
+rectangle "存储介质" {
+    database mysql
+    database TiDB
+}
+
+A --> P
+B --> P
+M --> P
+
+P --> J
+
+J -down-> mysql : 热数据
+J -down-> TiDB : 冷数据
+
+mysql -.right-> TiDB #red : <color:red>canal同步</color>
+
+[用户聚合服务]
+
+rectangle "后端服务" {
+  [商品服务组件]
+  [购物车服务组件]
+  [订单服务组件]
+  [支付服务组件]
+  [库存服务组件]
+  [配送服务组件]
+}
+
+[用户聚合服务] --> [商品服务组件] : 请求商品信息
+[用户聚合服务] --> [购物车服务组件] : 添加/管理购物车
+[用户聚合服务] --> [订单服务组件] : 创建订单
+[用户聚合服务] --> [支付服务组件] : 处理支付
+[用户聚合服务] --> [配送服务组件] : 获取配送状态
+
+[订单服务组件] --> [库存服务组件] : 核对库存
+[订单服务组件] --> [配送服务组件] : 安排配送
+[支付服务组件] --> [订单服务组件] : 更新订单状态
+[配送服务组件] --> [订单服务组件] : 更新配送状态
+
+@enduml

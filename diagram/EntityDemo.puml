@@ -1,0 +1,103 @@
+@startuml
+
+title 退款模型
+
+'隐藏类标'
+hide circle
+
+'使用直线'
+skinparam linetype ortho
+'设置实体背景颜色为白色'
+skinparam classBackgroundColor white
+
+entity "batch_refund" {
+*id:主键ID
+--
+*batch_id:业务唯一ID
+*batch_refund_amount:退款金额（元）
+*batch_status:退款状态：100初始化, 200退款中, 300退款成功
+*batch_success_time:批量退款成功时间
+}
+
+entity "batch_refund_info" {
+*id:主键ID
+--
+*batch_id:业务唯一ID
+*trade_no:原支付单交易单号
+*trade_type:原支付单交易类型 1:代扣 2:用户支付
+*refundable_amount:可退总金额（元）
+*refund_amount:退款金额（元）
+*refund_after_amount:退后余额（元）
+*refund_status:退款状态 100初始化, 200退款中, 300退款成功, 400退款失败, 500不参与退款
+}
+
+entity "refund_record" {
+*id:主键ID
+--
+*refund_record_id:受理唯一ID
+*user_type:用户类型
+*user_id:用户id
+*refund_type:退款类型 1:单笔 2:批量
+*trade_type:原支付单交易类型 1:代扣 2:用户支付
+*biz_serial_no:发起退款的业务流水号
+*trade_no:支付平台交易号
+*paid_amount:原单已支付金额（元）
+*refund_amount:退款金额（元）
+*refund_after_amount:退后余额（元）
+*refund_status:退款状态 100初始化, 200退款中, 300退款成功, 400退款失败
+*refund_time:退款时间
+*refund_trade_no:支付退款唯一流水号
+*pay_merchant_no:支付商户号
+*error_code:错误code
+*error_message:错误信息
+}
+
+entity "withhold_record" {
+*id:主键ID
+--
+*biz_order_id:业务单号（全局唯一）
+*user_type:用户类型
+*user_id:用户身份id
+*pay_merchant_no:支付业务识别码
+*earliest_time:允许代扣的最早时间
+*latest_time:代扣截止时间
+*next_schedule_time:下一次调度时间
+*withhold_amount:代扣支付金额
+*withhold_status:代扣状态(100待缴费，200缴费中，300缴费成功，400缴费失败，410代扣取消)
+*withhold_success_time:代扣成功时间
+*biz_serial_no:发起支付的业务流水号, 代扣明确失败需要换单重发, 代扣卡在中间态需要原单重试
+*trade_no:支付平台支付通知的交易流水号
+*env:环境
+*remark:备注
+}
+
+entity "pay_record" {
+*id:主键ID
+--
+*biz_order_id:业务单号（全局唯一）
+*user_type:user类型
+*user_id:用户id
+*pay_status:支付状态:100初始化, 200支付中, 300支付成功, 400支付失败
+*paid_amount:实际支付金额（元）
+*trade_no:支付流水号
+*biz_serial_no:发起支付的业务流水号
+*pay_success_time:支付成功时间
+*pay_merchant_no:业务识别码
+*error_code:错误code
+*error_message:错误信息
+}
+
+'一对多'
+batch_refund ||--|{ batch_refund_info
+'一对0或1'
+batch_refund_info ||--o| refund_record
+'一对0或1'
+withhold_record ||--o| refund_record
+'一对0或1'
+pay_record ||--o| refund_record
+'一对0或多'
+withhold_record ||--o{ batch_refund
+'一对0或多'
+pay_record ||--o{ batch_refund
+
+@enduml

@@ -1,0 +1,81 @@
+@startuml
+
+title "时序图Demo"
+
+'实线粗细'
+skinparam sequenceArrowThickness 2
+
+actor A #red
+entity User
+collections userList
+participant B as "名字非常\n长的服务" #99FF99
+box "中间件" #LightBlue
+database C #yellow
+queue MQ
+end box
+
+autonumber 1
+A -> B: 发起请求
+
+par 并行
+B -> C ++: 查询可退订单list
+return: 反回可退订单list
+note right:200ms
+B -> C ++: 查询订单历史退单记录
+return: 反回订单历史退单记录
+note right:100ms
+end
+
+B -> B: 计算可退款总额度
+opt 申请退款额度 > 可退款总额度
+B --> A: 申请失败\n申请退款额度 > 可退款总额度
+end
+
+== 计算退款额度开始 ==
+loop 遍历可退订单list计算每单退款额
+break 申请退款额度 <= 0
+end
+
+alt #Gold 如果本单交易额度 <= 申请退款额度
+B -> B: 本单进行全部退款\n申请退款额度 = 申请退款额度 - 本单交易额度
+else #Pink 如果本单交易额度 > 申请退款额度
+B -> B: 本单剩余退款额度 = 本单交易额度 - 申请退款额度\n本单退款额度 = 申请退款额度
+break 结束退款额度计算流程
+end
+end
+end
+== 计算退款额度结束 ==
+
+critical 事务内操作
+B -> C ++: 存储退单数据
+return 存储结果
+B -> C ++: 更新额度数据
+return 更新结果
+end
+
+B --> A: 请求响应
+autonumber stop
+
+group 自定义 [自定义2]
+A -[#red]> A: 阅读结果\n反思流程
+note right #aqua : 注释1\n注释2
+end
+
+||50||
+A -> User **: 创建user对象
+activate User
+User -> User: 属性赋值
+User --> A : 返回user对象
+destroy User
+
+||50||
+A -> userList ** : new userList
+activate userList
+userList -> userList: 装填user
+userList --> A -- : 返回userList
+
+||50||
+A -> MQ: 发送mq
+MQ --> A: 发送结果
+
+@enduml
