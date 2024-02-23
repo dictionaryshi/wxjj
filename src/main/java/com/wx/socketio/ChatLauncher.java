@@ -1,5 +1,6 @@
 package com.wx.socketio;
 
+import com.corundumstudio.socketio.handler.SuccessAuthorizationListener;
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.*;
 import com.scy.core.StringUtil;
@@ -15,11 +16,34 @@ public class ChatLauncher {
 
     public static void main(String[] argss) throws InterruptedException {
         Configuration config = new Configuration();
+        config.setHostname("wxjj.com");
+        // 设置心跳超时时间
+        config.setPingTimeout(60000);
+        config.setContext("/socket.io");
+        // 使用直接缓冲区
+        config.setPreferDirectBuffer(Boolean.TRUE);
+        // 配置每次握手时调用的授权监听器
+        config.setAuthorizationListener(new SuccessAuthorizationListener());
+        // 配置传输升级过程中的超时时间
+        config.setUpgradeTimeout(10000);
+        // 使用linux epoll
+        config.setUseLinuxNativeEpoll(Boolean.TRUE);
+        // “沉默通道”攻击是一种网络攻击，攻击者打开连接但不发送任何数据，目的是耗尽服务器资源。
+        config.setFirstDataTimeout(5000);
+        // 启用HTTP压缩
+        config.setHttpCompression(Boolean.TRUE);
+        // 启用WebSocket压缩
+        config.setWebsocketCompression(Boolean.TRUE);
+        // 异常监听器
         config.setExceptionListener(new DefaultExceptionListener());
-        config.setPingInterval(60000);
+        // 设置心跳检测的时间间隔
+        config.setPingInterval(25000);
         config.setPort(9092);
+        // 服务器应答模式
         config.setAckMode(AckMode.AUTO_SUCCESS_ONLY);
+        // HTTP请求内容的最大长度
         config.setMaxHttpContentLength(5 * 1024 * 1024);
+        // WebSocket帧的最大有效载荷长度
         config.setMaxFramePayloadLength(5 * 1024 * 1024);
 
         // 设置是否禁用 Nagle 算法。如果设置为 true，表示禁用，可以减少数据包的延迟，适用于小包或需要低延迟的传输。通常，对于需要即时性的应用，建议设置为 true。
