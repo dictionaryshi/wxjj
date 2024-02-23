@@ -22,9 +22,13 @@ public class ChatLauncher {
         config.setMaxHttpContentLength(5 * 1024 * 1024);
         config.setMaxFramePayloadLength(5 * 1024 * 1024);
 
+        // 设置是否禁用 Nagle 算法。如果设置为 true，表示禁用，可以减少数据包的延迟，适用于小包或需要低延迟的传输。通常，对于需要即时性的应用，建议设置为 true。
         config.getSocketConfig().setTcpNoDelay(Boolean.TRUE);
+        // 设置是否启用 TCP 的 keepalive 属性。如果设置为 true，TCP 会定期发送探测包以检测连接是否仍然有效。这有助于在网络中断时快速发现死连接。通常，对于需要维持长连接的应用，建议设置为 true。
         config.getSocketConfig().setTcpKeepAlive(Boolean.TRUE);
+        // 设置是否允许重用套接字地址。如果设置为 true，即使前一个连接还在 TIME_WAIT 状态，也允许新的套接字绑定相同的地址。这对于服务器应用来说很有用，可以快速重启绑定到相同端口。
         config.getSocketConfig().setReuseAddress(Boolean.TRUE);
+        // 设置套接字接受连接请求的队列长度。如果队列满了，新的连接请求可能会被拒绝。常用值取决于应用的并发需求，但511是一个常见的设置，为了兼容性和性能。
         config.getSocketConfig().setAcceptBackLog(511);
 
         final SocketIOServer server = new SocketIOServer(config);
