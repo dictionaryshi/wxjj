@@ -57,12 +57,21 @@ public class ChatLauncher {
 
         final SocketIOServer server = new SocketIOServer(config);
 
+        server.addPingListener(client -> {
+        });
+
+        server.addPongListener(client -> {
+        });
+
         server.addConnectListener(client -> {
             String token = SocketCookieUtil.getCookieValue(client.getHandshakeData(), "SCY_SSO");
             if (StringUtil.isEmpty(token)) {
                 client.disconnect();
                 return;
             }
+
+            client.set("isLogin", Boolean.TRUE);
+
             System.out.println("onConnect_" + client.toString());
         });
 
@@ -75,6 +84,9 @@ public class ChatLauncher {
             HttpHeaders httpHeaders = handshakeData.getHttpHeaders();
             SocketAddress remoteAddress = client.getRemoteAddress();
             boolean channelOpen = client.isChannelOpen();
+            boolean hasIsLoginKey = client.has("isLogin");
+            Object o = client.get("isLogin");
+            boolean writable = client.isWritable();
             client.sendEvent("chatResponse", data);
         });
 
