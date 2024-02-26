@@ -31,8 +31,8 @@ public class ChatLauncher {
         });
         // 配置传输升级过程中的超时时间
         config.setUpgradeTimeout(10000);
-        // 使用linux epoll
-        config.setUseLinuxNativeEpoll(Boolean.TRUE);
+        // 非linux环境不使用linux epoll
+        config.setUseLinuxNativeEpoll(Boolean.FALSE);
         // “沉默通道”攻击是一种网络攻击，攻击者打开连接但不发送任何数据，目的是耗尽服务器资源。
         config.setFirstDataTimeout(5000);
         // 启用HTTP压缩
