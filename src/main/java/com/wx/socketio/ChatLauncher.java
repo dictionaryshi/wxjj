@@ -4,8 +4,9 @@ import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.*;
 import com.scy.core.StringUtil;
 import com.scy.core.format.MessageUtil;
+import com.scy.netty.model.Session;
 import com.scy.netty.socketio.SocketCookieUtil;
-import io.netty.handler.codec.http.HttpHeaders;
+import com.scy.netty.socketio.SocketSessionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.SocketAddress;
@@ -60,12 +61,11 @@ public class ChatLauncher {
         // 设置套接字接受连接请求的队列长度。如果队列满了，新的连接请求可能会被拒绝。常用值取决于应用的并发需求，但511是一个常见的设置，为了兼容性和性能。
         config.getSocketConfig().setAcceptBackLog(511);
 
-        final SocketIOServer server = new SocketIOServer(config);
+        SocketIOServer server = new SocketIOServer(config);
 
         server.addPingListener(client -> {
-        });
-
-        server.addPongListener(client -> {
+            Session session = SocketSessionUtil.getSession(client);
+            log.info(MessageUtil.format("client ping", "session", session));
         });
 
         server.addConnectListener(client -> {
@@ -75,31 +75,17 @@ public class ChatLauncher {
                 return;
             }
 
-            client.set("isLogin", Boolean.TRUE);
-
-            System.out.println("onConnect_" + client.toString());
+            SocketSessionUtil.bindSession(client, new Session(token));
         });
 
-        server.addDisconnectListener(client -> {
-            System.out.println("onDisconnect_" + client.toString());
-        });
+        server.addDisconnectListener(client -> SocketSessionUtil.unBindSession(client));
 
         server.addEventListener("chatRequest", ChatObject.class, (client, data, ackRequest) -> {
-            HandshakeData handshakeData = client.getHandshakeData();
-            HttpHeaders httpHeaders = handshakeData.getHttpHeaders();
             SocketAddress remoteAddress = client.getRemoteAddress();
             boolean channelOpen = client.isChannelOpen();
-            boolean hasIsLoginKey = client.has("isLogin");
-            Object isLogin = client.get("isLogin");
             boolean writable = client.isWritable();
             client.sendEvent("chatResponse", data);
         });
-
-        final SocketIONamespace chat1namespace = server.addNamespace("/chat1");
-        chat1namespace.addEventListener("messageRequest", ChatObject.class, (client, data, ackRequest) -> client.sendEvent("messageResponse", data));
-
-        final SocketIONamespace chat2namespace = server.addNamespace("/chat2");
-        chat2namespace.addEventListener("messageRequest", ChatObject.class, (client, data, ackRequest) -> client.sendEvent("messageResponse", data));
 
         server.addEventListener("imgRequest", byte[].class, (client, data, ackRequest) -> client.sendEvent("imgResponse", data));
 
@@ -108,23 +94,22 @@ public class ChatLauncher {
                 ackRequest.sendAckData("server ack1", "server ack2");
             }
 
-            ChatObject ackChatObjectData = new ChatObject(data.getUserName(), "server ack data");
-            client.sendEvent("ackevent2", new AckCallback<String>(String.class) {
+            Session session = SocketSessionUtil.getSession(client);
 
+            ChatObject ackChatObjectData = new ChatObject(data.getUserName(), "ackevent2 data");
+            client.sendEvent("ackevent2", new AckCallback<String>(String.class) {
                 @Override
                 public void onSuccess(String result) {
-                    System.out.println("ack from client: " + client.getSessionId() + " data: " + result);
+                    log.info(MessageUtil.format("ack from client", "session", session, "result", result));
                 }
             }, ackChatObjectData);
 
-            ChatObject ackChatObjectData1 = new ChatObject(data.getUserName(), "server ack void");
+            ChatObject ackChatObjectData1 = new ChatObject(data.getUserName(), "ackevent3 data");
             client.sendEvent("ackevent3", new VoidAckCallback() {
-
                 @Override
                 protected void onSuccess() {
-                    System.out.println("ack from client: " + client.getSessionId());
+                    log.info(MessageUtil.format("ack from client", "session", session));
                 }
-
             }, ackChatObjectData1);
         });
 
