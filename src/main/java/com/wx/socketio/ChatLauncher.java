@@ -1,6 +1,5 @@
 package com.wx.socketio;
 
-import com.corundumstudio.socketio.handler.SuccessAuthorizationListener;
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.*;
 import com.scy.core.StringUtil;
@@ -23,7 +22,13 @@ public class ChatLauncher {
         // 使用直接缓冲区
         config.setPreferDirectBuffer(Boolean.TRUE);
         // 配置每次握手时调用的授权监听器
-        config.setAuthorizationListener(new SuccessAuthorizationListener());
+        config.setAuthorizationListener(handshakeData -> {
+            String token = SocketCookieUtil.getCookieValue(handshakeData, "SCY_SSO");
+            if (StringUtil.isEmpty(token)) {
+                return AuthorizationResult.FAILED_AUTHORIZATION;
+            }
+            return AuthorizationResult.SUCCESSFUL_AUTHORIZATION;
+        });
         // 配置传输升级过程中的超时时间
         config.setUpgradeTimeout(10000);
         // 使用linux epoll
@@ -85,7 +90,7 @@ public class ChatLauncher {
             SocketAddress remoteAddress = client.getRemoteAddress();
             boolean channelOpen = client.isChannelOpen();
             boolean hasIsLoginKey = client.has("isLogin");
-            Object o = client.get("isLogin");
+            Object isLogin = client.get("isLogin");
             boolean writable = client.isWritable();
             client.sendEvent("chatResponse", data);
         });
