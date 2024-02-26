@@ -48,10 +48,6 @@ public class ChatLauncher {
             }, ackChatObjectData1);
         });
 
-        server.addEventInterceptor((client, eventName, args, ackRequest) -> {
-            log.info(MessageUtil.format("eventInterceptor", "eventName", eventName, "args", args));
-        });
-
         server.start();
 
         Thread.sleep(Integer.MAX_VALUE);
