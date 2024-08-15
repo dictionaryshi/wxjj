@@ -2,11 +2,9 @@
 
 hide empty description
 
-state 退款成功 #pink {
-}
+state 退款成功 #pink
 
-state 已取消 #pink {
-}
+state 已取消 #pink
 
 [*] -right-> 初始化 : 用户提交
 初始化 : 收单后待处理数据
